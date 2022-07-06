@@ -1,0 +1,74 @@
+﻿@page
+@using InHouseOidc.Certify.Provider
+@namespace InHouseOidc.Certify.Provider.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Logout
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Logout";
+}
+<div class="container960">
+    <div class="card">
+        <div class="card-header">
+            <a class="nav-link d-inline-block" asp-page="Index"><h3>InHouseOidc.Certify.Provider</h3></a><h3 class="d-inline-block float-end">Logout</h3>
+        </div>
+        <div class="card-body">
+            @switch(Model.Status)
+            {
+                case Logout.LogoutStatus.ConfirmLogout:
+                    <div class="alert alert-info">No logout code supplied.</div>
+                    break;
+                case Logout.LogoutStatus.InvalidLogoutCode:
+                    <div class="alert alert-warning">Unable to validate logout code.</div>
+                    break;
+                case Logout.LogoutStatus.LoggedOut:
+                    <div class="alert alert-success">You're logged out.</div>
+                    break;
+                case Logout.LogoutStatus.NotLoggedIn:
+                    <div class="alert alert-danger">You're not currently logged in.</div>
+                    break;
+            }
+            @if(Model.Status == Logout.LogoutStatus.ConfirmLogout || Model.Status == Logout.LogoutStatus.InvalidLogoutCode)
+            {
+                <form method="post">
+                    <input class="btn btn-primary" type="submit" value="Confirm Logout" id="logout" />
+                </form>
+            }
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(@Model.PostLogoutRedirectUri) || !string.IsNullOrEmpty(@Model.State))
+    {
+        <div class="card mt-2">
+            <div class="card-header">
+                <h4 class="m-0">Parameters</h4>
+            </div>
+            <div class="card-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PostLogoutRedirectUri</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Model.PostLogoutRedirectUri</td>
+                            <td>@Model.State</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(@Model.IdTokenHint))
+    {
+        <div class="card mt-2">
+            <div class="card-header">
+                <h4 class="m-0">Id Token Hint</h4>
+            </div>
+            <div class="card-body">
+                @Model.IdTokenHint
+            </div>
+        </div>
+    }
+</div>

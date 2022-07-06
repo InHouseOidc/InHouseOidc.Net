@@ -1,0 +1,97 @@
+﻿@page
+@using InHouseOidc.Example.Provider
+@namespace InHouseOidc.Example.Provider.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Provider.Index
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Home";
+}
+<div class="container960">
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <a class="nav-link" asp-page="Index"><h3>InHouseOidc.Example.Provider</h3></a>
+            <form method="post">
+                <input class="btn btn-primary" type="submit" value="Logout" id="logout" asp-page-handler="Logout" />
+            </form>
+        </div>
+        <div class="card-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Session Expiry</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.ViewModel.Name</td>
+                        <td>@Model.ViewModel.Role</td>
+                        <td>@Model.ViewModel.SessionExpiry</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div>
+                <div class="d-flex mt-2 align-items-center">
+                    <form method="post">
+                        <input class="btn btn-primary mr-2" type="submit" value="Call API" id="callApi" asp-page-handler="CallApi" />
+                    </form>
+                    <span class="">@Model.ViewModel.ApiResult</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mt-2">
+        <div class="card-header">
+            <h4 class="m-0">Claims</h4>
+        </div>
+        <div class="card-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in Model.ViewModel.Claims ?? new List<System.Security.Claims.Claim>())
+                    {
+                        <tr>
+                            <td>@claim.Type</td>
+                            <td>@claim.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card mt-2">
+        <div class="card-header d-flex align-items-center">
+            <h4 class="m-0">Access Token</h4>
+            <small class="ml-auto">Expiry @Model.ViewModel.AccessTokenExpiry</small>
+            <div class="btn-group-sm btn-group-toggle ml-2">
+                <button id="buttonAccessTokenEncoded" type="button" class="btn btn-secondary active" onclick="displayAccessTokenEncoded()">Encoded</button>
+                <button id="buttonAccessTokenDecoded" type="button" class="btn btn-secondary" onclick="displayAccessTokenDecoded()">Decoded</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <span id="accessTokenEncoded">@Model.ViewModel.AccessToken</span>
+            <pre id="accessTokenDecoded" class="m-0 d-none">@Model.ViewModel.AccessTokenJson</pre>
+        </div>
+    </div>
+    <div class="card mt-2">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h4 class="m-0">Id Token</h4>
+            <small class="ml-auto">Expiry @Model.ViewModel.IdTokenExpiry</small>
+            <div class="btn-group-sm btn-group-toggle ml-2">
+                <button id="buttonIdTokenEncoded" type="button" class="btn btn-secondary active" onclick="displayIdTokenEncoded()">Encoded</button>
+                <button id="buttonIdTokenDecoded" type="button" class="btn btn-secondary" onclick="displayIdTokenDecoded()">Decoded</button>
+            </div>
+        </div>
+        <div class="card-body mb-0">
+            <span id="idTokenEncoded">@Model.ViewModel.IdToken</span>
+            <pre id="idTokenDecoded" class="m-0 d-none">@Model.ViewModel.IdTokenJson</pre>
+        </div>
+    </div>
+</div>
