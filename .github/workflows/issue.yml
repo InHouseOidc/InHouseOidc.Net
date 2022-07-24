@@ -65,13 +65,14 @@ jobs:
           name: code-coverage-report
           path: ./Coverage/Results/
 
-      - name: Check coverage percentage
-        uses: 5monkeys/cobertura-action@master
-        with:
-          path: ./Coverage/Results/coverage.cobertura.xml
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          minimum_coverage: 100
-          fail_below_threshold: false
+      #  Disable code coverage check until coverlet merge/report generator can agree on the coverage percentage
+      #- name: Check coverage percentage
+      #  uses: 5monkeys/cobertura-action@master
+      #  with:
+      #    path: ./Coverage/Results/coverage.cobertura.xml
+      #    repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #    minimum_coverage: 100
+      #    fail_below_threshold: true
           
       - name: Make coverage badge
         uses: action-badges/cobertura-coverage-xml-badges@0.2.1
