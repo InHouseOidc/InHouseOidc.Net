@@ -1,0 +1,98 @@
+name: issue
+
+on:
+  push:
+    branches: [ 'issue/**' ]
+
+jobs:
+  build:
+
+    env:
+      BUILD_CONFIG: 'Release'
+      SOLUTION: 'InHouseOidc.Net.sln'
+      
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.301
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: csharpier line wrap check
+        run: dotnet csharpier --check .
+
+      - name: Code format check 
+        run: |
+          dotnet format analyzers --verify-no-changes
+          dotnet format style --verify-no-changes
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
+
+      - name: Run tests
+        run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build
+
+      - name: Coverage
+        run: |
+          if [ -d Coverage ]; then rm -rf Coverage; fi
+          mkdir Coverage
+          dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=../Coverage/Results/ \
+            /p:MergeWith=../Coverage/Results/coverage.json \
+            /p:CoverletOutputFormat="json%2ccobertura" \
+            -m:1 \
+            $SOLUTION
+          dotnet tool install dotnet-reportgenerator-globaltool --tool-path ./Coverage/Tools --ignore-failed-sources
+          ./Coverage/Tools/reportgenerator -reports:./Coverage/Results/coverage.cobertura.xml -targetdir:./Coverage/Results/
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: ./Coverage/Results/
+
+      - name: Check coverage percentage
+        uses: 5monkeys/cobertura-action@master
+        with:
+          path: ./Coverage/Results/coverage.cobertura.xml
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          minimum_coverage: 100
+          fail_below_threshold: false
+          
+      - name: Make coverage badge
+        uses: action-badges/cobertura-coverage-xml-badges@0.2.1
+        with:
+          file-name: coverage.svg
+          badge-branch: badges
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          coverage-file-name: ./Coverage/Results/coverage.cobertura.xml
+
+      - name: Determine package version using semver
+        id: semver
+        uses: paulhatch/semantic-version@v5.0.0-alpha2
+        with:
+          tag_prefix: "v"
+          version_format: "${major}.${minor}.${patch}"
+          search_commit_body: false
+
+      - name: Pack
+        run: dotnet pack --configuration $BUILD_CONFIG --no-restore --no-build -p:PackageVersion="${{ steps.semver.outputs.version }}-issue-$(git rev-parse --short HEAD)"
+
+      - name: Archive packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget-packages
+          path: ./InHouseOidc.Net.*/**/*.nupkg

@@ -1,0 +1,88 @@
+name: release
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+
+    env:
+      BUILD_CONFIG: 'Release'
+      SOLUTION: 'InHouseOidc.Net.sln'
+      
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.301
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: csharpier line wrap check
+        run: dotnet csharpier --check .
+
+      - name: Code format check 
+        run: |
+          dotnet format analyzers --verify-no-changes
+          dotnet format style --verify-no-changes
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
+
+      - name: Run tests
+        run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build
+
+      - name: Coverage
+        run: |
+          if [ -d Coverage ]; then rm -rf Coverage; fi
+          mkdir Coverage
+          dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=../Coverage/Results/ \
+            /p:MergeWith=../Coverage/Results/coverage.json \
+            /p:CoverletOutputFormat="json%2ccobertura" \
+            -m:1 \
+            $SOLUTION
+          dotnet tool install dotnet-reportgenerator-globaltool --tool-path ./Coverage/Tools --ignore-failed-sources
+          ./Coverage/Tools/reportgenerator -reports:./Coverage/Results/coverage.cobertura.xml -targetdir:./Coverage/Results/
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: ./Coverage/Results/
+
+      - name: Determine package version using semver
+        id: semver
+        uses: paulhatch/semantic-version@v4.0.3
+        with:
+          tag_prefix: "v"
+          format: "${major}.${minor}.${patch}"
+          search_commit_body: false
+
+      - name: Pack
+        run: dotnet pack --configuration $BUILD_CONFIG --no-restore --no-build -p:PackageVersion=${{ steps.semver.outputs.version }}
+
+      - name: Publish
+        run: dotnet nuget push "InHouseOidc.Net.*/**/*.nupkg" --source 'https://nuget.pkg.github.com/InHouseOidc/index.json' --api-key ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Write release version badge
+        uses: action-badges/core@main
+        with:
+          badge-branch: badges
+          file-name: release.svg
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          label: "release"
+          message: "v${{ steps.semver.outputs.version }}"
