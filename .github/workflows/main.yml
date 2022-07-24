@@ -51,6 +51,7 @@ jobs:
           if [ -d Coverage ]; then rm -rf Coverage; fi
           mkdir Coverage
           dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build \
+            /p:Exclude="[InHouseOidc.Test.Common]*%2c[*]InHouseOidc.Common.Constant.*" \
             /p:CollectCoverage=true \
             /p:CoverletOutput=../Coverage/Results/ \
             /p:MergeWith=../Coverage/Results/coverage.json \
