@@ -99,4 +99,4 @@ jobs:
 
       - name: Publish
         if: github.event_name != 'pull_request'
-        run: dotnet nuget push "InHouseOidc.Net.*/**/*.nupkg" --source 'https://nuget.pkg.github.com/BrentJohnsonNz/index.json' --api-key ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet nuget push "InHouseOidc.Net.*/**/*.nupkg" --source 'https://nuget.pkg.github.com/InHouseOidc/index.json' --api-key ${{ secrets.GITHUB_TOKEN }}
