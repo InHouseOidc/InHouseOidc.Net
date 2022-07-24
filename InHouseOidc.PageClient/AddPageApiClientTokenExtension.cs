@@ -13,7 +13,7 @@ namespace InHouseOidc.PageClient
         /// Adds OIDC client support for an MVC or Razor page based website to an HttpClientBuilder.<br />
         /// A message handler is added to any built HttpClient that automatically includes an access token header in all requests.
         /// </summary>
-        /// <param name="httpClientBuilder">The HttpClientBuilder being configured during startup</param>
+        /// <param name="httpClientBuilder">The HttpClientBuilder being configured during startup.</param>
         /// <param name="clientName">The named HttpClient requiring access tokens.</param>
         /// <returns>ProviderBuilder.</returns>
         public static IHttpClientBuilder AddPageApiClientToken(
