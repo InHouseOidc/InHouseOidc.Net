@@ -77,7 +77,7 @@ jobs:
         run: dotnet pack --configuration $BUILD_CONFIG --no-restore --no-build -p:PackageVersion=${{ steps.semver.outputs.version }}
 
       - name: Publish
-        run: dotnet nuget push "InHouseOidc.Net.*/**/*.nupkg" --source 'https://nuget.pkg.github.com/InHouseOidc/index.json' --api-key ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet nuget push "InHouseOidc.*/**/*.nupkg" --source 'https://nuget.pkg.github.com/InHouseOidc/index.json' --api-key ${{ secrets.GITHUB_TOKEN }}
       
       - name: Write release version badge
         uses: action-badges/core@main
