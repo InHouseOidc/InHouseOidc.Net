@@ -21,6 +21,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Determine package version using semver
+        id: semver
+        uses: paulhatch/semantic-version@v4.0.3
+        with:
+          tag_prefix: "v"
+          format: "${major}.${minor}.${patch}-main-${increment}"
+          search_commit_body: false
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
@@ -41,7 +49,12 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
+        run: |
+          dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore \
+            /p:PackageVersion=${{ steps.semver.outputs.version }} \
+            /p:AssemblyVersion="${{ steps.semver.outputs.major }}.0.0" \
+            /p:FileVersion="${{ steps.semver.outputs.major }}.${{ steps.semver.outputs.minor }}.${{ steps.semver.outputs.patch }}.$GITHUB_RUN_NUMBER" \
+            /p:InformationalVersion="${{ steps.semver.outputs.version }}"
 
       - name: Run tests
         run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build
@@ -83,19 +96,6 @@ jobs:
           badge-branch: badges
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           coverage-file-name: ./Coverage/Results/coverage.cobertura.xml
-
-      - name: Determine package version using semver
-        if: github.event_name != 'pull_request'
-        id: semver
-        uses: paulhatch/semantic-version@v4.0.3
-        with:
-          tag_prefix: "v"
-          format: "${major}.${minor}.${patch}-main-${increment}"
-          search_commit_body: false
-
-      - name: Pack
-        if: github.event_name != 'pull_request'
-        run: dotnet pack --configuration $BUILD_CONFIG --no-restore --no-build -p:PackageVersion=${{ steps.semver.outputs.version }}
 
       - name: Publish
         if: github.event_name != 'pull_request'
