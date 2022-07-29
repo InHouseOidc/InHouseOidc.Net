@@ -32,14 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.0" allowedVersions="6.*" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>InHouseOidc.Common</IncludeAssets>
-    </ProjectReference>
+    <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj" PrivateAssets="all" />
   </ItemGroup>
 
   <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
