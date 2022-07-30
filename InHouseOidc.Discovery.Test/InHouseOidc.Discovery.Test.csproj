@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj" />
     <ProjectReference Include="..\InHouseOidc.Discovery\InHouseOidc.Discovery.csproj" />
     <ProjectReference Include="..\InHouseOidc.Test.Common\InHouseOidc.Test.Common.csproj" />
   </ItemGroup>

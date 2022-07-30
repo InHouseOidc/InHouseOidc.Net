@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj" />
     <ProjectReference Include="..\InHouseOidc.Example.Common\InHouseOidc.Example.Common.csproj" />
     <ProjectReference Include="..\InHouseOidc.PageClient\InHouseOidc.PageClient.csproj" />
     <ProjectReference Include="..\InHouseOidc.Provider\InHouseOidc.Provider.csproj" />

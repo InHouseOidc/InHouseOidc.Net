@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InHouseOidc.Api\InHouseOidc.Api.csproj" />
-    <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj" />
     <ProjectReference Include="..\InHouseOidc.Test.Common\InHouseOidc.Test.Common.csproj" />
   </ItemGroup>
 

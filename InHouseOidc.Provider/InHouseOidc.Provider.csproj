@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>InHouseOidc.Provider</PackageId>
-    <TargetFramework>net6.0</TargetFramework>
     <Authors>Brent Johnson</Authors>
     <Copyright>Brent Johnson 2022</Copyright>
     <Company>InHouseOidc</Company>
@@ -20,7 +19,6 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsPackable>true</IsPackable>
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,13 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj" />
   </ItemGroup>
-
-  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
-    <ItemGroup>
-      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
-   </ItemGroup>
-  </Target>
 
 </Project>

@@ -1,13 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <IsPackable>false</IsPackable>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageId>InHouseOidc.Common</PackageId>
+    <TargetFramework>net6.0</TargetFramework>
+    <Authors>Brent Johnson</Authors>
+    <Copyright>Brent Johnson 2022</Copyright>
+    <Company>InHouseOidc</Company>
+    <Description>InHouseOidc Common library.</Description>
+    <RepositoryUrl>https://github.com/InHouseOidc/InHouseOidc.Net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/InHouseOidc/InHouseOidc.Net/tree/main/InHouseOidc.Common</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,10 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
-    <PackageReference Include="Polly" Version="7.2.3" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" AllowedVersions="6.*" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" AllowedVersions="6.*" />
+    <PackageReference Include="Polly" Version="7.2.3" AllowedVersions="7.*" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.0" AllowedVersions="6.*" />
   </ItemGroup>
 
 </Project>

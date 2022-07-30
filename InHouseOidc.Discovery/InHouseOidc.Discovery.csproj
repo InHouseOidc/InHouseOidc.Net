@@ -5,21 +5,28 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <IsPackable>false</IsPackable>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageId>InHouseOidc.Discovery</PackageId>
+    <Authors>Brent Johnson</Authors>
+    <Copyright>Brent Johnson 2022</Copyright>
+    <Company>InHouseOidc</Company>
+    <Description>InHouseOidc Discovery library.</Description>
+    <RepositoryUrl>https://github.com/InHouseOidc/InHouseOidc.Net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/InHouseOidc/InHouseOidc.Net/tree/main/InHouseOidc.Discovery</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" AllowedVersions="6.*" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Type\" />
   </ItemGroup>
 
 </Project>
