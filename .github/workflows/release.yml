@@ -78,9 +78,12 @@ jobs:
           name: code-coverage-report
           path: ./Coverage/Results/
 
-      - name: Publish
+      - name: Publish Github
         run: dotnet nuget push "InHouseOidc.*/**/*.nupkg" --source 'https://nuget.pkg.github.com/InHouseOidc/index.json' --api-key ${{ secrets.GITHUB_TOKEN }}
-      
+
+      - name: Publish NuGet
+        run: dotnet nuget push "InHouseOidc.*/**/*.nupkg" --source 'https://api.nuget.org/v3/index.json' --api-key ${{ secrets.INHOUSEOIDC_PUSH }}
+
       - name: Write release version badge
         uses: action-badges/core@main
         with:

@@ -97,6 +97,10 @@ jobs:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           coverage-file-name: ./Coverage/Results/coverage.cobertura.xml
 
-      - name: Publish
+      - name: Publish Github
         if: github.event_name != 'pull_request'
         run: dotnet nuget push "InHouseOidc.*/**/*.nupkg" --source 'https://nuget.pkg.github.com/InHouseOidc/index.json' --api-key ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish NuGet
+        if: github.event_name != 'pull_request'
+        run: dotnet nuget push "InHouseOidc.*/**/*.nupkg" --source 'https://api.nuget.org/v3/index.json' --api-key ${{ secrets.INHOUSEOIDC_PUSH }}
