@@ -7,7 +7,7 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>InHouseOidc.Provider</PackageId>
     <Authors>Brent Johnson</Authors>
-    <Copyright>Brent Johnson 2022</Copyright>
+    <Copyright>Copyright © Brent Johnson 2022</Copyright>
     <Company>InHouseOidc</Company>
     <Description>InHouseOidc provider library.</Description>
     <RepositoryUrl>https://github.com/InHouseOidc/InHouseOidc.Net</RepositoryUrl>

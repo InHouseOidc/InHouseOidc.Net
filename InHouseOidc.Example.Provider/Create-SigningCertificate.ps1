@@ -1,18 +1,12 @@
 $ErrorActionPreference = "Stop"
-if (Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object {$_.Subject -eq "CN=InHouseOidcExample"})
-{
-	Write-Host "Local certificate InHouseOidcExample already exists" -ForegroundColor Green
+$filename = "$PWD\\InHouseOidcExample.pfx"
+if (Test-Path $filename) {
+    Remove-Item $filename
 }
-else
-{
-	New-SelfSignedCertificate -Subject "InHouseOidcExample" -DnsName "InHouseOidcExample" `
-		-CertStoreLocation Cert:\LocalMachine\My `
-		-HashAlgorithm "SHA256" `
-		-KeyExportPolicy Exportable `
-		-KeyUsage DigitalSignature, KeyEncipherment `
-		-NotAfter (Get-Date).AddYears(5)
-	Write-Host "Added local certificate InHouseOidcExample" -ForegroundColor Yellow
-}
-$certificate = Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object {$_.Subject -eq "CN=InHouseOidcExample"}
-$securePass = ConvertTo-SecureString -String "Internal" -Force -AsPlainText
-Export-PfxCertificate -Cert $certificate -FilePath ".\InHouseOidcExample.pfx" -Password $securePass
+$rsa = [System.Security.Cryptography.RSA]::Create()
+$hashAlgorithm = [System.Security.Cryptography.HashAlgorithmName]::SHA256
+$rsaSignaturePadding = [System.Security.Cryptography.RSASignaturePadding]::Pkcs1
+$cr = New-Object System.Security.Cryptography.X509Certificates.CertificateRequest("cn=InHouseOidc", $rsa, $hashAlgorithm, $rsaSignaturePadding)
+$certificate = $cr.CreateSelfSigned([System.DateTime]::UtcNow, [System.DateTime]::UtcNow.AddYears(5))
+$certificateData = $certificate.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx, "Internal")
+[System.IO.File]::WriteAllBytes($filename, $certificateData)

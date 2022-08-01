@@ -66,13 +66,15 @@ authentication can be automatically renewed using refresh tokens.
 
 Please refer to the example projects for each of the packages and use cases.
 
-- InHouseOidc.Example.Api - how to use the InHouseOidc.Api package
-- InHouseOidc.Example.CredentialsClient - how to use the InHouseOidc.CredentialsClient package
-- InHouseOidc.Example.Mvc - how to use the InHouseOidc.PageClient package in an MVC application
-- InHouseOidc.Example.Provider - how to implement a provider using the InHouseOidc.Provider package
-- InHouseOidc.Example.Razor - how to use the InHouseOidc.PageClient in a Razor Page application
+- InHouseOidc.Example.Api - how to use the InHouseOidc.Api package (http://localhost:5102)
+- InHouseOidc.Example.CredentialsClient - how to use the InHouseOidc.CredentialsClient package (console app)
+- InHouseOidc.Example.Mvc - how to use the InHouseOidc.PageClient package in an MVC application (http://localhost:5103)
+- InHouseOidc.Example.Provider - how to implement a provider using the InHouseOidc.Provider package (http://localhost:5100)
+- InHouseOidc.Example.Razor - how to use the InHouseOidc.PageClient in a Razor Page application (http://localhost:5101)
 
-Many of the examples rely on each other to operate, so please start by launching all of the examples together using the "Set Startup Projects..." / "Multiple startup projects" options.
+The Provider example requires a signing certificate file to exist at startup.  Run the script "Create-SigningCertificate.ps1" in the Provider folder to create a self-signed certificate. 
+
+Many of the examples rely on each other to operate, so please start by launching all of the above 5 examples together using the "Set Startup Projects..." / "Multiple startup projects" options.
 
 # Testing
 
