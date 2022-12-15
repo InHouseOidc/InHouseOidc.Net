@@ -9,7 +9,7 @@
     <Authors>Brent Johnson</Authors>
     <Copyright>Copyright © Brent Johnson 2022</Copyright>
     <Company>InHouseOidc</Company>
-    <Description>InHouseOidc Discovery library.</Description>
+    <Description>InHouseOidc discovery library.</Description>
     <RepositoryUrl>https://github.com/InHouseOidc/InHouseOidc.Net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

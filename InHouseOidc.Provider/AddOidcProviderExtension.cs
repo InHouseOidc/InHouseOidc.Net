@@ -25,7 +25,6 @@ namespace InHouseOidc.Provider
             serviceCollection.AddScoped<IEndpointHandler<JsonWebKeySetHandler>, JsonWebKeySetHandler>();
             serviceCollection.AddSingleton<IJsonWebTokenHandler, JsonWebTokenHandler>();
             serviceCollection.AddScoped<ProviderAuthenticationHandler>();
-            serviceCollection.AddSingleton<IProviderSession, ProviderSessionHandler>();
             serviceCollection.AddScoped<IEndpointHandler<TokenHandler>, TokenHandler>();
             serviceCollection.AddSingleton<IValidationHandler, ValidationHandler>();
             serviceCollection.AddSingleton<IUtcNow, UtcNow>();
