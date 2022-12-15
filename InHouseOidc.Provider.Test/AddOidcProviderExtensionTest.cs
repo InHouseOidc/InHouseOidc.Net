@@ -33,7 +33,6 @@ namespace InHouseOidc.Provider.Test
             _ = serviceProvider.GetRequiredService<IEndpointHandler<JsonWebKeySetHandler>>();
             _ = serviceProvider.GetRequiredService<IJsonWebTokenHandler>();
             _ = serviceProvider.GetRequiredService<ProviderAuthenticationHandler>();
-            _ = serviceProvider.GetRequiredService<IProviderSession>();
             _ = serviceProvider.GetRequiredService<IEndpointHandler<TokenHandler>>();
             _ = serviceProvider.GetRequiredService<IValidationHandler>();
         }

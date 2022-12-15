@@ -72,7 +72,7 @@ Please refer to the example projects for each of the packages and use cases.
 - InHouseOidc.Example.Provider - how to implement a provider using the InHouseOidc.Provider package (http://localhost:5100)
 - InHouseOidc.Example.Razor - how to use the InHouseOidc.PageClient in a Razor Page application (http://localhost:5101)
 
-The Provider example requires a signing certificate file to exist at startup.  Run the script "Create-SigningCertificate.ps1" in the Provider folder to create a self-signed certificate. 
+The Provider example requires a signing certificate file to exist at startup.  Run the script "Create-SigningCertificate.ps1" in the InHouseOidc.Example.Provider folder to create a self-signed certificate. 
 
 Many of the examples rely on each other to operate, so please start by launching all of the above 5 examples together using the "Set Startup Projects..." / "Multiple startup projects" options.
 
@@ -101,4 +101,4 @@ Contributions are welcome.  Ensure that you:
 For any authentication package best practice is a moving target so feedback is essential.
 Please feel free to discuss anything where your experience of best practice differs from the current implementation.
 
-Please do not use Github issues for general assistance, use Github Discussions instead.  Any questions raised as issues will be tagged and closed.
+Please do not use Github Issues for general assistance, use Github Discussions instead.  Any questions raised as issues will be tagged and closed.

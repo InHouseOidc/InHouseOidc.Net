@@ -34,7 +34,7 @@ namespace InHouseOidc.Provider
             serviceCollection.AddSingleton(
                 new ApiAuthenticationOptions { Audience = audience, Scopes = scopes.ToList() }
             );
-            serviceCollection.AddAuthorizationCore(authorizationOptions =>
+            serviceCollection.AddAuthorization(authorizationOptions =>
             {
                 foreach (var scope in scopes)
                 {
