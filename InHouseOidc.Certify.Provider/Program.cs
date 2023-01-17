@@ -51,6 +51,7 @@ var clientOptions = new PageClientOptions
     AccessDeniedPath = "/AccessDenied",
     ClientId = "providercertify",
     GetClaimsFromUserInfoEndpoint = true,
+    IssueLocalAuthenticationCookie = false,
     OidcProviderAddress = providerAddress,
     Scope = "openid address email phone profile",
     UniqueClaimMappings = new() { { "address", "address" }, { "phone_number", "phone_number" } },

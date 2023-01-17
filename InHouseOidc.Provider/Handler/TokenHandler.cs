@@ -713,13 +713,13 @@ namespace InHouseOidc.Provider.Handler
                     ErrorArgs = new[] { clientId },
                 };
             }
-            if (!string.IsNullOrEmpty(oidcClient.ClientSecret))
+            if (oidcClient.ClientSecretRequired ?? false)
             {
                 if (string.IsNullOrWhiteSpace(clientSecret))
                 {
-                    return new ClientValidation { ErrorMessage = "Token request missing client_secret form field" };
+                    return new ClientValidation { ErrorMessage = "Token request missing client_secret" };
                 }
-                var isValidSecret = await this.clientStore.IsCorrectClientSecret(oidcClient.ClientSecret, clientSecret);
+                var isValidSecret = await this.clientStore.IsCorrectClientSecret(clientId, clientSecret);
                 if (!isValidSecret)
                 {
                     return new ClientValidation { ErrorMessage = "Invalid client_secret" };

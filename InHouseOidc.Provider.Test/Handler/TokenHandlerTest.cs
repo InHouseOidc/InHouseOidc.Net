@@ -639,13 +639,13 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 AccessTokenExpiry = TimeSpan.FromMinutes(15),
                 ClientId = this.clientId,
-                ClientSecret = this.clientSecret,
+                ClientSecretRequired = true,
                 GrantTypes = new() { GrantType.ClientCredentials },
                 Scopes = new() { this.scope1 },
             };
             this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
             this.mockClientStore
-                .Setup(m => m.IsCorrectClientSecret(this.clientSecret, this.clientSecret))
+                .Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
                 .ReturnsAsync(true);
             var issuer = $"{this.urlScheme}://{this.host}";
             var accessToken = "access.token";
@@ -770,7 +770,7 @@ namespace InHouseOidc.Provider.Test.Handler
             CredCliEx.None,
             CredPrmEx.NoSecret,
             ProviderConstant.InvalidClient,
-            "Token request missing client_secret form field"
+            "Token request missing client_secret"
         )]
         [DataRow(
             CredAutEx.None,
@@ -888,7 +888,7 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 AccessTokenExpiry = TimeSpan.FromMinutes(15),
                 ClientId = this.clientId,
-                ClientSecret = this.clientSecret,
+                ClientSecretRequired = true,
                 GrantTypes = credClientEx switch
                 {
                     CredCliEx.NoGrants => null,
@@ -907,7 +907,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 case CredCliEx.BadSecret:
                     this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
                     this.mockClientStore
-                        .Setup(m => m.IsCorrectClientSecret(this.clientSecret, this.clientSecret))
+                        .Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
                         .ReturnsAsync(false);
                     break;
                 case CredCliEx.BadScope:
@@ -917,7 +917,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 case CredCliEx.NoScopes:
                     this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
                     this.mockClientStore
-                        .Setup(m => m.IsCorrectClientSecret(this.clientSecret, this.clientSecret))
+                        .Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
                         .ReturnsAsync(true);
                     break;
             }
