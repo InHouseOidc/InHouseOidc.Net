@@ -7,102 +7,114 @@ namespace InHouseOidc.Example.Provider
 {
     public class ClientStore : IClientStore
     {
-        private readonly Dictionary<string, OidcClient> clients =
+        private readonly Dictionary<string, (OidcClient OidcClient, string? ClientSecret)> clients =
             new()
             {
                 {
                     "clientcredentialsexample",
-                    new OidcClient
-                    {
-                        AccessTokenExpiry = TimeSpan.FromMinutes(15),
-                        ClientId = "clientcredentialsexample",
-                        ClientSecret = "topsecret",
-                        GrantTypes = new() { GrantType.ClientCredentials },
-                        Scopes = new() { "exampleapiscope" },
-                    }
+                    (
+                        new OidcClient
+                        {
+                            AccessTokenExpiry = TimeSpan.FromMinutes(15),
+                            ClientId = "clientcredentialsexample",
+                            ClientSecretRequired = true,
+                            GrantTypes = new() { GrantType.ClientCredentials },
+                            Scopes = new() { "exampleapiscope" },
+                        },
+                        "topsecret"
+                    )
                 },
                 {
                     "mvcexample",
-                    new OidcClient
-                    {
-                        AccessTokenExpiry = TimeSpan.FromMinutes(15),
-                        ClientId = "mvcexample",
-                        GrantTypes = new() { GrantType.AuthorizationCode, GrantType.RefreshToken },
-                        IdentityTokenExpiry = TimeSpan.FromMinutes(60),
-                        RedirectUris = new()
+                    (
+                        new OidcClient
                         {
-                            "http://localhost:5103",
-                            "http://localhost:5103/connect/authorize/callback",
+                            AccessTokenExpiry = TimeSpan.FromMinutes(15),
+                            ClientId = "mvcexample",
+                            GrantTypes = new() { GrantType.AuthorizationCode, GrantType.RefreshToken },
+                            IdentityTokenExpiry = TimeSpan.FromMinutes(60),
+                            RedirectUris = new()
+                            {
+                                "http://localhost:5103",
+                                "http://localhost:5103/connect/authorize/callback",
+                            },
+                            RedirectUrisPostLogout = new()
+                            {
+                                "http://localhost:5103",
+                                "http://localhost:5103/signout-callback-oidc",
+                            },
+                            Scopes = new()
+                            {
+                                "openid",
+                                "offline_access",
+                                "email",
+                                "phone",
+                                "profile",
+                                "role",
+                                "exampleapiscope",
+                                "exampleproviderapiscope",
+                            },
                         },
-                        RedirectUrisPostLogout = new()
-                        {
-                            "http://localhost:5103",
-                            "http://localhost:5103/signout-callback-oidc",
-                        },
-                        Scopes = new()
-                        {
-                            "openid",
-                            "offline_access",
-                            "email",
-                            "phone",
-                            "profile",
-                            "role",
-                            "exampleapiscope",
-                            "exampleproviderapiscope",
-                        },
-                    }
+                        null
+                    )
                 },
                 {
                     "providerexample",
-                    new OidcClient
-                    {
-                        AccessTokenExpiry = TimeSpan.FromMinutes(15),
-                        ClientId = "providerexample",
-                        GrantTypes = new() { GrantType.AuthorizationCode },
-                        IdentityTokenExpiry = TimeSpan.FromMinutes(60),
-                        RedirectUris = new()
+                    (
+                        new OidcClient
                         {
-                            "http://localhost:5100",
-                            "http://localhost:5100/connect/authorize/callback",
+                            AccessTokenExpiry = TimeSpan.FromMinutes(15),
+                            ClientId = "providerexample",
+                            GrantTypes = new() { GrantType.AuthorizationCode },
+                            IdentityTokenExpiry = TimeSpan.FromMinutes(60),
+                            RedirectUris = new()
+                            {
+                                "http://localhost:5100",
+                                "http://localhost:5100/connect/authorize/callback",
+                            },
+                            RedirectUrisPostLogout = new()
+                            {
+                                "http://localhost:5100",
+                                "http://localhost:5100/signout-callback-oidc",
+                            },
+                            Scopes = new() { "openid", "email", "phone", "profile", "role", "exampleapiscope" },
                         },
-                        RedirectUrisPostLogout = new()
-                        {
-                            "http://localhost:5100",
-                            "http://localhost:5100/signout-callback-oidc",
-                        },
-                        Scopes = new() { "openid", "email", "phone", "profile", "role", "exampleapiscope" },
-                    }
+                        null
+                    )
                 },
                 {
                     "razorexample",
-                    new OidcClient
-                    {
-                        AccessTokenExpiry = TimeSpan.FromMinutes(15),
-                        ClientId = "razorexample",
-                        GrantTypes = new() { GrantType.AuthorizationCode, GrantType.RefreshToken },
-                        IdentityTokenExpiry = TimeSpan.FromMinutes(60),
-                        RedirectUris = new()
+                    (
+                        new OidcClient
                         {
-                            "http://localhost:5101",
-                            "http://localhost:5101/connect/authorize/callback",
+                            AccessTokenExpiry = TimeSpan.FromMinutes(15),
+                            ClientId = "razorexample",
+                            GrantTypes = new() { GrantType.AuthorizationCode, GrantType.RefreshToken },
+                            IdentityTokenExpiry = TimeSpan.FromMinutes(60),
+                            RedirectUris = new()
+                            {
+                                "http://localhost:5101",
+                                "http://localhost:5101/connect/authorize/callback",
+                            },
+                            RedirectUrisPostLogout = new()
+                            {
+                                "http://localhost:5101",
+                                "http://localhost:5101/signout-callback-oidc",
+                            },
+                            Scopes = new()
+                            {
+                                "openid",
+                                "offline_access",
+                                "email",
+                                "phone",
+                                "profile",
+                                "role",
+                                "exampleapiscope",
+                                "exampleproviderapiscope",
+                            },
                         },
-                        RedirectUrisPostLogout = new()
-                        {
-                            "http://localhost:5101",
-                            "http://localhost:5101/signout-callback-oidc",
-                        },
-                        Scopes = new()
-                        {
-                            "openid",
-                            "offline_access",
-                            "email",
-                            "phone",
-                            "profile",
-                            "role",
-                            "exampleapiscope",
-                            "exampleproviderapiscope",
-                        },
-                    }
+                        null
+                    )
                 },
             };
 
@@ -110,14 +122,18 @@ namespace InHouseOidc.Example.Provider
         {
             if (this.clients.TryGetValue(clientId, out var client))
             {
-                return Task.FromResult<OidcClient?>(client);
+                return Task.FromResult<OidcClient?>(client.OidcClient);
             }
             return Task.FromResult<OidcClient?>(null);
         }
 
-        public Task<bool> IsCorrectClientSecret(string clientSecretHashed, string checkClientSecretRaw)
+        public Task<bool> IsCorrectClientSecret(string clientId, string checkClientSecretRaw)
         {
-            return Task.FromResult(clientSecretHashed == checkClientSecretRaw);
+            if (!this.clients.TryGetValue(clientId, out var client))
+            {
+                return Task.FromResult(false);
+            }
+            return Task.FromResult(client.ClientSecret == checkClientSecretRaw);
         }
 
         public Task<bool> IsKnownPostLogoutRedirectUri(string postLogoutRedirectUri)
@@ -125,8 +141,8 @@ namespace InHouseOidc.Example.Provider
             foreach (var client in this.clients.Values)
             {
                 if (
-                    client.RedirectUrisPostLogout != null
-                    && client.RedirectUrisPostLogout.Contains(postLogoutRedirectUri)
+                    client.OidcClient.RedirectUrisPostLogout != null
+                    && client.OidcClient.RedirectUrisPostLogout.Contains(postLogoutRedirectUri)
                 )
                 {
                     return Task.FromResult(true);

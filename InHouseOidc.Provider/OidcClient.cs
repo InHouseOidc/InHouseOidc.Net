@@ -21,9 +21,9 @@ namespace InHouseOidc.Provider
         public string? ClientId { get; init; }
 
         /// <summary>
-        /// Gets secret for this client.  Should always be stored as a hashed value.
+        /// Indicates that a client secret must be supplied to authenticate this client.
         /// </summary>
-        public string? ClientSecret { get; init; }
+        public bool? ClientSecretRequired { get; init; }
 
         /// <summary>
         /// Gets the grant types this client supports. Required for all flows.

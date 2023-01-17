@@ -19,10 +19,10 @@ namespace InHouseOidc.Provider
         /// <summary>
         /// Validate a passed check client secret is correct based on the current client secret.
         /// </summary>
-        /// <param name="clientSecretHashed">The client secret hashed.</param>
+        /// <param name="clientId">The client identifier.</param>
         /// <param name="checkClientSecretRaw">The raw (clear text) client secret on the token request that needs to be verified.</param>
         /// <returns>True for client secret is correct.</returns>
-        Task<bool> IsCorrectClientSecret(string clientSecretHashed, string checkClientSecretRaw);
+        Task<bool> IsCorrectClientSecret(string clientId, string checkClientSecretRaw);
 
         /// <summary>
         /// Validate a passed post logout redirect URI.<br />

@@ -8,7 +8,7 @@ namespace InHouseOidc.Certify.Provider
 {
     public class ClientStore : IClientStore
     {
-        private readonly Dictionary<string, OidcClient> clients = new();
+        private readonly Dictionary<string, (OidcClient OidcClient, string? ClientSecret)> clients = new();
 
         public ClientStore(IConfiguration configuration)
         {
@@ -18,22 +18,25 @@ namespace InHouseOidc.Certify.Provider
                 var clientConfig = client.Get<ClientConfig>();
                 this.clients.Add(
                     client.Key,
-                    new OidcClient
-                    {
-                        ClientId = clientConfig.ClientId,
-                        ClientSecret = clientConfig.ClientSecret,
-                        AccessTokenExpiry = TimeSpan.FromMinutes(clientConfig.AccessTokenExpiryMinutes ?? 0),
-                        GrantTypes =
-                            clientConfig.GrantTypes == null
-                                ? new List<GrantType>()
-                                : clientConfig.GrantTypes
-                                    .Select(gt => EnumHelper.ParseEnumMember<GrantType>(gt))
-                                    .ToList(),
-                        IdentityTokenExpiry = TimeSpan.FromMinutes(clientConfig.IdentityTokenExpiryMinutes ?? 0),
-                        RedirectUris = clientConfig.RedirectUris,
-                        RedirectUrisPostLogout = clientConfig.RedirectUrisPostLogout,
-                        Scopes = clientConfig.Scopes,
-                    }
+                    (
+                        new OidcClient
+                        {
+                            ClientId = clientConfig.ClientId,
+                            ClientSecretRequired = !string.IsNullOrEmpty(clientConfig.ClientSecret),
+                            AccessTokenExpiry = TimeSpan.FromMinutes(clientConfig.AccessTokenExpiryMinutes ?? 0),
+                            GrantTypes =
+                                clientConfig.GrantTypes == null
+                                    ? new List<GrantType>()
+                                    : clientConfig.GrantTypes
+                                        .Select(gt => EnumHelper.ParseEnumMember<GrantType>(gt))
+                                        .ToList(),
+                            IdentityTokenExpiry = TimeSpan.FromMinutes(clientConfig.IdentityTokenExpiryMinutes ?? 0),
+                            RedirectUris = clientConfig.RedirectUris,
+                            RedirectUrisPostLogout = clientConfig.RedirectUrisPostLogout,
+                            Scopes = clientConfig.Scopes,
+                        },
+                        clientConfig.ClientSecret
+                    )
                 );
             }
         }
@@ -42,14 +45,18 @@ namespace InHouseOidc.Certify.Provider
         {
             if (this.clients.TryGetValue(clientId, out var client))
             {
-                return Task.FromResult<OidcClient?>(client);
+                return Task.FromResult<OidcClient?>(client.OidcClient);
             }
             return Task.FromResult<OidcClient?>(null);
         }
 
-        public Task<bool> IsCorrectClientSecret(string clientSecretHashed, string checkClientSecretRaw)
+        public Task<bool> IsCorrectClientSecret(string clientId, string checkClientSecretRaw)
         {
-            return Task.FromResult(clientSecretHashed == checkClientSecretRaw);
+            if (!this.clients.TryGetValue(clientId, out var client))
+            {
+                return Task.FromResult(false);
+            }
+            return Task.FromResult(client.ClientSecret == checkClientSecretRaw);
         }
 
         public Task<bool> IsKnownPostLogoutRedirectUri(string postLogoutRedirectUri)
@@ -57,8 +64,8 @@ namespace InHouseOidc.Certify.Provider
             foreach (var client in this.clients.Values)
             {
                 if (
-                    client.RedirectUrisPostLogout != null
-                    && client.RedirectUrisPostLogout.Contains(postLogoutRedirectUri)
+                    client.OidcClient.RedirectUrisPostLogout != null
+                    && client.OidcClient.RedirectUrisPostLogout.Contains(postLogoutRedirectUri)
                 )
                 {
                     return Task.FromResult(true);
