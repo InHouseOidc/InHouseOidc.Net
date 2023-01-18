@@ -63,16 +63,22 @@ namespace InHouseOidc.CredentialsClient.Resolver
                 this.tokenDictionary.TryRemove(clientName, out var _);
             }
             // Lookup the client credentials options
-            if (!this.clientOptions.CredentialsClientsOptions.TryGetValue(clientName, out var clientCredentialsOptions))
-            {
-                this.logger.LogError("Unable to resolve client credential options");
-                return null;
-            }
+            this.clientOptions.CredentialsClientsOptions.TryGetValue(clientName, out var clientCredentialsOptions);
             if (clientCredentialsOptions == null)
             {
                 // Retrieve the options and save the value for all subsequent token requests
-                var credentialsStore = this.serviceProvider.GetRequiredService<ICredentialsStore>();
+                var credentialsStore = this.serviceProvider.GetService<ICredentialsStore>();
+                if (credentialsStore == null)
+                {
+                    this.logger.LogError("Client credentials options not available via AddClient or ICredentialsStore");
+                    return null;
+                }
                 clientCredentialsOptions = await credentialsStore.GetCredentialsClientOptions(clientName);
+                if (clientCredentialsOptions == null)
+                {
+                    this.logger.LogError("Client credentials options not available from ICredentialsStore");
+                    return null;
+                }
                 this.clientOptions.CredentialsClientsOptions[clientName] = clientCredentialsOptions;
             }
             // Confirm required client options fields are present

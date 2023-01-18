@@ -13,8 +13,9 @@ namespace InHouseOidc.CredentialsClient
         /// <summary>
         /// Get client credentials options for a client name.
         /// </summary>
-        /// <param name="clientName">The client name registed at startup using <see cref="ClientBuilder.AddClient(string)"></see>.</param>
+        /// <param name="clientName">The client name registed at startup using <see cref="ClientBuilder.AddClient(string)"></see>,
+        /// or resolvable at runtime via the implementation of ICredentialsStore.</param>
         /// <returns><see cref="CredentialsClientOptions"/>.</returns>
-        Task<CredentialsClientOptions> GetCredentialsClientOptions(string clientName);
+        Task<CredentialsClientOptions?> GetCredentialsClientOptions(string clientName);
     }
 }
