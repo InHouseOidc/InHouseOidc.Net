@@ -17,13 +17,15 @@ namespace InHouseOidc.Example.CredentialsClient
             const string clientId = "clientcredentialsexample";
             const string clientSecret = "topsecret";
             const string scope = "exampleapiscope";
-            return Task.FromResult<CredentialsClientOptions?>(new CredentialsClientOptions
-            {
-                ClientId = clientId,
-                ClientSecret = clientSecret,
-                Scope = scope,
-                OidcProviderAddress = providerAddress,
-            });
+            return Task.FromResult<CredentialsClientOptions?>(
+                new CredentialsClientOptions
+                {
+                    ClientId = clientId,
+                    ClientSecret = clientSecret,
+                    Scope = scope,
+                    OidcProviderAddress = providerAddress,
+                }
+            );
         }
     }
 }

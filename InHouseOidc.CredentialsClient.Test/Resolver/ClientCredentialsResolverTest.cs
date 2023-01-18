@@ -164,9 +164,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             }
             else
             {
-                this.mockServiceProvider
-                    .Setup(m => m.GetService(typeof(ICredentialsStore)))
-                    .Returns(null);
+                this.mockServiceProvider.Setup(m => m.GetService(typeof(ICredentialsStore))).Returns(null);
             }
             // Act
             var result = await clientCredentialsResolver.GetClientToken(clientName, CancellationToken.None);

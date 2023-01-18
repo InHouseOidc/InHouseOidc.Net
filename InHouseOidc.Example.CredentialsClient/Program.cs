@@ -24,7 +24,7 @@ const string scope = "exampleapiscope";
 serviceCollection
     .AddSingleton<ICredentialsStore, CredentialsStore>()
     .AddHttpClient(clientNameRuntime)
-        .AddClientCredentialsToken();
+    .AddClientCredentialsToken();
 serviceCollection
     .AddOidcCredentialsClient()
     .AddClient(

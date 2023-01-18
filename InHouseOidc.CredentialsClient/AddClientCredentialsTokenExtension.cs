@@ -15,9 +15,7 @@ namespace InHouseOidc.CredentialsClient
         /// </summary>
         /// <param name="httpClientBuilder">The HttpClientBuilder being configured during startup.</param>
         /// <returns>ProviderBuilder.</returns>
-        public static IHttpClientBuilder AddClientCredentialsToken(
-            this IHttpClientBuilder httpClientBuilder
-        )
+        public static IHttpClientBuilder AddClientCredentialsToken(this IHttpClientBuilder httpClientBuilder)
         {
             return httpClientBuilder.AddHttpMessageHandler(serviceProvider =>
             {
