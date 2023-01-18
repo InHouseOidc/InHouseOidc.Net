@@ -22,7 +22,7 @@ namespace InHouseOidc.CredentialsClient.Test
             var clientCredentialsResolver = new Mock<IClientCredentialsResolver>();
             serviceCollection.AddSingleton(clientCredentialsResolver.Object);
             // Act
-            serviceCollection.AddHttpClient(clientName).AddClientCredentialsToken(clientName);
+            serviceCollection.AddHttpClient(clientName).AddClientCredentialsToken();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             // Assert
             var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();

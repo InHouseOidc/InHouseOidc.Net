@@ -137,8 +137,10 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             Assert.AreEqual("accesstoken", result4);
         }
 
-        [TestMethod]
-        public async Task ClientCredentialsResolver_BadClientName()
+        [DataTestMethod]
+        [DataRow(false, "Client credentials options not available via AddClient or ICredentialsStore")]
+        [DataRow(true, "Client credentials options not available from ICredentialsStore")]
+        public async Task ClientCredentialsResolver_BadClientName(bool setupCredentialsStore, string expectedMessage)
         {
             // Arrange
             var clientCredentialsResolver = new ClientCredentialsResolver(
@@ -149,11 +151,26 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 this.mockServiceProvider.Object,
                 this.mockUtcNow.Object
             );
+            var clientName = "badclientname";
+            if (setupCredentialsStore)
+            {
+                var mockCredentialsStore = new Mock<ICredentialsStore>(MockBehavior.Strict);
+                mockCredentialsStore
+                    .Setup(m => m.GetCredentialsClientOptions(clientName))
+                    .Returns(Task.FromResult<CredentialsClientOptions?>(null));
+                this.mockServiceProvider
+                    .Setup(m => m.GetService(typeof(ICredentialsStore)))
+                    .Returns(mockCredentialsStore.Object);
+            }
+            else
+            {
+                this.mockServiceProvider.Setup(m => m.GetService(typeof(ICredentialsStore))).Returns(null);
+            }
             // Act
-            var result = await clientCredentialsResolver.GetClientToken("badclientname", CancellationToken.None);
+            var result = await clientCredentialsResolver.GetClientToken(clientName, CancellationToken.None);
             // Assert
             Assert.IsNull(result);
-            this.logger.AssertLastItemContains(LogLevel.Error, "Unable to resolve client credential options");
+            this.logger.AssertLastItemContains(LogLevel.Error, expectedMessage);
         }
 
         [TestMethod]

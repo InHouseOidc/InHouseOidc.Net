@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.CredentialsClient;
+using InHouseOidc.Example.CredentialsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -14,15 +15,20 @@ serviceCollection.AddLogging(
 );
 
 // Setup the OIDC client
+const string clientNameStartup = "exampleapistartup";
+const string clientNameRuntime = "exampleapiruntime";
 const string providerAddress = "http://localhost:5100";
-const string clientName = "exampleapi";
 const string clientId = "clientcredentialsexample";
 const string clientSecret = "topsecret";
 const string scope = "exampleapiscope";
 serviceCollection
+    .AddSingleton<ICredentialsStore, CredentialsStore>()
+    .AddHttpClient(clientNameRuntime)
+    .AddClientCredentialsToken();
+serviceCollection
     .AddOidcCredentialsClient()
     .AddClient(
-        clientName,
+        clientNameStartup,
         new CredentialsClientOptions
         {
             ClientId = clientId,
@@ -49,11 +55,16 @@ while (true)
     try
     {
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var httpClient = httpClientFactory.CreateClient(clientName);
-        var response = await httpClient.GetAsync(new Uri(new Uri(apiAddress), "/secure"));
-        response.EnsureSuccessStatusCode();
-        var responseContent = await response.Content.ReadAsStringAsync();
-        logger.LogInformation("/secure response: {responseContent}", responseContent);
+        var httpClientStartup = httpClientFactory.CreateClient(clientNameStartup);
+        var responseStartup = await httpClientStartup.GetAsync(new Uri(new Uri(apiAddress), "/secure"));
+        responseStartup.EnsureSuccessStatusCode();
+        var responseContentStartup = await responseStartup.Content.ReadAsStringAsync();
+        logger.LogInformation("[Startup HttpClient] /secure response: {responseContent}", responseContentStartup);
+        var httpClientRuntime = httpClientFactory.CreateClient(clientNameRuntime);
+        var responseRuntime = await httpClientRuntime.GetAsync(new Uri(new Uri(apiAddress), "/secure"));
+        responseRuntime.EnsureSuccessStatusCode();
+        var responseContentRuntime = await responseRuntime.Content.ReadAsStringAsync();
+        logger.LogInformation("[Runtime HttpClient] /secure response: {responseContent}", responseContentRuntime);
     }
     catch (Exception ex)
     {

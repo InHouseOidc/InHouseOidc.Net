@@ -39,22 +39,6 @@ namespace InHouseOidc.CredentialsClient
         }
 
         /// <summary>
-        /// Sets up a named HttpClient with client credentials token access.<br />
-        /// Client credentials options are retrieved after startup from the registered ICredentialsStore service.
-        /// </summary>
-        /// <param name="clientName">The HttpClient name to allocate.</param>
-        /// <returns><see cref="CredentialsClientBuilder"/> so additional calls can be chained.</returns>
-        public CredentialsClientBuilder AddClient(string clientName)
-        {
-            // Configure
-            if (!this.ClientOptions.CredentialsClientsOptions.TryAdd(clientName, null))
-            {
-                throw new ArgumentException($"Duplicate client name: {clientName}", nameof(clientName));
-            }
-            return this;
-        }
-
-        /// <summary>
         /// Builds the final services for the client. Required as the final step of the client setup.
         /// </summary>
         public void Build()
@@ -66,15 +50,15 @@ namespace InHouseOidc.CredentialsClient
             this.ServiceCollection.AddSingleton(this.ClientOptions);
             this.ServiceCollection.AddHttpClient(this.ClientOptions.InternalHttpClientName);
             this.ServiceCollection.TryAddSingleton<IDiscoveryResolver, DiscoveryResolver>();
+            this.ServiceCollection.TryAddSingleton<IClientCredentialsResolver, ClientCredentialsResolver>();
             // Setup the credentials clients added
             if (this.ClientOptions.CredentialsClientsOptions.Any())
             {
-                this.ServiceCollection.TryAddSingleton<IClientCredentialsResolver, ClientCredentialsResolver>();
                 var clientNames = this.ClientOptions.CredentialsClientsOptions.Keys;
                 foreach (var clientName in clientNames)
                 {
                     // Add the HTTP client and bind the token handler
-                    this.ServiceCollection.AddHttpClient(clientName).AddClientCredentialsToken(clientName);
+                    this.ServiceCollection.AddHttpClient(clientName).AddClientCredentialsToken();
                 }
             }
         }

@@ -24,7 +24,7 @@ namespace InHouseOidc.CredentialsClient.Test
         }
 
         [TestMethod]
-        public void ClientBuilder_AddClient_WithOptions()
+        public void ClientBuilder_AddClient()
         {
             // Arrange
             var clientName = "CredentialsClient";
@@ -37,36 +37,6 @@ namespace InHouseOidc.CredentialsClient.Test
             };
             // Act
             var clientBuilder = this.serviceCollection.AddOidcCredentialsClient().AddClient(clientName, clientOptions);
-            var duplicateException = Assert.ThrowsException<ArgumentException>(
-                () => clientBuilder.AddClient(clientName)
-            );
-            clientBuilder.Build();
-            var serviceProvider = this.serviceCollection.BuildServiceProvider();
-            // Assert
-            _ = serviceProvider.GetRequiredService<ClientOptions>();
-            _ = serviceProvider.GetRequiredService<IDiscoveryResolver>();
-            _ = serviceProvider.GetRequiredService<IClientCredentialsResolver>();
-            var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-            var httpClient = httpClientFactory.CreateClient(clientName);
-            Assert.IsNotNull(httpClient);
-            Assert.IsNotNull(duplicateException);
-            Assert.IsTrue(duplicateException.Message.Contains("Duplicate client name"));
-        }
-
-        [TestMethod]
-        public void ClientBuilder_AddClient_WithoutOptions()
-        {
-            // Arrange
-            var clientName = "CredentialsClient";
-            var clientOptions = new CredentialsClientOptions
-            {
-                ClientId = clientName,
-                ClientSecret = "TopSecret",
-                OidcProviderAddress = "https://localhost",
-                Scope = "scope1",
-            };
-            // Act
-            var clientBuilder = this.serviceCollection.AddOidcCredentialsClient().AddClient(clientName);
             var duplicateException = Assert.ThrowsException<ArgumentException>(
                 () => clientBuilder.AddClient(clientName, clientOptions)
             );
