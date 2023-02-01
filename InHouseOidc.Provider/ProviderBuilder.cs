@@ -29,13 +29,6 @@ namespace InHouseOidc.Provider
         /// </summary>
         public void Build()
         {
-            // Signing certificates must be supplied
-            if (!this.ProviderOptions.SigningKeys.Any())
-            {
-                throw new InvalidOperationException(
-                    "InHouseOidc.Provider: .SetSigningCertificates() is required before .Build()"
-                );
-            }
             var authenticationBuilder = this.ServiceCollection.AddAuthentication(authenticationOptions =>
             {
                 authenticationOptions.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -219,7 +212,8 @@ namespace InHouseOidc.Provider
         }
 
         /// <summary>
-        /// Sets the signing certificate(s) included in the Json Web Key Set.  Required.<br />
+        /// Sets the signing certificate(s) included in the Json Web Key Set.<br />
+        /// Required unless ICertificateStore is implemented to provide certificates at runtime.<br />
         /// See <see href="https://openid.net/specs/openid-connect-core-1_0.html#SigEnc"></see>
         /// Certificate selection respects NotBefore and NotAfter certificate properties,<br />
         /// and always selects the certificate with the longest time to expiry when issuing new tokens.<br />
@@ -230,27 +224,7 @@ namespace InHouseOidc.Provider
         /// <returns><see cref="ProviderBuilder"/> so additional calls can be chained.</returns>
         public ProviderBuilder SetSigningCertificates(IEnumerable<X509Certificate2> x509Certificate2s)
         {
-            var signingKeys = new List<SigningKey>();
-            foreach (var x509Certificate2 in x509Certificate2s)
-            {
-                if (!x509Certificate2.HasPrivateKey)
-                {
-                    throw new ArgumentException(
-                        "X509Certificate2 must include a private key",
-                        nameof(x509Certificate2s)
-                    );
-                }
-                var x509SecurityKey = new X509SecurityKey(x509Certificate2);
-                if (!x509SecurityKey.IsSupportedAlgorithm(SecurityAlgorithms.RsaSha256))
-                {
-                    throw new ArgumentException(
-                        "X509Certificate2 must support RS256 algorithm",
-                        nameof(x509Certificate2s)
-                    );
-                }
-                signingKeys.Add(new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey());
-            }
-            this.ProviderOptions.SigningKeys = signingKeys;
+            this.ProviderOptions.SigningKeys.StoreSigningKeys(x509Certificate2s);
             return this;
         }
 

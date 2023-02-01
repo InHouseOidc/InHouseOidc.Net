@@ -17,16 +17,19 @@ namespace InHouseOidc.Provider.Handler
         private readonly IClientStore clientStore;
         private readonly ILogger<ValidationHandler> logger;
         private readonly ProviderOptions providerOptions;
+        private readonly IServiceProvider serviceProvider;
 
         public ValidationHandler(
             IClientStore clientStore,
             ILogger<ValidationHandler> logger,
-            ProviderOptions providerOptions
+            ProviderOptions providerOptions,
+            IServiceProvider serviceProvider
         )
         {
             this.clientStore = clientStore;
             this.logger = logger;
             this.providerOptions = providerOptions;
+            this.serviceProvider = serviceProvider;
         }
 
         public async Task<(AuthorizationRequest?, RedirectError?)> ParseValidateAuthorizationRequest(
@@ -304,7 +307,9 @@ namespace InHouseOidc.Provider.Handler
 
         public ClaimsPrincipal? ValidateJsonWebToken(string? audience, string issuer, string jwt, bool validateLifetime)
         {
-            var signingKeys = this.providerOptions.SigningKeys.Select(s => s.X509SecurityKey);
+            var signingKeys = this.providerOptions.SigningKeys
+                .Resolve(this.serviceProvider)
+                .Select(s => s.X509SecurityKey);
             var handler = new JwtSecurityTokenHandler();
             var tokenValidationParameters = new TokenValidationParameters
             {

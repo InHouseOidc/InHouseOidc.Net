@@ -7,6 +7,7 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using InHouseOidc.Test.Common;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,6 +35,7 @@ namespace InHouseOidc.Provider.Test.Handler
 
         private Mock<IClientStore> mockClientStore = new(MockBehavior.Strict);
         private ProviderOptions providerOptions = new();
+        private ServiceProvider serviceProvider = new TestServiceCollection().BuildServiceProvider();
 
         [TestInitialize]
         public void Initialise()
@@ -47,7 +49,12 @@ namespace InHouseOidc.Provider.Test.Handler
         public async Task ParseValidateAuthorizationRequest()
         {
             // Arrange
-            var handler = new ValidationHandler(this.mockClientStore.Object, this.logger, this.providerOptions);
+            var handler = new ValidationHandler(
+                this.mockClientStore.Object,
+                this.logger,
+                this.providerOptions,
+                this.serviceProvider
+            );
             var requestScope = $"openid {this.scope1}";
             var parameters = new Dictionary<string, string>
             {
@@ -270,7 +277,12 @@ namespace InHouseOidc.Provider.Test.Handler
         {
             // Arrange
             this.providerOptions.AuthorizationCodePkceRequired = false;
-            var handler = new ValidationHandler(this.mockClientStore.Object, this.logger, this.providerOptions);
+            var handler = new ValidationHandler(
+                this.mockClientStore.Object,
+                this.logger,
+                this.providerOptions,
+                this.serviceProvider
+            );
             var parameters = new Dictionary<string, string>();
             var oidcClient = new OidcClient
             {
@@ -481,7 +493,12 @@ namespace InHouseOidc.Provider.Test.Handler
         )
         {
             // Arrange
-            var handler = new ValidationHandler(this.mockClientStore.Object, this.logger, this.providerOptions);
+            var handler = new ValidationHandler(
+                this.mockClientStore.Object,
+                this.logger,
+                this.providerOptions,
+                this.serviceProvider
+            );
             var issuer = "https://localhost";
             var audience = "something.interested";
             var x509SecurityKey = new X509SecurityKey(TestCertificate.Create(DateTimeOffset.UtcNow));

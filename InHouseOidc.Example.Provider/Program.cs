@@ -20,7 +20,7 @@ builder.Services.AddHttpLogging(httpLogging =>
 builder.Services.AddRazorPages();
 
 // Setup the OIDC provider
-var signingCertificate = new X509Certificate2("InHouseOidcExample.pfx", "Internal");
+// var signingCertificate = new X509Certificate2("InHouseOidcExample.pfx", "Internal");
 builder.Services
     .AddOidcProvider()
     .EnableAuthorizationCodeFlow()
@@ -29,10 +29,11 @@ builder.Services
     .EnableRefreshTokenGrant()
     // .EnableUserInfoEndpoint()
     .LogFailuresAsInformation(false)
-    .SetSigningCertificates(new[] { signingCertificate })
+    // SetSigningCertificates(new[] { signingCertificate })
     .Build();
 
 // Setup the stores the provider relies on
+builder.Services.AddSingleton<ICertificateStore, InHouseOidc.Example.Provider.CertificateStore>();
 builder.Services.AddSingleton<IClientStore, InHouseOidc.Example.Provider.ClientStore>();
 builder.Services.AddSingleton<ICodeStore, InHouseOidc.Example.Provider.CodeStore>();
 builder.Services.AddSingleton<IResourceStore, InHouseOidc.Example.Provider.ResourceStore>();
