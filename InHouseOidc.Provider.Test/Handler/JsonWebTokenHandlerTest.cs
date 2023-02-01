@@ -8,6 +8,7 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using InHouseOidc.Test.Common;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -53,6 +54,7 @@ namespace InHouseOidc.Provider.Test.Handler
 
         private ProviderOptions providerOptions = new();
         private Mock<IResourceStore> mockResourceStore = new(MockBehavior.Strict);
+        private ServiceProvider serviceProvider = new TestServiceCollection().BuildServiceProvider();
 
         [TestInitialize]
         public void Initialise()
@@ -75,6 +77,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
+                this.serviceProvider,
                 this.mockUtcNow.Object
             );
             // Act
@@ -120,6 +123,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
+                this.serviceProvider,
                 this.mockUtcNow.Object
             );
             var address =
@@ -257,6 +261,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
+                this.serviceProvider,
                 this.mockUtcNow.Object
             );
             // Act
@@ -327,6 +332,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
+                this.serviceProvider,
                 this.mockUtcNow.Object
             );
             // Act

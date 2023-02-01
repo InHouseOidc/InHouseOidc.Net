@@ -8,6 +8,7 @@ using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using InHouseOidc.Test.Common;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -24,10 +25,21 @@ namespace InHouseOidc.Provider.Test.Handler
         private readonly string urlScheme = "https";
 
         [DataTestMethod]
-        [DataRow("GET", false, null)]
-        [DataRow("GET", true, null)]
-        [DataRow("POST", false, "HttpMethod not supported: {method}")]
-        public async Task HandleRequest(string method, bool setKeys, string? expectedExceptionMessage)
+        [DataRow(
+            "GET",
+            false,
+            null,
+            "No signing keys available.  Set via ProviderBuilder.SetSigningCertificates"
+                + " or implement ICertificateStore.GetSigningCertificates"
+        )]
+        [DataRow("GET", true, null, null)]
+        [DataRow("POST", false, "HttpMethod not supported: {method}", null)]
+        public async Task HandleRequest(
+            string method,
+            bool setKeys,
+            string? expectedBadRequestExceptionMessage,
+            string? expectedInternalErrorExceptionMessage
+        )
         {
             // Arrange
             var context = new DefaultHttpContext();
@@ -44,9 +56,14 @@ namespace InHouseOidc.Provider.Test.Handler
                 signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
                 providerOptions.SigningKeys.Add(signingKey);
             }
-            var jsonWebKeySetHandler = new JsonWebKeySetHandler(providerOptions);
+            var serviceCollection = new TestServiceCollection();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var jsonWebKeySetHandler = new JsonWebKeySetHandler(providerOptions, serviceProvider);
             // Act/Assert
-            if (string.IsNullOrEmpty(expectedExceptionMessage))
+            if (
+                string.IsNullOrEmpty(expectedBadRequestExceptionMessage)
+                && string.IsNullOrEmpty(expectedInternalErrorExceptionMessage)
+            )
             {
                 var result = await jsonWebKeySetHandler.HandleRequest(context.Request);
                 Assert.IsTrue(result);
@@ -66,13 +83,21 @@ namespace InHouseOidc.Provider.Test.Handler
                     Assert.AreEqual(0, testJsonWebKeySets.Keys.Length);
                 }
             }
-            else
+            else if (!string.IsNullOrEmpty(expectedBadRequestExceptionMessage))
             {
                 var exception = await Assert.ThrowsExceptionAsync<BadRequestException>(
                     async () => await jsonWebKeySetHandler.HandleRequest(context.Request)
                 );
                 Assert.IsNotNull(exception);
-                Assert.AreEqual(expectedExceptionMessage, exception.LogMessage);
+                Assert.AreEqual(expectedBadRequestExceptionMessage, exception.LogMessage);
+            }
+            else if (!string.IsNullOrEmpty(expectedInternalErrorExceptionMessage))
+            {
+                var exception = await Assert.ThrowsExceptionAsync<InternalErrorException>(
+                    async () => await jsonWebKeySetHandler.HandleRequest(context.Request)
+                );
+                Assert.IsNotNull(exception);
+                Assert.AreEqual(expectedInternalErrorExceptionMessage, exception.LogMessage);
             }
         }
 

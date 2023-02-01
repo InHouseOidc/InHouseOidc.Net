@@ -4,6 +4,7 @@
 using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider.Exception;
+using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,12 +16,19 @@ namespace InHouseOidc.Provider.Handler
     {
         private readonly ProviderOptions providerOptions;
         private readonly IResourceStore resourceStore;
+        private readonly IServiceProvider serviceProvider;
         private readonly IUtcNow utcNow;
 
-        public JsonWebTokenHandler(ProviderOptions providerOptions, IResourceStore resourceStore, IUtcNow utcNow)
+        public JsonWebTokenHandler(
+            ProviderOptions providerOptions,
+            IResourceStore resourceStore,
+            IServiceProvider serviceProvider,
+            IUtcNow utcNow
+        )
         {
             this.providerOptions = providerOptions;
             this.resourceStore = resourceStore;
+            this.serviceProvider = serviceProvider;
             this.utcNow = utcNow;
         }
 
@@ -183,6 +191,7 @@ namespace InHouseOidc.Provider.Handler
             // Filter out not-before and expired, sort so longest expiry period appears first
             var utcNow = this.utcNow.UtcNow;
             var signingKey = this.providerOptions.SigningKeys
+                .Resolve(this.serviceProvider)
                 .Where(sk => sk.NotAfter >= utcNow && sk.NotBefore <= utcNow)
                 .OrderByDescending(sk => (sk.NotAfter - utcNow).TotalSeconds)
                 .FirstOrDefault();

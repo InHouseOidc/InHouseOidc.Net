@@ -1,6 +1,7 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
+using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using InHouseOidc.Test.Common;
@@ -47,19 +48,6 @@ namespace InHouseOidc.Provider.Test
             var providerOptions = serviceProvider.GetRequiredService<ProviderOptions>();
             Assert.AreEqual(providerOptions.AuthenticationCookieName, cookieOptions.Cookie.Name);
             _ = serviceProvider.GetRequiredService<ProviderAuthenticationHandler>();
-        }
-
-        [TestMethod]
-        public void Build_NoSigningKeys()
-        {
-            // Arrange
-            var serviceCollection = new TestServiceCollection();
-            var providerBuilder = serviceCollection.AddOidcProvider();
-            // Act
-            var exception = Assert.ThrowsException<InvalidOperationException>(() => providerBuilder.Build());
-            // Assert
-            Assert.IsNotNull(exception);
-            StringAssert.Contains(exception.Message, ".SetSigningCertificates() is required");
         }
 
         [TestMethod]
@@ -316,14 +304,14 @@ namespace InHouseOidc.Provider.Test
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
             // Act
-            var exception = Assert.ThrowsException<ArgumentException>(
+            var exception = Assert.ThrowsException<InternalErrorException>(
                 () =>
                     providerBuilder.SetSigningCertificates(
                         new[] { TestCertificate.CreatePublicOnly(DateTimeOffset.UtcNow) }
                     )
             );
             // Assert
-            StringAssert.Contains(exception.Message, "must include a private key");
+            StringAssert.Contains(exception.LogMessage, "must include a private key");
         }
 
         [TestMethod]
@@ -333,14 +321,14 @@ namespace InHouseOidc.Provider.Test
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
             // Act
-            var exception = Assert.ThrowsException<ArgumentException>(
+            var exception = Assert.ThrowsException<InternalErrorException>(
                 () =>
                     providerBuilder.SetSigningCertificates(
                         new[] { TestCertificate.CreateNonRS256(DateTimeOffset.UtcNow) }
                     )
             );
             // Assert
-            StringAssert.Contains(exception.Message, "must support RS256 algorithm");
+            StringAssert.Contains(exception.LogMessage, "must support RS256 algorithm");
         }
 
         [TestMethod]
