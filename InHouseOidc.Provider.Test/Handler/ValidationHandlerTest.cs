@@ -14,7 +14,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -505,18 +504,21 @@ namespace InHouseOidc.Provider.Test.Handler
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
             this.providerOptions.SigningKeys.Add(signingKey);
             this.providerOptions.LogFailuresAsInformation = logAsInformation;
-            var header = new JwtHeader(signingKey.SigningCredentials)
-            {
-                [JsonWebTokenClaim.Typ] = JsonWebTokenConstant.AccessTokenType,
-                [JsonWebTokenClaim.X5t] = signingKey.JsonWebKey.X5t,
-            };
             var utcNow = DateTimeOffset.UtcNow;
             var expiry = utcNow.AddMinutes(isExpired ? -5 : 5);
-            var payload = new JwtPayload(issuer, null, null, utcNow.UtcDateTime.AddMinutes(-10), expiry.UtcDateTime);
-            payload.AddClaim(new Claim(JsonWebTokenClaim.Audience, audience));
-            var token = new JwtSecurityToken(header, payload);
-            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            var jwt = jwtSecurityTokenHandler.WriteToken(token);
+            var securityTokenDescriptor = new SecurityTokenDescriptor
+            {
+                Claims = new Dictionary<string, object>(),
+                Expires = expiry.UtcDateTime,
+                IssuedAt = utcNow.UtcDateTime,
+                Issuer = issuer,
+                NotBefore = utcNow.UtcDateTime.AddMinutes(-10),
+                SigningCredentials = signingKey.SigningCredentials,
+                TokenType = JsonWebTokenConstant.AccessTokenType,
+            };
+            securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.Audience, audience);
+            var jsonWebTokenHandler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
+            var jwt = jsonWebTokenHandler.CreateToken(securityTokenDescriptor);
             // Act
             var result = handler.ValidateJsonWebToken(checkAudience, checkIssuer, jwt, checkExpiry);
             // Assert

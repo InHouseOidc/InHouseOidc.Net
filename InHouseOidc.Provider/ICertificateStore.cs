@@ -17,7 +17,7 @@ namespace InHouseOidc.Provider
         /// Certificate selection respects NotBefore and NotAfter certificate properties,<br />
         /// and always selects the certificate with the longest time to expiry when issuing new tokens.<br />
         /// Use multiple certificates to rollover keys by loading a replacement certificate (that has at least 24 hours
-        /// of overlap with your current certificate) at least 24 hours before your current certificate expires .<br />
+        /// of overlap with your current certificate) at least 24 hours before your current certificate expires.<br />
         /// </summary>
         /// <returns>The list of <see cref="X509Certificate2"/> to use for signing JWTs.</returns>
         Task<IEnumerable<X509Certificate2>> GetSigningCertificates();

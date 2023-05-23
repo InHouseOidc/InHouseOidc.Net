@@ -7,7 +7,7 @@ using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace InHouseOidc.Provider.Handler
@@ -40,29 +40,22 @@ namespace InHouseOidc.Provider.Handler
             string? subject
         )
         {
-            var header = this.GetJwtHeader(JsonWebTokenConstant.AccessTokenType);
+            var securityTokenDescriptor = this.GetSecurityTokenDescriptor(JsonWebTokenConstant.AccessTokenType);
             var utcNow = this.utcNow.UtcNow;
-            var payload = new JwtPayload(issuer, null, null, utcNow.UtcDateTime, expiry.UtcDateTime);
-            payload.AddClaim(
-                new Claim(JsonWebTokenClaim.IssuedAt, utcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
-            );
-            payload.AddClaim(new Claim(JsonWebTokenClaim.ClientId, clientId));
+            securityTokenDescriptor.Issuer = issuer;
+            securityTokenDescriptor.IssuedAt = utcNow.UtcDateTime;
+            securityTokenDescriptor.NotBefore = utcNow.UtcDateTime;
+            securityTokenDescriptor.Expires = expiry.UtcDateTime;
+            securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.ClientId, clientId);
             if (!string.IsNullOrEmpty(subject))
             {
-                payload.AddClaim(new Claim(JsonWebTokenClaim.Subject, subject));
+                securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.Subject, subject);
             }
             var audiences = await this.resourceStore.GetAudiences(scopes);
-            foreach (var audience in audiences.Distinct())
-            {
-                payload.AddClaim(new Claim(JsonWebTokenClaim.Audience, audience));
-            }
-            foreach (var requestScope in scopes)
-            {
-                payload.AddClaim(new Claim(JsonWebTokenClaim.Scope, requestScope));
-            }
-            var token = new JwtSecurityToken(header, payload);
-            var handler = new JwtSecurityTokenHandler();
-            return handler.WriteToken(token);
+            securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.Audience, audiences.ToArray());
+            securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.Scope, scopes.ToArray());
+            var handler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
+            return handler.CreateToken(securityTokenDescriptor);
         }
 
         public string GetIdToken(
@@ -74,36 +67,33 @@ namespace InHouseOidc.Provider.Handler
         )
         {
             var utcNow = this.utcNow.UtcNow;
-            var header = this.GetJwtHeader(JsonWebTokenConstant.Jwt);
-            var claims = new List<Claim>
-            {
-                new Claim(JsonWebTokenClaim.IssuedAt, utcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
-                new Claim(JsonWebTokenClaim.Subject, subject),
-            };
+            var securityTokenDescriptor = this.GetSecurityTokenDescriptor(JsonWebTokenConstant.Jwt);
+            securityTokenDescriptor.Audience = clientId;
+            securityTokenDescriptor.IssuedAt = utcNow.UtcDateTime.AddSeconds(-1);
+            securityTokenDescriptor.Issuer = issuer;
+            securityTokenDescriptor.NotBefore = utcNow.UtcDateTime.AddSeconds(-1);
+            securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.Subject, subject);
             if (!string.IsNullOrWhiteSpace(authorizationRequest.Nonce))
             {
-                claims.Add(new Claim(JsonWebTokenClaim.Nonce, authorizationRequest.Nonce));
+                securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.Nonce, authorizationRequest.Nonce);
             }
-            claims.Add(
-                new Claim(
-                    JsonWebTokenClaim.AuthenticationTime,
-                    authorizationRequest.GetClaimValue(JsonWebTokenClaim.AuthenticationTime),
-                    ClaimValueTypes.Integer64
-                )
+            securityTokenDescriptor.Claims.Add(
+                JsonWebTokenClaim.AuthenticationTime,
+                long.Parse(authorizationRequest.GetClaimValue(JsonWebTokenClaim.AuthenticationTime))
             );
-            claims.Add(
-                new Claim(
-                    JsonWebTokenClaim.IdentityProvider,
-                    authorizationRequest.GetClaimValue(JsonWebTokenClaim.IdentityProvider)
-                )
+            securityTokenDescriptor.Claims.Add(
+                JsonWebTokenClaim.IdentityProvider,
+                authorizationRequest.GetClaimValue(JsonWebTokenClaim.IdentityProvider)
             );
-            claims.Add(
-                new Claim(JsonWebTokenClaim.SessionId, authorizationRequest.GetClaimValue(JsonWebTokenClaim.SessionId))
+            securityTokenDescriptor.Claims.Add(
+                JsonWebTokenClaim.SessionId,
+                authorizationRequest.GetClaimValue(JsonWebTokenClaim.SessionId)
             );
             var authorizationRequestClaims = authorizationRequest.AuthorizationRequestClaims;
             if (!this.providerOptions.UserInfoEndpointEnabled)
             {
                 // Only include standard claims in ID token when userinfo is disabled
+                var claims = new List<Claim>();
                 claims.AddRange(
                     ExtractScopeClaims(
                         JsonWebTokenConstant.Address,
@@ -136,13 +126,16 @@ namespace InHouseOidc.Provider.Handler
                         authorizationRequestClaims
                     )
                 );
+                foreach (var claim in claims)
+                {
+                    securityTokenDescriptor.Claims.Add(claim.Type, claim.Value);
+                }
             }
             if (!authorizationRequest.SessionExpiryUtc.HasValue)
             {
                 throw new InternalErrorException("AuthorizationRequest has no value for SessionExpiryUtc");
             }
-            var expires = authorizationRequest.SessionExpiryUtc.Value.UtcDateTime;
-            var payload = new JwtPayload(issuer, clientId, claims, utcNow.UtcDateTime.AddSeconds(-1), expires);
+            securityTokenDescriptor.Expires = authorizationRequest.SessionExpiryUtc.Value.UtcDateTime;
             // Add claims that need to be serialized as arrays even with only 1 entry
             if (authorizationRequestClaims.Any(c => c.Type == JsonWebTokenClaim.AuthenticationMethodReference))
             {
@@ -150,7 +143,7 @@ namespace InHouseOidc.Provider.Handler
                     .Where(c => c.Type == JsonWebTokenClaim.AuthenticationMethodReference)
                     .Select(c => c.Value)
                     .ToArray();
-                payload.Add(JsonWebTokenClaim.AuthenticationMethodReference, amrs);
+                securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.AuthenticationMethodReference, amrs);
             }
             var roles = ExtractScopeClaims(
                     JsonWebTokenConstant.Role,
@@ -162,11 +155,10 @@ namespace InHouseOidc.Provider.Handler
                 .ToArray();
             if (roles.Any())
             {
-                payload.Add(JsonWebTokenClaim.Role, roles);
+                securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.Role, roles);
             }
-            var token = new JwtSecurityToken(header, payload);
-            var handler = new JwtSecurityTokenHandler();
-            return handler.WriteToken(token);
+            var handler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
+            return handler.CreateToken(securityTokenDescriptor);
         }
 
         private static List<Claim> ExtractScopeClaims(
@@ -186,7 +178,7 @@ namespace InHouseOidc.Provider.Handler
             return new List<Claim>();
         }
 
-        private JwtHeader GetJwtHeader(string tokenType)
+        private SecurityTokenDescriptor GetSecurityTokenDescriptor(string tokenType)
         {
             // Filter out not-before and expired, sort so longest expiry period appears first
             var utcNow = this.utcNow.UtcNow;
@@ -199,11 +191,14 @@ namespace InHouseOidc.Provider.Handler
             {
                 throw new InternalErrorException("Unable to resolve signing credentials for JWT");
             }
-            return new JwtHeader(signingKey.SigningCredentials)
+            // Setup the token descriptor
+            var securityTokenDescriptor = new SecurityTokenDescriptor
             {
-                [JsonWebTokenClaim.Typ] = tokenType,
-                [JsonWebTokenClaim.X5t] = signingKey.JsonWebKey.X5t,
+                Claims = new Dictionary<string, object>(),
+                SigningCredentials = signingKey.SigningCredentials,
+                TokenType = tokenType,
             };
+            return securityTokenDescriptor;
         }
     }
 }
