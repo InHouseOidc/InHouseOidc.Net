@@ -14,7 +14,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -50,7 +49,7 @@ namespace InHouseOidc.Provider.Test.Handler
             00,
             TimeSpan.Zero
         ).ToUniversalTime();
-        private readonly JwtSecurityTokenHandler handler = new();
+        private readonly Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler handler = new();
 
         private ProviderOptions providerOptions = new();
         private Mock<IResourceStore> mockResourceStore = new(MockBehavior.Strict);
@@ -90,25 +89,26 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             // Assert
             Assert.IsNotNull(result);
-            var jwtSecurityToken = this.handler.ReadJwtToken(result);
-            Assert.IsNotNull(jwtSecurityToken);
-            Assert.AreEqual(signingKey.JsonWebKey.Kid, jwtSecurityToken.Header.Kid);
-            Assert.AreEqual(this.issuer, jwtSecurityToken.Issuer);
-            Assert.AreEqual(this.expiry.DateTime, jwtSecurityToken.ValidTo);
-            AssertHasClaim(jwtSecurityToken, JsonWebTokenClaim.ClientId, this.clientId);
+            var securityToken = this.handler.ReadToken(result);
+            var jsonWebToken = securityToken as Microsoft.IdentityModel.JsonWebTokens.JsonWebToken;
+            Assert.IsNotNull(jsonWebToken);
+            Assert.AreEqual(signingKey.JsonWebKey.Kid, jsonWebToken.Kid);
+            Assert.AreEqual(this.issuer, securityToken.Issuer);
+            Assert.AreEqual(this.expiry.DateTime, securityToken.ValidTo);
+            AssertHasClaim(jsonWebToken, JsonWebTokenClaim.ClientId, this.clientId);
             if (string.IsNullOrEmpty(subjectId))
             {
                 Assert.IsFalse(
-                    jwtSecurityToken.Claims.Any(c => c.Type == JsonWebTokenClaim.Subject),
+                    jsonWebToken.Claims.Any(c => c.Type == JsonWebTokenClaim.Subject),
                     "Existence of subject claim was unexpected"
                 );
             }
             else
             {
-                AssertHasClaim(jwtSecurityToken, JsonWebTokenClaim.Subject, subjectId);
+                AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Subject, subjectId);
             }
-            AssertHasClaims(jwtSecurityToken, JsonWebTokenClaim.Audience, this.audiences);
-            AssertHasClaims(jwtSecurityToken, JsonWebTokenClaim.Scope, this.scopes);
+            AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Audience, this.audiences);
+            AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Scope, this.scopes);
         }
 
         [DataTestMethod]
@@ -192,32 +192,33 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             // Assert
             Assert.IsNotNull(result);
-            var jwtSecurityToken = this.handler.ReadJwtToken(result);
-            Assert.IsNotNull(jwtSecurityToken);
-            Assert.AreEqual(signingKey.JsonWebKey.Kid, jwtSecurityToken.Header.Kid);
-            Assert.AreEqual(this.issuer, jwtSecurityToken.Issuer);
-            Assert.AreEqual(this.expiry, jwtSecurityToken.ValidTo);
-            AssertHasClaim(jwtSecurityToken, JsonWebTokenClaim.Subject, this.subject);
-            AssertHasClaim(jwtSecurityToken, JsonWebTokenClaim.Address, address);
-            AssertHasClaim(jwtSecurityToken, JsonWebTokenClaim.Email, this.email);
-            AssertHasClaim(jwtSecurityToken, JsonWebTokenClaim.PhoneNumber, phoneNumber);
-            AssertHasClaim(jwtSecurityToken, JsonWebTokenClaim.Name, name);
-            AssertHasClaims(jwtSecurityToken, JsonWebTokenClaim.Audience, new[] { this.clientId });
+            var securityToken = this.handler.ReadToken(result);
+            var jsonWebToken = securityToken as Microsoft.IdentityModel.JsonWebTokens.JsonWebToken;
+            Assert.IsNotNull(jsonWebToken);
+            Assert.AreEqual(signingKey.JsonWebKey.Kid, jsonWebToken.Kid);
+            Assert.AreEqual(this.issuer, securityToken.Issuer);
+            Assert.AreEqual(this.expiry, securityToken.ValidTo);
+            AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Subject, this.subject);
+            AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Address, address);
+            AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Email, this.email);
+            AssertHasClaim(jsonWebToken, JsonWebTokenClaim.PhoneNumber, phoneNumber);
+            AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Name, name);
+            AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Audience, new[] { this.clientId });
             if (!string.IsNullOrEmpty(nonce))
             {
-                AssertHasClaim(jwtSecurityToken, JsonWebTokenClaim.Nonce, nonce);
+                AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Nonce, nonce);
             }
             if (!string.IsNullOrEmpty(amr))
             {
                 AssertHasClaims(
-                    jwtSecurityToken,
+                    jsonWebToken,
                     JsonWebTokenClaim.AuthenticationMethodReference,
                     new List<string> { amr }
                 );
             }
             if (!string.IsNullOrEmpty(role))
             {
-                AssertHasClaims(jwtSecurityToken, JsonWebTokenClaim.Role, new List<string> { role });
+                AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Role, new List<string> { role });
             }
         }
 
@@ -345,14 +346,19 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             // Assert
             Assert.IsNotNull(result);
-            var jwtSecurityToken = this.handler.ReadJwtToken(result);
-            Assert.IsNotNull(jwtSecurityToken);
-            Assert.AreEqual(signingKey.JsonWebKey.Kid, jwtSecurityToken.Header.Kid);
+            var securityToken = this.handler.ReadToken(result);
+            var jsonWebToken = securityToken as Microsoft.IdentityModel.JsonWebTokens.JsonWebToken;
+            Assert.IsNotNull(jsonWebToken);
+            Assert.AreEqual(signingKey.JsonWebKey.Kid, jsonWebToken.Kid);
         }
 
-        private static void AssertHasClaim(JwtSecurityToken jwtSecurityToken, string claimType, string claimValue)
+        private static void AssertHasClaim(
+            Microsoft.IdentityModel.JsonWebTokens.JsonWebToken jsonWebToken,
+            string claimType,
+            string claimValue
+        )
         {
-            var claims = jwtSecurityToken.Claims.Where(c => c.Type == claimType).ToList();
+            var claims = jsonWebToken.Claims.Where(c => c.Type == claimType).ToList();
             if (!claims.Any())
             {
                 Assert.Fail($"Unable to find claimType: {claimType}");
@@ -365,12 +371,12 @@ namespace InHouseOidc.Provider.Test.Handler
         }
 
         private static void AssertHasClaims(
-            JwtSecurityToken jwtSecurityToken,
+            Microsoft.IdentityModel.JsonWebTokens.JsonWebToken jsonWebToken,
             string claimType,
             IEnumerable<string> claimValues
         )
         {
-            var claims = jwtSecurityToken.Claims.Where(c => c.Type == claimType).Select(c => c.Value).ToList();
+            var claims = jsonWebToken.Claims.Where(c => c.Type == claimType).Select(c => c.Value).ToList();
             if (!claims.Any())
             {
                 Assert.Fail($"Unable to find claimType: {claimType}");

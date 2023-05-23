@@ -7,7 +7,7 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using System;
 using System.Security.Claims;
 
 namespace InHouseOidc.Provider.Handler
@@ -310,7 +310,7 @@ namespace InHouseOidc.Provider.Handler
             var signingKeys = this.providerOptions.SigningKeys
                 .Resolve(this.serviceProvider)
                 .Select(s => s.X509SecurityKey);
-            var handler = new JwtSecurityTokenHandler();
+            var handler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
             var tokenValidationParameters = new TokenValidationParameters
             {
                 IssuerSigningKeys = signingKeys.Where(s => s != null),
@@ -320,21 +320,18 @@ namespace InHouseOidc.Provider.Handler
                 ValidateIssuerSigningKey = true,
                 ValidateLifetime = validateLifetime,
             };
-            try
+            var tokenValidationResult = handler.ValidateToken(jwt, tokenValidationParameters);
+            if (tokenValidationResult.IsValid)
             {
-                var tokenPrincipal = handler.ValidateToken(jwt, tokenValidationParameters, out var securityToken);
-                return tokenPrincipal;
+                return new ClaimsPrincipal(tokenValidationResult.ClaimsIdentity);
             }
-            catch (System.Exception exception)
-            {
-                this.logger.Log(
-                    this.providerOptions.LogFailuresAsInformation ? LogLevel.Information : LogLevel.Error,
-                    exception,
-                    "Json web token validation failed: {exceptionType}",
-                    exception.GetType().Name
-                );
-                return null;
-            }
+            this.logger.Log(
+                this.providerOptions.LogFailuresAsInformation ? LogLevel.Information : LogLevel.Error,
+                tokenValidationResult.Exception,
+                "Json web token validation failed: {exceptionType}",
+                tokenValidationResult.Exception.GetType().Name
+            );
+            return null;
         }
 
         private static (AuthorizationRequest?, RedirectError?) ErrorAuthorization(
