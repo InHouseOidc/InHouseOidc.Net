@@ -9,7 +9,7 @@ namespace InHouseOidc.Example.CredentialsClient
     {
         public Task<CredentialsClientOptions?> GetCredentialsClientOptions(string clientName)
         {
-            if (clientName != "exampleapiruntime")
+            if (clientName != "exampleapistored")
             {
                 return Task.FromResult<CredentialsClientOptions?>(null);
             }

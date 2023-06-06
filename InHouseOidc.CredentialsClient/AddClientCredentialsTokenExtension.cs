@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.CredentialsClient.Handler;
-using InHouseOidc.CredentialsClient.Resolver;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace InHouseOidc.CredentialsClient

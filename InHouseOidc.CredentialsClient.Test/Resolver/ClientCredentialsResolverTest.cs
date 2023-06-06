@@ -384,5 +384,85 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             Assert.IsNull(result);
             this.logger.AssertLastItemContains(LogLevel.Error, "No token returned from");
         }
+
+        [TestMethod]
+        public async Task ClientCredentialsResolver_ClientAsParameter()
+        {
+            // Arrange
+            var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.clientOptions,
+                this.mockDiscoveryResolver.Object,
+                this.mockHttpClientFactory.Object,
+                this.logger,
+                this.mockServiceProvider.Object,
+                this.mockUtcNow.Object
+            );
+            this.testMessageHandler.ResponseMessage = new HttpResponseMessage
+            {
+                Content = new TestJsonContent(this.tokenResponse),
+                StatusCode = HttpStatusCode.OK,
+            };
+            var credentialsClientOptions = new CredentialsClientOptions
+            {
+                ClientId = this.clientName,
+                ClientSecret = "TopSecret",
+                OidcProviderAddress = "https://localhost",
+                Scope = "scope1",
+            };
+            this.mockDiscoveryResolver
+                .Setup(
+                    m =>
+                        m.GetDiscovery(
+                            this.clientOptions.DiscoveryOptions,
+                            credentialsClientOptions.OidcProviderAddress,
+                            CancellationToken.None
+                        )
+                )
+                .ReturnsAsync(this.discovery);
+            // Act 1 (uncached)
+            var result1 = await clientCredentialsResolver.GetClientToken(
+                this.clientName,
+                credentialsClientOptions,
+                CancellationToken.None
+            );
+            // Assert 1
+            Assert.IsNotNull(result1);
+            Assert.AreEqual("accesstoken", result1);
+            Assert.AreEqual(1, this.testMessageHandler.SendCount);
+            this.mockDiscoveryResolver.VerifyAll();
+            this.mockHttpClientFactory.VerifyAll();
+            // Act 2 (cached)
+            var result2 = await clientCredentialsResolver.GetClientToken(
+                this.clientName,
+                credentialsClientOptions,
+                CancellationToken.None
+            );
+            // Assert 2
+            this.mockUtcNow.VerifyAll();
+            Assert.AreEqual(1, this.testMessageHandler.SendCount);
+            Assert.IsNotNull(result2);
+            Assert.AreEqual("accesstoken", result2);
+            // Act 3 (cleared cache)
+            await clientCredentialsResolver.ClearClientToken(this.clientName);
+            var result3 = await clientCredentialsResolver.GetClientToken(
+                this.clientName,
+                credentialsClientOptions,
+                CancellationToken.None
+            );
+            // Assert 3
+            Assert.AreEqual(2, this.testMessageHandler.SendCount);
+            Assert.IsNotNull(result3);
+            Assert.AreEqual("accesstoken", result3);
+            // Act 4 (expired)
+            this.mockUtcNow.Setup(m => m.UtcNow).Returns(this.utcNow.AddHours(1));
+            var result4 = await clientCredentialsResolver.GetClientToken(
+                this.clientName,
+                credentialsClientOptions,
+                CancellationToken.None
+            );
+            Assert.AreEqual(3, this.testMessageHandler.SendCount);
+            Assert.IsNotNull(result4);
+            Assert.AreEqual("accesstoken", result4);
+        }
     }
 }

@@ -1,7 +1,6 @@
 // Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using InHouseOidc.CredentialsClient.Resolver;
 using InHouseOidc.Test.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
