@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.CredentialsClient.Handler;
-using InHouseOidc.CredentialsClient.Resolver;
 using InHouseOidc.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

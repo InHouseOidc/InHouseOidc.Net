@@ -47,7 +47,43 @@ namespace InHouseOidc.CredentialsClient.Resolver
             return Task.CompletedTask;
         }
 
-        public async Task<string?> GetClientToken(string clientName, CancellationToken cancellationToken)
+        public async Task<string?> GetClientToken(string clientName, CancellationToken cancellationToken = default)
+        {
+            // Check for already resolved
+            if (this.tokenDictionary.TryGetValue(clientName, out var token))
+            {
+                if (token.ExpiryUtc > this.utcNow.UtcNow)
+                {
+                    return token.AccessToken;
+                }
+            }
+            // Lookup the client credentials options
+            this.clientOptions.CredentialsClientsOptions.TryGetValue(clientName, out var credentialsClientOptions);
+            if (credentialsClientOptions == null)
+            {
+                // Retrieve the options and save the value for all subsequent token requests
+                var credentialsStore = this.serviceProvider.GetService<ICredentialsStore>();
+                if (credentialsStore == null)
+                {
+                    this.logger.LogError("Client credentials options not available via AddClient or ICredentialsStore");
+                    return null;
+                }
+                credentialsClientOptions = await credentialsStore.GetCredentialsClientOptions(clientName);
+                if (credentialsClientOptions == null)
+                {
+                    this.logger.LogError("Client credentials options not available from ICredentialsStore");
+                    return null;
+                }
+                this.clientOptions.CredentialsClientsOptions[clientName] = credentialsClientOptions;
+            }
+            return await this.GetClientTokenInternal(clientName, credentialsClientOptions, cancellationToken);
+        }
+
+        public async Task<string?> GetClientToken(
+            string clientName,
+            CredentialsClientOptions credentialsClientOptions,
+            CancellationToken cancellationToken = default
+        )
         {
             // Check for already resolved
             if (this.tokenDictionary.TryGetValue(clientName, out var token))
@@ -62,31 +98,21 @@ namespace InHouseOidc.CredentialsClient.Resolver
             {
                 this.tokenDictionary.TryRemove(clientName, out var _);
             }
-            // Lookup the client credentials options
-            this.clientOptions.CredentialsClientsOptions.TryGetValue(clientName, out var clientCredentialsOptions);
-            if (clientCredentialsOptions == null)
-            {
-                // Retrieve the options and save the value for all subsequent token requests
-                var credentialsStore = this.serviceProvider.GetService<ICredentialsStore>();
-                if (credentialsStore == null)
-                {
-                    this.logger.LogError("Client credentials options not available via AddClient or ICredentialsStore");
-                    return null;
-                }
-                clientCredentialsOptions = await credentialsStore.GetCredentialsClientOptions(clientName);
-                if (clientCredentialsOptions == null)
-                {
-                    this.logger.LogError("Client credentials options not available from ICredentialsStore");
-                    return null;
-                }
-                this.clientOptions.CredentialsClientsOptions[clientName] = clientCredentialsOptions;
-            }
+            return await this.GetClientTokenInternal(clientName, credentialsClientOptions, cancellationToken);
+        }
+
+        private async Task<string?> GetClientTokenInternal(
+            string clientName,
+            CredentialsClientOptions credentialsClientOptions,
+            CancellationToken cancellationToken
+        )
+        {
             // Confirm required client options fields are present
             if (
-                string.IsNullOrEmpty(clientCredentialsOptions.ClientId)
-                || string.IsNullOrEmpty(clientCredentialsOptions.ClientSecret)
-                || string.IsNullOrEmpty(clientCredentialsOptions.OidcProviderAddress)
-                || string.IsNullOrEmpty(clientCredentialsOptions.Scope)
+                string.IsNullOrEmpty(credentialsClientOptions.ClientId)
+                || string.IsNullOrEmpty(credentialsClientOptions.ClientSecret)
+                || string.IsNullOrEmpty(credentialsClientOptions.OidcProviderAddress)
+                || string.IsNullOrEmpty(credentialsClientOptions.Scope)
             )
             {
                 throw new InvalidOperationException("Client options are missing required values");
@@ -94,7 +120,7 @@ namespace InHouseOidc.CredentialsClient.Resolver
             // Use discovery to resolve the token endpoint
             var discovery = await this.discoveryResolver.GetDiscovery(
                 this.clientOptions.DiscoveryOptions,
-                clientCredentialsOptions.OidcProviderAddress,
+                credentialsClientOptions.OidcProviderAddress,
                 cancellationToken
             );
             if (discovery == null)
@@ -109,7 +135,7 @@ namespace InHouseOidc.CredentialsClient.Resolver
                 return null;
             }
             // Create the endpoint URIs
-            var providerUri = new Uri(clientCredentialsOptions.OidcProviderAddress, UriKind.Absolute);
+            var providerUri = new Uri(credentialsClientOptions.OidcProviderAddress, UriKind.Absolute);
             var tokenEndpointUri = new Uri(providerUri, discovery.TokenEndpoint);
             // Request a token
             var httpClient = this.httpClientFactory.CreateClient(this.clientOptions.InternalHttpClientName);
@@ -117,9 +143,9 @@ namespace InHouseOidc.CredentialsClient.Resolver
             {
                 { TokenEndpointConstant.GrantType, TokenEndpointConstant.ClientCredentials },
             };
-            form.Add(TokenEndpointConstant.ClientId, clientCredentialsOptions.ClientId);
-            form.Add(TokenEndpointConstant.ClientSecret, clientCredentialsOptions.ClientSecret);
-            form.Add(TokenEndpointConstant.Scope, clientCredentialsOptions.Scope);
+            form.Add(TokenEndpointConstant.ClientId, credentialsClientOptions.ClientId);
+            form.Add(TokenEndpointConstant.ClientSecret, credentialsClientOptions.ClientSecret);
+            form.Add(TokenEndpointConstant.Scope, credentialsClientOptions.Scope);
             var formContent = new FormUrlEncodedContent(form);
             var response = await httpClient.SendWithRetry(
                 HttpMethod.Post,
@@ -134,7 +160,7 @@ namespace InHouseOidc.CredentialsClient.Resolver
             {
                 this.logger.LogError(
                     "Unable to obtain token from {oidcProviderAddress} response {statusCode}",
-                    clientCredentialsOptions.OidcProviderAddress,
+                    credentialsClientOptions.OidcProviderAddress,
                     response.StatusCode
                 );
                 return null;
@@ -144,13 +170,13 @@ namespace InHouseOidc.CredentialsClient.Resolver
             {
                 this.logger.LogError(
                     "No token returned from {oidcProviderAddress} for client {clientName}",
-                    clientCredentialsOptions.OidcProviderAddress,
+                    credentialsClientOptions.OidcProviderAddress,
                     clientName
                 );
                 return null;
             }
             // Cache the value
-            token = new ClientCredentialsToken(
+            var token = new ClientCredentialsToken(
                 tokenResponse.AccessToken,
                 this.utcNow.UtcNow.AddSeconds(tokenResponse.ExpiresIn ?? 0)
             );
