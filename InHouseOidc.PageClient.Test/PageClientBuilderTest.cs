@@ -107,6 +107,8 @@ namespace InHouseOidc.PageClient.Test
             // Act
             var pageClientBuilder = this.serviceCollection
                 .AddOidcPageClient()
+                .EnableDiscoveryGrantTypeValidation(false)
+                .EnableDiscoveryIssuerValidation(false)
                 .SetDiscoveryCacheTime(discoveryCacheTime)
                 .SetInternalHttpClientName(internalHttpClientName)
                 .SetMaxRetryAttempts(maxRetryAttempts)
@@ -115,10 +117,12 @@ namespace InHouseOidc.PageClient.Test
             var serviceProvider = this.serviceCollection.BuildServiceProvider();
             // Assert
             var clientOptions = serviceProvider.GetRequiredService<ClientOptions>();
-            Assert.AreEqual(discoveryCacheTime, clientOptions.DiscoveryCacheTime);
+            Assert.AreEqual(discoveryCacheTime, clientOptions.DiscoveryOptions.CacheTime);
             Assert.AreEqual(internalHttpClientName, clientOptions.InternalHttpClientName);
             Assert.AreEqual(maxRetryAttempts, clientOptions.MaxRetryAttempts);
             Assert.AreEqual(retryDelayMilliseconds, clientOptions.RetryDelayMilliseconds);
+            Assert.IsFalse(clientOptions.DiscoveryOptions.ValidateGrantTypes);
+            Assert.IsFalse(clientOptions.DiscoveryOptions.ValidateIssuer);
             var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
             var httpClient = httpClientFactory.CreateClient(internalHttpClientName);
             Assert.IsNotNull(httpClient);

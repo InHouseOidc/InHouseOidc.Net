@@ -12,6 +12,7 @@ namespace InHouseOidc.Common.Type
         public string? AccessToken { get; set; }
 
         [JsonPropertyName(JsonWebTokenConstant.ExpiresIn)]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public double? ExpiresIn { get; set; }
 
         [JsonPropertyName(JsonWebTokenConstant.IdToken)]

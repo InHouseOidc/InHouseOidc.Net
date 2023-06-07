@@ -9,7 +9,6 @@ namespace InHouseOidc.PageClient.Type
 {
     internal class ClientOptions
     {
-        public TimeSpan DiscoveryCacheTime { get; set; } = TimeSpan.FromMinutes(30);
         public DiscoveryOptions DiscoveryOptions { get; } = new();
         public string InternalHttpClientName { get; set; } = DiscoveryConstant.DefaultInternalHttpClientName;
         public int MaxRetryAttempts { get; set; } = 5;

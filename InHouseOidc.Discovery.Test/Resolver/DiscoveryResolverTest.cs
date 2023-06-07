@@ -225,5 +225,35 @@ namespace InHouseOidc.Discovery.Test.Resolver
             Assert.IsNull(discovery2);
             this.logger.AssertLastItemContains(LogLevel.Error, "Invalid TokenEndpointAuthMethodsSupported");
         }
+
+        [TestMethod]
+        public async Task DiscoveryResolver_GetDiscovery_InvalidDiscoveryIgnored()
+        {
+            // Arrange
+            var discoveryResponse = new DiscoveryResponse
+            {
+                GrantTypesSupported = null,
+                Issuer = null,
+                TokenEndpoint = "/token",
+                TokenEndpointAuthMethodsSupported = new List<string> { "client_secret_post" },
+            };
+            this.testMessageHandler.ResponseMessage = new HttpResponseMessage
+            {
+                Content = new TestJsonContent(discoveryResponse),
+                StatusCode = HttpStatusCode.OK,
+            };
+            this.discoveryOptions.ValidateIssuer = false;
+            this.discoveryOptions.ValidateGrantTypes = false;
+            // Act
+            Assert.IsNotNull(this.discoveryResolver);
+            var discovery = await this.discoveryResolver.GetDiscovery(
+                this.discoveryOptions,
+                "https://localhost",
+                CancellationToken.None
+            );
+            // Assert
+            Assert.IsNotNull(discovery);
+            Assert.AreEqual(1, this.testMessageHandler.SendCount);
+        }
     }
 }

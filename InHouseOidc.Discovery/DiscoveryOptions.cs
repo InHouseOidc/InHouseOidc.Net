@@ -7,9 +7,11 @@ namespace InHouseOidc.Discovery
 {
     public class DiscoveryOptions
     {
-        public TimeSpan DiscoveryCacheTime { get; set; } = TimeSpan.FromMinutes(30);
+        public TimeSpan CacheTime { get; set; } = TimeSpan.FromMinutes(30);
         public string InternalHttpClientName { get; set; } = DiscoveryConstant.DefaultInternalHttpClientName;
         public int MaxRetryAttempts { get; set; } = 5;
         public int RetryDelayMilliseconds { get; set; } = 50;
+        public bool ValidateGrantTypes { get; set; } = true;
+        public bool ValidateIssuer { get; set; } = true;
     }
 }
