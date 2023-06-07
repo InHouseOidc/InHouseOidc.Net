@@ -63,7 +63,10 @@ namespace InHouseOidc.Discovery
                 this.logger.LogError("Unable to load discovery from {oidcProviderAddress}", oidcProviderAddress);
                 return null;
             }
-            if (discoveryResponse.GrantTypesSupported == null || discoveryResponse.GrantTypesSupported.Count == 0)
+            if (
+                discoveryOptions.ValidateGrantTypes
+                && (discoveryResponse.GrantTypesSupported == null || discoveryResponse.GrantTypesSupported.Count == 0)
+            )
             {
                 this.logger.LogError(
                     "Invalid GrantTypesSupported response from {oidcProviderAddress}",
@@ -71,7 +74,10 @@ namespace InHouseOidc.Discovery
                 );
                 return null;
             }
-            if (string.IsNullOrEmpty(discoveryResponse.Issuer) || discoveryResponse.Issuer != oidcProviderAddress)
+            if (
+                discoveryOptions.ValidateIssuer
+                && (string.IsNullOrEmpty(discoveryResponse.Issuer) || discoveryResponse.Issuer != oidcProviderAddress)
+            )
             {
                 this.logger.LogError("Invalid Issuer response from {oidcProviderAddress}", oidcProviderAddress);
                 return null;
@@ -91,9 +97,9 @@ namespace InHouseOidc.Discovery
             discovery = new Discovery(
                 discoveryResponse.AuthorizationEndpoint,
                 discoveryResponse.EndSessionEndpoint,
-                this.utcNow.UtcNow.Add(discoveryOptions.DiscoveryCacheTime),
-                discoveryResponse.GrantTypesSupported,
-                discoveryResponse.Issuer,
+                this.utcNow.UtcNow.Add(discoveryOptions.CacheTime),
+                discoveryResponse.GrantTypesSupported ?? new List<string>(),
+                discoveryResponse.Issuer ?? string.Empty,
                 discoveryResponse.TokenEndpoint,
                 discoveryResponse.TokenEndpointAuthMethodsSupported
             );

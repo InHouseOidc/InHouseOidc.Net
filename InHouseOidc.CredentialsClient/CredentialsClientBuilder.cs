@@ -43,10 +43,14 @@ namespace InHouseOidc.CredentialsClient
         /// </summary>
         public void Build()
         {
-            this.ClientOptions.DiscoveryOptions.DiscoveryCacheTime = this.ClientOptions.DiscoveryCacheTime;
+            this.ClientOptions.DiscoveryOptions.CacheTime = this.ClientOptions.DiscoveryOptions.CacheTime;
             this.ClientOptions.DiscoveryOptions.InternalHttpClientName = this.ClientOptions.InternalHttpClientName;
             this.ClientOptions.DiscoveryOptions.MaxRetryAttempts = this.ClientOptions.MaxRetryAttempts;
             this.ClientOptions.DiscoveryOptions.RetryDelayMilliseconds = this.ClientOptions.RetryDelayMilliseconds;
+            this.ClientOptions.DiscoveryOptions.ValidateGrantTypes = this.ClientOptions
+                .DiscoveryOptions
+                .ValidateGrantTypes;
+            this.ClientOptions.DiscoveryOptions.ValidateIssuer = this.ClientOptions.DiscoveryOptions.ValidateIssuer;
             this.ServiceCollection.AddSingleton(this.ClientOptions);
             this.ServiceCollection.AddHttpClient(this.ClientOptions.InternalHttpClientName);
             this.ServiceCollection.TryAddSingleton<IDiscoveryResolver, DiscoveryResolver>();
@@ -64,13 +68,35 @@ namespace InHouseOidc.CredentialsClient
         }
 
         /// <summary>
+        /// Enables validation that discovery grant types are provided.  Optional (defaults to true).
+        /// </summary>
+        /// <param name="enable">Enable or disable validation.</param>
+        /// <returns><see cref="CredentialsClientBuilder"/> so additional calls can be chained.</returns>
+        public CredentialsClientBuilder EnableDiscoveryGrantTypeValidation(bool enable)
+        {
+            this.ClientOptions.DiscoveryOptions.ValidateGrantTypes = enable;
+            return this;
+        }
+
+        /// <summary>
+        /// Enables validation that discovery issuer matches OIDC provider.  Optional (defaults to true).
+        /// </summary>
+        /// <param name="enable">Enable or disable validation.</param>
+        /// <returns><see cref="CredentialsClientBuilder"/> so additional calls can be chained.</returns>
+        public CredentialsClientBuilder EnableDiscoveryIssuerValidation(bool enable)
+        {
+            this.ClientOptions.DiscoveryOptions.ValidateIssuer = enable;
+            return this;
+        }
+
+        /// <summary>
         /// Sets time to cache discovery information.  Optional (defaults to 30 minutes).
         /// </summary>
         /// <param name="discoveryCacheTime">The TimeSpan to cache for.</param>
         /// <returns><see cref="CredentialsClientBuilder"/> so additional calls can be chained.</returns>
         public CredentialsClientBuilder SetDiscoveryCacheTime(TimeSpan discoveryCacheTime)
         {
-            this.ClientOptions.DiscoveryCacheTime = discoveryCacheTime;
+            this.ClientOptions.DiscoveryOptions.CacheTime = discoveryCacheTime;
             return this;
         }
 
