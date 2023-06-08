@@ -135,7 +135,10 @@ namespace InHouseOidc.CredentialsClient.Resolver
                 return null;
             }
             // Create the endpoint URIs
-            var providerUri = new Uri(credentialsClientOptions.OidcProviderAddress, UriKind.Absolute);
+            var providerUri = new Uri(
+                credentialsClientOptions.OidcProviderAddress.EnsureEndsWithSlash(),
+                UriKind.Absolute
+            );
             var tokenEndpointUri = new Uri(providerUri, discovery.TokenEndpoint);
             // Request a token
             var httpClient = this.httpClientFactory.CreateClient(this.clientOptions.InternalHttpClientName);

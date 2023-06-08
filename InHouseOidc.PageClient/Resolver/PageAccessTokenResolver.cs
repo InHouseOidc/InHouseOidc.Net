@@ -97,7 +97,10 @@ namespace InHouseOidc.PageClient.Resolver
             }
             // Request a new access token using the current refresh token
             var httpClient = this.httpClientFactory.CreateClient(this.clientOptions.InternalHttpClientName);
-            var providerUri = new Uri(this.clientOptions.PageClientOptions.OidcProviderAddress, UriKind.Absolute);
+            var providerUri = new Uri(
+                this.clientOptions.PageClientOptions.OidcProviderAddress.EnsureEndsWithSlash(),
+                UriKind.Absolute
+            );
             var tokenEndpointUri = new Uri(providerUri, discovery.TokenEndpoint);
             var form = new Dictionary<string, string>
             {
