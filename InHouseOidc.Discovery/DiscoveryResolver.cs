@@ -44,7 +44,7 @@ namespace InHouseOidc.Discovery
             }
             // Access the discovery information from the provider
             var httpClient = this.httpClientFactory.CreateClient(discoveryOptions.InternalHttpClientName);
-            var providerUri = new Uri(oidcProviderAddress, UriKind.Absolute);
+            var providerUri = new Uri(oidcProviderAddress.EnsureEndsWithSlash(), UriKind.Absolute);
             var discoveryUri = new Uri(providerUri, ".well-known/openid-configuration");
             var response = await httpClient.SendWithRetry(
                 HttpMethod.Get,

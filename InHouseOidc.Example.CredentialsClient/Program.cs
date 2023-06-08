@@ -71,7 +71,7 @@ while (true)
         responseStored.EnsureSuccessStatusCode();
         var responseContentStored = await responseStored.Content.ReadAsStringAsync();
         logger.LogInformation("[Stored HttpClient] /secure response: {responseContent}", responseContentStored);
-        // Dynamicly configured client
+        // Dynamically configured client
         var httpClientDynamic = httpClientFactory.CreateClient(clientNameDynamic);
         var clientCredentialsResolver = serviceProvider.GetRequiredService<IClientCredentialsResolver>();
         var accessToken = await clientCredentialsResolver.GetClientToken(
