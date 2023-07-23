@@ -126,6 +126,22 @@ namespace InHouseOidc.Provider.Handler
                     return true;
                 }
             }
+            // Check if the time to session expiry is less than the mimumum allowed for token issuance
+            if (authenticationProperties.ExpiresUtc.HasValue)
+            {
+                var timeToSessionExpiry = authenticationProperties.ExpiresUtc.Value - this.utcNow.UtcNow;
+                if (timeToSessionExpiry < this.providerOptions.AuthorizationMinimumTokenExpiry)
+                {
+                    // Tokens can be issued, but token lifetime would be below the minimum time allowed
+                    throw RedirectToReturnUri(
+                        RedirectErrorType.LoginRequired,
+                        authorizationRequest.RedirectUri,
+                        authorizationRequest.SessionState,
+                        authorizationRequest.State,
+                        "Login required as session is near expiry"
+                    );
+                }
+            }
             // Use the authentication expiry as the session expiry
             authorizationRequest.SessionExpiryUtc = authenticationProperties.ExpiresUtc;
             // Check any id token hint is valid

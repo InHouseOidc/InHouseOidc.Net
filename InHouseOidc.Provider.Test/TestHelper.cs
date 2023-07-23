@@ -31,7 +31,8 @@ namespace InHouseOidc.Provider.Test
             string? subject,
             string sessionId,
             DateTimeOffset utcNow,
-            List<Claim>? extraClaims = null
+            List<Claim>? extraClaims = null,
+            TimeSpan? sessionExpiry = null
         )
         {
             var claims = new List<Claim>
@@ -52,10 +53,8 @@ namespace InHouseOidc.Provider.Test
             }
             var claimsIdentity = new ClaimsIdentity(claims, scheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            var authenticationProperties = new AuthenticationProperties(new Dictionary<string, string?>())
-            {
-                ExpiresUtc = utcNow.AddHours(1),
-            };
+            var authenticationProperties = new AuthenticationProperties(new Dictionary<string, string?>()) { };
+            authenticationProperties.ExpiresUtc = utcNow + (sessionExpiry ?? TimeSpan.FromHours(1));
             return (claimsPrincipal, authenticationProperties);
         }
 
@@ -67,7 +66,8 @@ namespace InHouseOidc.Provider.Test
             string scheme,
             string subject,
             string sessionId,
-            DateTimeOffset utcNow
+            DateTimeOffset utcNow,
+            TimeSpan? sessionExpiry = null
         )
         {
             var authenticationScheme = new AuthenticationScheme(scheme, null, typeof(TestHandler));
@@ -83,7 +83,9 @@ namespace InHouseOidc.Provider.Test
                 scheme,
                 subject,
                 sessionId,
-                utcNow
+                utcNow,
+                null,
+                sessionExpiry
             );
             var authenticateResult = authenticeSuccess
                 ? AuthenticateResult.Success(

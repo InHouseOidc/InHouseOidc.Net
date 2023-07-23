@@ -8,9 +8,10 @@ namespace InHouseOidc.Provider.Type
     internal class ProviderOptions
     {
         public string AuthenticationCookieName { get; set; } = ProviderConstant.AuthenticationCookieName;
-        public Uri AuthorizationEndpointUri { get; set; } =
-            new Uri(ProviderConstant.AuthorizationPath, UriKind.RelativeOrAbsolute);
         public bool AuthorizationCodePkceRequired { get; set; } = true;
+        public Uri AuthorizationEndpointUri { get; set; } =
+            new Uri(ProviderConstant.AuthorizationPath, UriKind.Relative);
+        public TimeSpan AuthorizationMinimumTokenExpiry { get; set; } = TimeSpan.FromSeconds(60);
         public string CheckSessionCookieName { get; set; } = ProviderConstant.CheckSessionCookieName;
         public bool CheckSessionEndpointEnabled { get; set; } = false;
         public Uri CheckSessionEndpointUri { get; set; } = new Uri(ProviderConstant.CheckSessionPath, UriKind.Relative);
@@ -24,11 +25,10 @@ namespace InHouseOidc.Provider.Type
         public string LoginPath { get; set; } = ProviderConstant.LoginPath;
         public string LogoutPath { get; set; } = ProviderConstant.LogoutPath;
         public List<SigningKey> SigningKeys { get; set; } = new();
-        public Uri TokenEndpointUri { get; set; } = new Uri(ProviderConstant.TokenPath, UriKind.RelativeOrAbsolute);
+        public Uri TokenEndpointUri { get; set; } = new Uri(ProviderConstant.TokenPath, UriKind.Relative);
         public List<string> TokenEndpointAuthMethods { get; } =
             new(new[] { DiscoveryConstant.ClientSecretPost, DiscoveryConstant.ClientSecretBasic });
         public bool UserInfoEndpointEnabled { get; set; } = false;
-        public Uri UserInfoEndpointUri { get; set; } =
-            new Uri(ProviderConstant.UserInfoPath, UriKind.RelativeOrAbsolute);
+        public Uri UserInfoEndpointUri { get; set; } = new Uri(ProviderConstant.UserInfoPath, UriKind.Relative);
     }
 }

@@ -208,6 +208,25 @@ namespace InHouseOidc.Provider.Test
         }
 
         [TestMethod]
+        public void SetAuthorizationMinimumTokenExpiry()
+        {
+            // Arrange
+            var serviceCollection = new TestServiceCollection();
+            var providerBuilder = serviceCollection.AddOidcProvider();
+            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            // var uri = new Uri("/authorize", UriKind.Relative);
+            var expiryTimeSpan = TimeSpan.FromMinutes(5);
+            // Act
+            providerBuilder.SetAuthorizationMinimumTokenExpiry(expiryTimeSpan);
+            providerBuilder.Build();
+            // Assert
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            Assert.IsNotNull(serviceProvider);
+            var providerOptions = serviceProvider.GetRequiredService<ProviderOptions>();
+            Assert.AreEqual(expiryTimeSpan, providerOptions.AuthorizationMinimumTokenExpiry);
+        }
+
+        [TestMethod]
         public void SetCheckSessionEndpointAddress()
         {
             // Arrange

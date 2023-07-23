@@ -168,6 +168,7 @@ namespace InHouseOidc.Provider.Handler
                     "Client does not allow authorization_code grant type"
                 );
             }
+            // Retrieve the authorization request using the authorization code
             var storedCode = await this.RequiredCodeStore.GetCode(code, CodeType.AuthorizationCode, issuer);
             if (
                 storedCode == null
