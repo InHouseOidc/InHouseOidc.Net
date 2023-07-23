@@ -157,6 +157,19 @@ namespace InHouseOidc.Provider
         }
 
         /// <summary>
+        /// Sets the minimum token expiry time allowed for the authorization code flow.  Optional (defaults to 1 minute).<br />
+        /// Prevents silent token renewal loops when approaching expiry of the session.<br />
+        /// When below the minimum time the authorization endpoint will respond with error "login_required".
+        /// </summary>
+        /// <param name="minimumExpiry">The mimimum expiry time.</param>
+        /// <returns><see cref="ProviderBuilder"/> so additional calls can be chained.</returns>
+        public ProviderBuilder SetAuthorizationMinimumTokenExpiry(TimeSpan minimumExpiry)
+        {
+            this.ProviderOptions.AuthorizationMinimumTokenExpiry = minimumExpiry;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the endpoint address to use to check session state.  Optional (defaults to "/connect/checksession")<br />
         /// See <see href="https://openid.net/specs/openid-connect-session-1_0.html#OPiframe"></see>.
         /// </summary>

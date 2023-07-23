@@ -650,5 +650,58 @@ namespace InHouseOidc.Provider.Test.Handler
                 );
             }
         }
+
+        [TestMethod]
+        public async Task HandleRequest_AuthorizationMinimumTokenExpiry()
+        {
+            // Arrange
+            var context = new DefaultHttpContext();
+            context.Request.Headers.Host = this.host;
+            context.Request.Method = "GET";
+            context.Request.Scheme = this.urlScheme;
+            context.Request.QueryString = new QueryString($"?state={this.state}");
+            var serviceCollection = new TestServiceCollection();
+            TestHelper.SetupContextClaimsPrincipal(
+                context,
+                serviceCollection,
+                true,
+                TimeSpan.Zero,
+                this.scheme,
+                this.subject,
+                this.sessionId,
+                this.utcNow,
+                TimeSpan.FromSeconds(30)
+            );
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var authorizationHandler = new AuthorizationHandler(
+                this.mockCodeStore.Object,
+                this.providerOptions,
+                serviceProvider,
+                this.mockUtcNow.Object,
+                this.mockValidationHandler.Object
+            );
+            var authorizationRequest = new AuthorizationRequest(
+                this.clientId,
+                this.redirectUri,
+                ResponseType.Code,
+                this.scope
+            )
+            {
+                Prompt = Prompt.None,
+            };
+            authorizationRequest.State = this.state;
+            this.mockValidationHandler
+                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+                .ReturnsAsync((authorizationRequest, null));
+            this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
+            // Act
+            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+                async () => await authorizationHandler.HandleRequest(context.Request)
+            );
+            // Assert
+            Assert.IsNotNull(exception);
+            Assert.AreEqual("Login required as session is near expiry", exception.LogMessage);
+            Assert.AreEqual(this.redirectUri, exception.Uri);
+        }
     }
 }
