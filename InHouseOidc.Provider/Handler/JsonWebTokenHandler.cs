@@ -4,9 +4,7 @@
 using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider.Exception;
-using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
@@ -16,19 +14,19 @@ namespace InHouseOidc.Provider.Handler
     {
         private readonly ProviderOptions providerOptions;
         private readonly IResourceStore resourceStore;
-        private readonly IServiceProvider serviceProvider;
+        private readonly ISigningKeyHandler signingKeyHandler;
         private readonly IUtcNow utcNow;
 
         public JsonWebTokenHandler(
             ProviderOptions providerOptions,
             IResourceStore resourceStore,
-            IServiceProvider serviceProvider,
+            ISigningKeyHandler signingKeyHandler,
             IUtcNow utcNow
         )
         {
             this.providerOptions = providerOptions;
             this.resourceStore = resourceStore;
-            this.serviceProvider = serviceProvider;
+            this.signingKeyHandler = signingKeyHandler;
             this.utcNow = utcNow;
         }
 
@@ -40,7 +38,7 @@ namespace InHouseOidc.Provider.Handler
             string? subject
         )
         {
-            var securityTokenDescriptor = this.GetSecurityTokenDescriptor(JsonWebTokenConstant.AccessTokenType);
+            var securityTokenDescriptor = await this.GetSecurityTokenDescriptor(JsonWebTokenConstant.AccessTokenType);
             var utcNow = this.utcNow.UtcNow;
             securityTokenDescriptor.Issuer = issuer;
             securityTokenDescriptor.IssuedAt = utcNow.UtcDateTime;
@@ -58,7 +56,7 @@ namespace InHouseOidc.Provider.Handler
             return handler.CreateToken(securityTokenDescriptor);
         }
 
-        public string GetIdToken(
+        public async Task<string> GetIdToken(
             AuthorizationRequest authorizationRequest,
             string clientId,
             string issuer,
@@ -67,7 +65,7 @@ namespace InHouseOidc.Provider.Handler
         )
         {
             var utcNow = this.utcNow.UtcNow;
-            var securityTokenDescriptor = this.GetSecurityTokenDescriptor(JsonWebTokenConstant.Jwt);
+            var securityTokenDescriptor = await this.GetSecurityTokenDescriptor(JsonWebTokenConstant.Jwt);
             securityTokenDescriptor.Audience = clientId;
             securityTokenDescriptor.IssuedAt = utcNow.UtcDateTime.AddSeconds(-1);
             securityTokenDescriptor.Issuer = issuer;
@@ -178,12 +176,12 @@ namespace InHouseOidc.Provider.Handler
             return new List<Claim>();
         }
 
-        private SecurityTokenDescriptor GetSecurityTokenDescriptor(string tokenType)
+        private async Task<SecurityTokenDescriptor> GetSecurityTokenDescriptor(string tokenType)
         {
             // Filter out not-before and expired, sort so longest expiry period appears first
             var utcNow = this.utcNow.UtcNow;
-            var signingKey = this.providerOptions.SigningKeys
-                .Resolve(this.serviceProvider)
+            var signingKeys = await this.signingKeyHandler.Resolve();
+            var signingKey = signingKeys
                 .Where(sk => sk.NotAfter >= utcNow && sk.NotBefore <= utcNow)
                 .OrderByDescending(sk => (sk.NotAfter - utcNow).TotalSeconds)
                 .FirstOrDefault();

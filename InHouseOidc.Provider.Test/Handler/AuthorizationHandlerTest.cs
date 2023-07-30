@@ -300,8 +300,8 @@ namespace InHouseOidc.Provider.Test.Handler
             )
             {
                 Prompt = Prompt.Login,
+                State = this.state,
             };
-            authorizationRequest.State = this.state;
             this.mockValidationHandler
                 .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
                 .ReturnsAsync((authorizationRequest, null));
@@ -363,8 +363,8 @@ namespace InHouseOidc.Provider.Test.Handler
             )
             {
                 Prompt = Prompt.None,
+                State = this.state,
             };
-            authorizationRequest.State = this.state;
             this.mockValidationHandler
                 .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
                 .ReturnsAsync((authorizationRequest, null));
@@ -415,8 +415,8 @@ namespace InHouseOidc.Provider.Test.Handler
             )
             {
                 Prompt = Prompt.NotSpecified,
+                State = this.state,
             };
-            authorizationRequest.State = this.state;
             this.mockValidationHandler
                 .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
                 .ReturnsAsync((authorizationRequest, null));
@@ -469,8 +469,8 @@ namespace InHouseOidc.Provider.Test.Handler
             )
             {
                 MaxAge = isAgePassed ? 60 : 120,
+                State = this.state,
             };
-            authorizationRequest.State = this.state;
             this.mockValidationHandler
                 .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
                 .ReturnsAsync((authorizationRequest, null));
@@ -559,7 +559,7 @@ namespace InHouseOidc.Provider.Test.Handler
             };
             this.mockValidationHandler
                 .Setup(m => m.ValidateJsonWebToken(null, issuer, jwt, true))
-                .Returns(issueValidJwt ? tokenClaimsPrincipal : null);
+                .ReturnsAsync(issueValidJwt ? tokenClaimsPrincipal : null);
             authorizationRequest.State = this.state;
             this.mockValidationHandler
                 .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
@@ -688,8 +688,8 @@ namespace InHouseOidc.Provider.Test.Handler
             )
             {
                 Prompt = Prompt.None,
+                State = this.state,
             };
-            authorizationRequest.State = this.state;
             this.mockValidationHandler
                 .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
                 .ReturnsAsync((authorizationRequest, null));

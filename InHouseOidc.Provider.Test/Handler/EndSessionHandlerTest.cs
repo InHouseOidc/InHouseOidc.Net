@@ -229,7 +229,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 );
                 this.mockValidationHandler
                     .Setup(m => m.ValidateJsonWebToken(null, issuer, jwt, false))
-                    .Returns(issueValidJwt.Value ? tokenClaimsPrincipal : null);
+                    .ReturnsAsync(issueValidJwt.Value ? tokenClaimsPrincipal : null);
             }
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var storedCodeCaptured = (StoredCode?)null;

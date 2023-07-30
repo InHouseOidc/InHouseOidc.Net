@@ -25,6 +25,7 @@ namespace InHouseOidc.Provider.Type
         public string LoginPath { get; set; } = ProviderConstant.LoginPath;
         public string LogoutPath { get; set; } = ProviderConstant.LogoutPath;
         public List<SigningKey> SigningKeys { get; set; } = new();
+        public TimeSpan StoreSigningKeyExpiry { get; set; } = TimeSpan.FromHours(12);
         public Uri TokenEndpointUri { get; set; } = new Uri(ProviderConstant.TokenPath, UriKind.Relative);
         public List<string> TokenEndpointAuthMethods { get; } =
             new(new[] { DiscoveryConstant.ClientSecretPost, DiscoveryConstant.ClientSecretBasic });

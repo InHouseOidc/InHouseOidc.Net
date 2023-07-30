@@ -110,7 +110,7 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             this.mockValidationHandler
                 .Setup(m => m.ValidateJsonWebToken(null, issuer, accessToken, true))
-                .Returns(tokenClaimsPrincipal);
+                .ReturnsAsync(tokenClaimsPrincipal);
             var address = JsonSerializer.Serialize(this.address, JsonHelper.JsonSerializerOptions);
             var email = "joe@bloggs.name";
             var name = "Joe Bloggs";
@@ -284,7 +284,7 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 this.mockValidationHandler
                     .Setup(m => m.ValidateJsonWebToken(null, issuer, accessToken, true))
-                    .Returns(accessToken == "good.token" ? tokenClaimsPrincipal : null);
+                    .ReturnsAsync(accessToken == "good.token" ? tokenClaimsPrincipal : null);
             }
             if (returnEmptyUserClaims && subject != null)
             {

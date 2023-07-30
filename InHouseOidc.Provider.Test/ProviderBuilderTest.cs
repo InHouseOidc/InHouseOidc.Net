@@ -1,7 +1,6 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using InHouseOidc.Test.Common;
@@ -317,40 +316,6 @@ namespace InHouseOidc.Provider.Test
         }
 
         [TestMethod]
-        public void SetSigningCertificates_NoPrivateKey()
-        {
-            // Arrange
-            var serviceCollection = new TestServiceCollection();
-            var providerBuilder = serviceCollection.AddOidcProvider();
-            // Act
-            var exception = Assert.ThrowsException<InternalErrorException>(
-                () =>
-                    providerBuilder.SetSigningCertificates(
-                        new[] { TestCertificate.CreatePublicOnly(DateTimeOffset.UtcNow) }
-                    )
-            );
-            // Assert
-            StringAssert.Contains(exception.LogMessage, "must include a private key");
-        }
-
-        [TestMethod]
-        public void SetSigningCertificates_NotRS256()
-        {
-            // Arrange
-            var serviceCollection = new TestServiceCollection();
-            var providerBuilder = serviceCollection.AddOidcProvider();
-            // Act
-            var exception = Assert.ThrowsException<InternalErrorException>(
-                () =>
-                    providerBuilder.SetSigningCertificates(
-                        new[] { TestCertificate.CreateNonRS256(DateTimeOffset.UtcNow) }
-                    )
-            );
-            // Assert
-            StringAssert.Contains(exception.LogMessage, "must support RS256 algorithm");
-        }
-
-        [TestMethod]
         public void SetSigningCertificates_Success()
         {
             // Arrange
@@ -364,6 +329,22 @@ namespace InHouseOidc.Provider.Test
             Assert.IsNotNull(serviceProvider);
             var providerOptions = serviceProvider.GetRequiredService<ProviderOptions>();
             Assert.AreEqual(1, providerOptions.SigningKeys.Count);
+        }
+
+        [TestMethod]
+        public void SetStoreSigningCertificateExpiry_Success()
+        {
+            // Arrange
+            var serviceCollection = new TestServiceCollection();
+            var providerBuilder = serviceCollection.AddOidcProvider();
+            // Act
+            providerBuilder.SetStoreSigningCertificateExpiry(TimeSpan.FromMinutes(1));
+            providerBuilder.Build();
+            // Assert
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            Assert.IsNotNull(serviceProvider);
+            var providerOptions = serviceProvider.GetRequiredService<ProviderOptions>();
+            Assert.AreEqual(1, providerOptions.StoreSigningKeyExpiry.Minutes);
         }
 
         [TestMethod]

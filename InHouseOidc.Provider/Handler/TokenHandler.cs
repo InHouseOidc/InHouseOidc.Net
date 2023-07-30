@@ -55,14 +55,12 @@ namespace InHouseOidc.Provider.Handler
                 );
             }
             // Parse the form post body
-            var formDictionary = await httpRequest.GetFormDictionary();
-            if (formDictionary == null)
-            {
-                throw new BadRequestException(
+            var formDictionary =
+                await httpRequest.GetFormDictionary()
+                ?? throw new BadRequestException(
                     ProviderConstant.InvalidContentType,
                     "Token request used invalid content type"
                 );
-            }
             // Handle according to grant type
             if (!formDictionary.TryGetValue(TokenEndpointConstant.GrantType, out var grantType))
             {
@@ -190,19 +188,14 @@ namespace InHouseOidc.Provider.Handler
                     "Authorisation code not found, expired, or already consumed"
                 );
             }
-            var authorizationRequest = JsonSerializer.Deserialize<AuthorizationRequest>(
-                storedCode.Content,
-                JsonHelper.JsonSerializerOptions
-            );
-            if (authorizationRequest == null)
-            {
-                throw this.AuthorizationBadRequest(
+            var authorizationRequest =
+                JsonSerializer.Deserialize<AuthorizationRequest>(storedCode.Content, JsonHelper.JsonSerializerOptions)
+                ?? throw this.AuthorizationBadRequest(
                     issuer,
                     code,
                     ProviderConstant.InvalidRequest,
                     "Unable to deserialize persisted authorisation request"
                 );
-            }
             // Check the redirect_uris match the request
             if (
                 !formDictionary.TryGetValue(TokenEndpointConstant.RedirectUri, out var redirectUri)
@@ -306,7 +299,7 @@ namespace InHouseOidc.Provider.Handler
                 requestedScopes,
                 storedCode.Subject
             );
-            var idToken = this.jsonWebTokenHandler.GetIdToken(
+            var idToken = await this.jsonWebTokenHandler.GetIdToken(
                 authorizationRequest,
                 clientValidate.ClientId,
                 issuer,
@@ -444,15 +437,13 @@ namespace InHouseOidc.Provider.Handler
             {
                 throw new BadRequestException(ProviderConstant.InvalidClient, "Token request missing client_id");
             }
-            var client = await this.clientStore.GetClient(clientId);
-            if (client == null)
-            {
-                throw new BadRequestException(
+            var client =
+                await this.clientStore.GetClient(clientId)
+                ?? throw new BadRequestException(
                     ProviderConstant.InvalidClient,
                     "Unknown client id: {clientId}",
                     clientId
                 );
-            }
             // Check grant type
             if (client.GrantTypes == null)
             {
@@ -479,17 +470,12 @@ namespace InHouseOidc.Provider.Handler
                 }
                 throw new BadRequestException(ProviderConstant.InvalidRequest, "Refresh token not found or expired");
             }
-            var refreshTokenRequest = JsonSerializer.Deserialize<RefreshTokenRequest>(
-                storedCode.Content,
-                JsonHelper.JsonSerializerOptions
-            );
-            if (refreshTokenRequest == null)
-            {
-                throw new BadRequestException(
+            var refreshTokenRequest =
+                JsonSerializer.Deserialize<RefreshTokenRequest>(storedCode.Content, JsonHelper.JsonSerializerOptions)
+                ?? throw new BadRequestException(
                     ProviderConstant.InvalidRequest,
                     "Unable to deserialize persisted refresh token request"
                 );
-            }
             // Check client id matches
             if (refreshTokenRequest.ClientId != clientId)
             {

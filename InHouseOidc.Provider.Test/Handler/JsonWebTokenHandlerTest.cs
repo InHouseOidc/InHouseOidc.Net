@@ -8,7 +8,6 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using InHouseOidc.Test.Common;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -50,10 +49,9 @@ namespace InHouseOidc.Provider.Test.Handler
             TimeSpan.Zero
         ).ToUniversalTime();
         private readonly Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler handler = new();
-
         private ProviderOptions providerOptions = new();
         private Mock<IResourceStore> mockResourceStore = new(MockBehavior.Strict);
-        private ServiceProvider serviceProvider = new TestServiceCollection().BuildServiceProvider();
+        private Mock<ISigningKeyHandler> mockSigningKeyHandler = new(MockBehavior.Strict);
 
         [TestInitialize]
         public void Initialise()
@@ -61,6 +59,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.providerOptions = new();
             this.mockResourceStore = new Mock<IResourceStore>(MockBehavior.Strict);
             this.mockResourceStore.Setup(m => m.GetAudiences(this.scopes)).ReturnsAsync(this.audiences);
+            this.mockSigningKeyHandler = new Mock<ISigningKeyHandler>(MockBehavior.Strict);
             this.mockUtcNow.Setup(m => m.UtcNow).Returns(this.utcNow);
         }
 
@@ -72,11 +71,11 @@ namespace InHouseOidc.Provider.Test.Handler
             // Arrange
             var x509SecurityKey = new X509SecurityKey(TestCertificate.Create(this.utcNow));
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-            this.providerOptions.SigningKeys.Add(signingKey);
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(new List<SigningKey> { signingKey });
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
-                this.serviceProvider,
+                this.mockSigningKeyHandler.Object,
                 this.mockUtcNow.Object
             );
             // Act
@@ -114,16 +113,16 @@ namespace InHouseOidc.Provider.Test.Handler
         [DataTestMethod]
         [DataRow("onlyonce", "pwd", "superuser")]
         [DataRow(null, null, null)]
-        public void GetIdToken_Success(string? nonce, string? amr, string? role)
+        public async Task GetIdToken_Success(string? nonce, string? amr, string? role)
         {
             // Arrange
             var x509SecurityKey = new X509SecurityKey(TestCertificate.Create(this.utcNow));
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-            this.providerOptions.SigningKeys.Add(signingKey);
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(new List<SigningKey> { signingKey });
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
-                this.serviceProvider,
+                this.mockSigningKeyHandler.Object,
                 this.mockUtcNow.Object
             );
             var address =
@@ -183,7 +182,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 );
             }
             // Act
-            var result = jsonWebTokenHandler.GetIdToken(
+            var result = await jsonWebTokenHandler.GetIdToken(
                 authorizationRequest,
                 this.clientId,
                 this.issuer,
@@ -225,14 +224,18 @@ namespace InHouseOidc.Provider.Test.Handler
         [DataTestMethod]
         [DataRow(false, false, "AuthorizationRequest has no value for SessionExpiryUtc")]
         [DataRow(true, true, "Unable to resolve signing credentials for JWT")]
-        public void GetIdToken_Exceptions(bool setExpiry, bool setExpiredCertificate, string expectedExceptionMessage)
+        public async Task GetIdToken_Exceptions(
+            bool setExpiry,
+            bool setExpiredCertificate,
+            string expectedExceptionMessage
+        )
         {
             // Arrange
             var x509SecurityKey = new X509SecurityKey(
                 setExpiredCertificate ? TestCertificate.CreateExpired(this.utcNow) : TestCertificate.Create(this.utcNow)
             );
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-            this.providerOptions.SigningKeys.Add(signingKey);
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(new List<SigningKey> { signingKey });
             var scopes = new List<string> { JsonWebTokenConstant.Email };
             var authorizationRequest = new AuthorizationRequest(
                 this.clientId,
@@ -262,11 +265,11 @@ namespace InHouseOidc.Provider.Test.Handler
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
-                this.serviceProvider,
+                this.mockSigningKeyHandler.Object,
                 this.mockUtcNow.Object
             );
             // Act
-            var exception = Assert.ThrowsException<InternalErrorException>(
+            var exception = await Assert.ThrowsExceptionAsync<InternalErrorException>(
                 () =>
                     jsonWebTokenHandler.GetIdToken(
                         authorizationRequest,
@@ -282,31 +285,30 @@ namespace InHouseOidc.Provider.Test.Handler
         }
 
         [TestMethod]
-        public void SelectOptimalSigningKey()
+        public async Task SelectOptimalSigningKey()
         {
             // Arrange
             var signingKey = new SigningCredentials(
                 new X509SecurityKey(TestCertificate.Create(this.utcNow)),
                 SecurityAlgorithms.RsaSha256
             ).ToSigningKey();
-            this.providerOptions.SigningKeys.AddRange(
-                new List<SigningKey>
-                {
-                    new SigningCredentials(
-                        new X509SecurityKey(TestCertificate.CreateExpired(this.utcNow)),
-                        SecurityAlgorithms.RsaSha256
-                    ).ToSigningKey(),
-                    new SigningCredentials(
-                        new X509SecurityKey(TestCertificate.CreateNearExpired(this.utcNow)),
-                        SecurityAlgorithms.RsaSha256
-                    ).ToSigningKey(),
-                    new SigningCredentials(
-                        new X509SecurityKey(TestCertificate.CreateNotReady(this.utcNow)),
-                        SecurityAlgorithms.RsaSha256
-                    ).ToSigningKey(),
-                    signingKey,
-                }
-            );
+            var signingKeys = new List<SigningKey>
+            {
+                new SigningCredentials(
+                    new X509SecurityKey(TestCertificate.CreateExpired(this.utcNow)),
+                    SecurityAlgorithms.RsaSha256
+                ).ToSigningKey(),
+                new SigningCredentials(
+                    new X509SecurityKey(TestCertificate.CreateNearExpired(this.utcNow)),
+                    SecurityAlgorithms.RsaSha256
+                ).ToSigningKey(),
+                new SigningCredentials(
+                    new X509SecurityKey(TestCertificate.CreateNotReady(this.utcNow)),
+                    SecurityAlgorithms.RsaSha256
+                ).ToSigningKey(),
+                signingKey,
+            };
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(signingKeys);
             var scopes = new List<string> { JsonWebTokenConstant.Email };
             var authorizationRequest = new AuthorizationRequest(
                 this.clientId,
@@ -333,11 +335,11 @@ namespace InHouseOidc.Provider.Test.Handler
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
-                this.serviceProvider,
+                this.mockSigningKeyHandler.Object,
                 this.mockUtcNow.Object
             );
             // Act
-            var result = jsonWebTokenHandler.GetIdToken(
+            var result = await jsonWebTokenHandler.GetIdToken(
                 authorizationRequest,
                 this.clientId,
                 this.issuer,

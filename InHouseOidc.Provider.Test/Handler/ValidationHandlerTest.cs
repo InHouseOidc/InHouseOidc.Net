@@ -33,6 +33,8 @@ namespace InHouseOidc.Provider.Test.Handler
         private readonly string state = "somevalue";
 
         private Mock<IClientStore> mockClientStore = new(MockBehavior.Strict);
+        private Mock<ISigningKeyHandler> mockSigningKeyHandler = new(MockBehavior.Strict);
+        private Mock<IUtcNow> mockUtcNow = new(MockBehavior.Strict);
         private ProviderOptions providerOptions = new();
         private ServiceProvider serviceProvider = new TestServiceCollection().BuildServiceProvider();
 
@@ -52,7 +54,8 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockClientStore.Object,
                 this.logger,
                 this.providerOptions,
-                this.serviceProvider
+                this.mockSigningKeyHandler.Object,
+                this.mockUtcNow.Object
             );
             var requestScope = $"openid {this.scope1}";
             var parameters = new Dictionary<string, string>
@@ -280,7 +283,8 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockClientStore.Object,
                 this.logger,
                 this.providerOptions,
-                this.serviceProvider
+                this.mockSigningKeyHandler.Object,
+                this.mockUtcNow.Object
             );
             var parameters = new Dictionary<string, string>();
             var oidcClient = new OidcClient
@@ -482,7 +486,7 @@ namespace InHouseOidc.Provider.Test.Handler
             false,
             nameof(SecurityTokenInvalidAudienceException)
         )]
-        public void ValidateJsonWebToken_Success(
+        public async Task ValidateJsonWebToken_Success(
             string checkIssuer,
             string checkAudience,
             bool checkExpiry,
@@ -496,13 +500,14 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockClientStore.Object,
                 this.logger,
                 this.providerOptions,
-                this.serviceProvider
+                this.mockSigningKeyHandler.Object,
+                this.mockUtcNow.Object
             );
             var issuer = "https://localhost";
             var audience = "something.interested";
             var x509SecurityKey = new X509SecurityKey(TestCertificate.Create(DateTimeOffset.UtcNow));
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-            this.providerOptions.SigningKeys.Add(signingKey);
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(new List<SigningKey> { signingKey });
             this.providerOptions.LogFailuresAsInformation = logAsInformation;
             var utcNow = DateTimeOffset.UtcNow;
             var expiry = utcNow.AddMinutes(isExpired ? -5 : 5);
@@ -520,7 +525,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var jsonWebTokenHandler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
             var jwt = jsonWebTokenHandler.CreateToken(securityTokenDescriptor);
             // Act
-            var result = handler.ValidateJsonWebToken(checkAudience, checkIssuer, jwt, checkExpiry);
+            var result = await handler.ValidateJsonWebToken(checkAudience, checkIssuer, jwt, checkExpiry);
             // Assert
             if (string.IsNullOrEmpty(exceptionType))
             {

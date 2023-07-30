@@ -7,7 +7,6 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Security.Claims;
 
 namespace InHouseOidc.Provider.Handler
@@ -17,19 +16,22 @@ namespace InHouseOidc.Provider.Handler
         private readonly IClientStore clientStore;
         private readonly ILogger<ValidationHandler> logger;
         private readonly ProviderOptions providerOptions;
-        private readonly IServiceProvider serviceProvider;
+        private readonly ISigningKeyHandler signingKeyHandler;
+        private readonly IUtcNow utcNow;
 
         public ValidationHandler(
             IClientStore clientStore,
             ILogger<ValidationHandler> logger,
             ProviderOptions providerOptions,
-            IServiceProvider serviceProvider
+            ISigningKeyHandler signingKeyHandler,
+            IUtcNow utcNow
         )
         {
             this.clientStore = clientStore;
             this.logger = logger;
             this.providerOptions = providerOptions;
-            this.serviceProvider = serviceProvider;
+            this.signingKeyHandler = signingKeyHandler;
+            this.utcNow = utcNow;
         }
 
         public async Task<(AuthorizationRequest?, RedirectError?)> ParseValidateAuthorizationRequest(
@@ -305,15 +307,19 @@ namespace InHouseOidc.Provider.Handler
             return (authorizationRequest, null);
         }
 
-        public ClaimsPrincipal? ValidateJsonWebToken(string? audience, string issuer, string jwt, bool validateLifetime)
+        public async Task<ClaimsPrincipal?> ValidateJsonWebToken(
+            string? audience,
+            string issuer,
+            string jwt,
+            bool validateLifetime
+        )
         {
-            var signingKeys = this.providerOptions.SigningKeys
-                .Resolve(this.serviceProvider)
-                .Select(s => s.X509SecurityKey);
+            var signingKeys = await this.signingKeyHandler.Resolve();
+            var securityKeys = signingKeys.Select(s => s.X509SecurityKey);
             var handler = new Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler();
             var tokenValidationParameters = new TokenValidationParameters
             {
-                IssuerSigningKeys = signingKeys.Where(s => s != null),
+                IssuerSigningKeys = securityKeys.Where(s => s != null),
                 ValidIssuer = issuer,
                 ValidateAudience = !string.IsNullOrEmpty(audience),
                 ValidAudience = audience,
