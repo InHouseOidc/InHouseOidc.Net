@@ -99,7 +99,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 : null;
             this.mockValidationHandler
                 .Setup(m => m.ValidateJsonWebToken(Audience, $"https://{issuer}", token, true))
-                .Returns(validationResult);
+                .ReturnsAsync(validationResult);
             // Act
             var result = await this.apiAuthenticationHandler.AuthenticateAsync();
             // Assert

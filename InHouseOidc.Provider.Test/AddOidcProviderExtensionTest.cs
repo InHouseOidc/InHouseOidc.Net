@@ -1,6 +1,7 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
+using InHouseOidc.Common;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Test.Common;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,10 +30,12 @@ namespace InHouseOidc.Provider.Test
             providerBuilder.Build();
             // Assert
             var serviceProvider = serviceCollection.BuildServiceProvider();
+            _ = serviceProvider.GetRequiredService<IAsyncLock<SigningKeyHandler>>();
             _ = serviceProvider.GetRequiredService<IEndpointHandler<DiscoveryHandler>>();
             _ = serviceProvider.GetRequiredService<IEndpointHandler<JsonWebKeySetHandler>>();
             _ = serviceProvider.GetRequiredService<IJsonWebTokenHandler>();
             _ = serviceProvider.GetRequiredService<ProviderAuthenticationHandler>();
+            _ = serviceProvider.GetRequiredService<ISigningKeyHandler>();
             _ = serviceProvider.GetRequiredService<IEndpointHandler<TokenHandler>>();
             _ = serviceProvider.GetRequiredService<IValidationHandler>();
         }

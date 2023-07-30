@@ -60,7 +60,7 @@ namespace InHouseOidc.Provider.Handler
             ClaimsPrincipal? tokenPrincipal = null;
             if (idTokenHint != null)
             {
-                tokenPrincipal = this.validationHandler.ValidateJsonWebToken(null, issuer, idTokenHint, false);
+                tokenPrincipal = await this.validationHandler.ValidateJsonWebToken(null, issuer, idTokenHint, false);
                 if (tokenPrincipal == null)
                 {
                     throw this.EndSessionError(httpRequest, "Invalid id token hint");

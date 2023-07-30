@@ -3,7 +3,6 @@
 
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Type;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
 
@@ -11,34 +10,6 @@ namespace InHouseOidc.Provider.Extension
 {
     internal static class ListSigningKeyExtension
     {
-        public static List<SigningKey> Resolve(this List<SigningKey> listSigningKey, IServiceProvider serviceProvider)
-        {
-            if (!listSigningKey.Any())
-            {
-                lock (listSigningKey)
-                {
-                    if (!listSigningKey.Any())
-                    {
-                        var certificateStore = serviceProvider.GetService<ICertificateStore>();
-                        if (certificateStore != null)
-                        {
-                            listSigningKey.StoreSigningKeys(
-                                certificateStore.GetSigningCertificates().GetAwaiter().GetResult()
-                            );
-                        }
-                        if (!listSigningKey.Any())
-                        {
-                            throw new InternalErrorException(
-                                "No signing keys available.  Set via ProviderBuilder.SetSigningCertificates"
-                                    + " or implement ICertificateStore.GetSigningCertificates"
-                            );
-                        }
-                    }
-                }
-            }
-            return listSigningKey;
-        }
-
         public static void StoreSigningKeys(
             this List<SigningKey> listSigningKey,
             IEnumerable<X509Certificate2> x509Certificate2s

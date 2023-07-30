@@ -14,7 +14,7 @@ namespace InHouseOidc.Provider.Handler
             List<string> scopes,
             string? subject
         );
-        string GetIdToken(
+        Task<string> GetIdToken(
             AuthorizationRequest authorizationRequest,
             string clientId,
             string issuer,

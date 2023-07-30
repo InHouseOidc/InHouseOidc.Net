@@ -5,22 +5,18 @@ using InHouseOidc.Common;
 using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
-using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 
 namespace InHouseOidc.Provider.Handler
 {
     internal class JsonWebKeySetHandler : IEndpointHandler<JsonWebKeySetHandler>
     {
-        private readonly ProviderOptions providerOptions;
-        private readonly IServiceProvider serviceProvider;
+        private readonly ISigningKeyHandler signingKeyHandler;
 
-        public JsonWebKeySetHandler(ProviderOptions providerOptions, IServiceProvider serviceProvider)
+        public JsonWebKeySetHandler(ISigningKeyHandler signingKeyHandler)
         {
-            this.providerOptions = providerOptions;
-            this.serviceProvider = serviceProvider;
+            this.signingKeyHandler = signingKeyHandler;
         }
 
         public async Task<bool> HandleRequest(HttpRequest httpRequest)
@@ -40,7 +36,7 @@ namespace InHouseOidc.Provider.Handler
             utf8JsonWriter.WriteStartObject();
             utf8JsonWriter.WritePropertyName(JsonWebKeySetConstant.Keys);
             utf8JsonWriter.WriteStartArray();
-            foreach (var signingKey in this.providerOptions.SigningKeys.Resolve(this.serviceProvider))
+            foreach (var signingKey in await this.signingKeyHandler.Resolve())
             {
                 // Write the signing key to the json array
                 utf8JsonWriter.WriteStartObject();

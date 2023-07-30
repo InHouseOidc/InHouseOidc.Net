@@ -29,7 +29,7 @@ namespace InHouseOidc.Provider.Handler
             this.validationHandler = validationHandler;
         }
 
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             // Check for the bearer authorisation header
             string authorisationHeader = this.Request.Headers[ApiConstant.Authorization];
@@ -38,16 +38,16 @@ namespace InHouseOidc.Provider.Handler
                 || !authorisationHeader.StartsWith(ApiConstant.Bearer, StringComparison.InvariantCultureIgnoreCase)
             )
             {
-                return Task.FromResult(AuthenticateResult.NoResult());
+                return AuthenticateResult.NoResult();
             }
             // Validate the token
             var token = authorisationHeader[ApiConstant.Bearer.Length..];
             if (token.Trim().Length == 0)
             {
-                return Task.FromResult(AuthenticateResult.NoResult());
+                return AuthenticateResult.NoResult();
             }
             var issuer = this.Request.GetBaseUriString();
-            var claimsPrincipal = this.validationHandler.ValidateJsonWebToken(
+            var claimsPrincipal = await this.validationHandler.ValidateJsonWebToken(
                 this.apiAuthenticationOptions.Audience,
                 issuer,
                 token,
@@ -55,11 +55,11 @@ namespace InHouseOidc.Provider.Handler
             );
             if (claimsPrincipal == null)
             {
-                return Task.FromResult(AuthenticateResult.NoResult());
+                return AuthenticateResult.NoResult();
             }
             // Return a ticket
             var authenticationTicket = new AuthenticationTicket(claimsPrincipal, this.Scheme.Name);
-            return Task.FromResult(AuthenticateResult.Success(authenticationTicket));
+            return AuthenticateResult.Success(authenticationTicket);
         }
     }
 }

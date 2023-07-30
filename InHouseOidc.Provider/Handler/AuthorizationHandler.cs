@@ -148,7 +148,7 @@ namespace InHouseOidc.Provider.Handler
             var issuer = httpRequest.GetBaseUriString();
             if (authorizationRequest.IdTokenHint != null)
             {
-                var tokenPrincipal = this.validationHandler.ValidateJsonWebToken(
+                var tokenPrincipal = await this.validationHandler.ValidateJsonWebToken(
                     null,
                     issuer,
                     authorizationRequest.IdTokenHint,

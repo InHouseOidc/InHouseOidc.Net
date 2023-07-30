@@ -11,6 +11,6 @@ namespace InHouseOidc.Provider.Handler
         Task<(AuthorizationRequest?, RedirectError?)> ParseValidateAuthorizationRequest(
             Dictionary<string, string> parameters
         );
-        ClaimsPrincipal? ValidateJsonWebToken(string? audience, string issuer, string jwt, bool validateLifetime);
+        Task<ClaimsPrincipal?> ValidateJsonWebToken(string? audience, string issuer, string jwt, bool validateLifetime);
     }
 }

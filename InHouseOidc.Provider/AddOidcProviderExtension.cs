@@ -21,10 +21,12 @@ namespace InHouseOidc.Provider
             serviceCollection.AddOptions();
             serviceCollection.AddLogging();
             serviceCollection.AddHttpContextAccessor();
+            serviceCollection.AddSingleton(typeof(IAsyncLock<>), typeof(AsyncLock<>));
             serviceCollection.AddScoped<IEndpointHandler<DiscoveryHandler>, DiscoveryHandler>();
             serviceCollection.AddScoped<IEndpointHandler<JsonWebKeySetHandler>, JsonWebKeySetHandler>();
             serviceCollection.AddSingleton<IJsonWebTokenHandler, JsonWebTokenHandler>();
             serviceCollection.AddScoped<ProviderAuthenticationHandler>();
+            serviceCollection.AddSingleton<ISigningKeyHandler, SigningKeyHandler>();
             serviceCollection.AddScoped<IEndpointHandler<TokenHandler>, TokenHandler>();
             serviceCollection.AddSingleton<IValidationHandler, ValidationHandler>();
             serviceCollection.AddSingleton<IUtcNow, UtcNow>();

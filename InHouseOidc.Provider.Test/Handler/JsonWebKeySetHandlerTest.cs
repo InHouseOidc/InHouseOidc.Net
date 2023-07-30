@@ -8,10 +8,11 @@ using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using InHouseOidc.Test.Common;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -23,23 +24,12 @@ namespace InHouseOidc.Provider.Test.Handler
     {
         private readonly string host = "localhost";
         private readonly string urlScheme = "https";
+        private Mock<ISigningKeyHandler> mockSigningKeyHandler = new(MockBehavior.Strict);
 
         [DataTestMethod]
-        [DataRow(
-            "GET",
-            false,
-            null,
-            "No signing keys available.  Set via ProviderBuilder.SetSigningCertificates"
-                + " or implement ICertificateStore.GetSigningCertificates"
-        )]
-        [DataRow("GET", true, null, null)]
-        [DataRow("POST", false, "HttpMethod not supported: {method}", null)]
-        public async Task HandleRequest(
-            string method,
-            bool setKeys,
-            string? expectedBadRequestExceptionMessage,
-            string? expectedInternalErrorExceptionMessage
-        )
+        [DataRow("GET", true, null)]
+        [DataRow("POST", false, "HttpMethod not supported: {method}")]
+        public async Task HandleRequest(string method, bool setKeys, string? expectedBadRequestExceptionMessage)
         {
             // Arrange
             var context = new DefaultHttpContext();
@@ -47,23 +37,19 @@ namespace InHouseOidc.Provider.Test.Handler
             context.Request.Method = method;
             context.Request.Scheme = this.urlScheme;
             context.Response.Body = new MemoryStream();
-            var providerOptions = new ProviderOptions();
             var signingKey = (SigningKey?)null;
             var utcNow = new DateTimeOffset(2022, 6, 6, 14, 58, 00, TimeSpan.Zero).ToUniversalTime();
+            var signingKeys = new List<SigningKey>();
             if (setKeys)
             {
                 var x509SecurityKey = new X509SecurityKey(TestCertificate.Create(utcNow));
                 signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-                providerOptions.SigningKeys.Add(signingKey);
+                signingKeys.Add(signingKey);
             }
-            var serviceCollection = new TestServiceCollection();
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var jsonWebKeySetHandler = new JsonWebKeySetHandler(providerOptions, serviceProvider);
+            var jsonWebKeySetHandler = new JsonWebKeySetHandler(this.mockSigningKeyHandler.Object);
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(signingKeys);
             // Act/Assert
-            if (
-                string.IsNullOrEmpty(expectedBadRequestExceptionMessage)
-                && string.IsNullOrEmpty(expectedInternalErrorExceptionMessage)
-            )
+            if (string.IsNullOrEmpty(expectedBadRequestExceptionMessage))
             {
                 var result = await jsonWebKeySetHandler.HandleRequest(context.Request);
                 Assert.IsTrue(result);
@@ -90,14 +76,6 @@ namespace InHouseOidc.Provider.Test.Handler
                 );
                 Assert.IsNotNull(exception);
                 Assert.AreEqual(expectedBadRequestExceptionMessage, exception.LogMessage);
-            }
-            else if (!string.IsNullOrEmpty(expectedInternalErrorExceptionMessage))
-            {
-                var exception = await Assert.ThrowsExceptionAsync<InternalErrorException>(
-                    async () => await jsonWebKeySetHandler.HandleRequest(context.Request)
-                );
-                Assert.IsNotNull(exception);
-                Assert.AreEqual(expectedInternalErrorExceptionMessage, exception.LogMessage);
             }
         }
 

@@ -242,6 +242,20 @@ namespace InHouseOidc.Provider
         }
 
         /// <summary>
+        /// Sets the expiry time for any signing certificate(s) loaded from the certificate store.  Optional (defaults to 12 hours).<br />
+        /// Once the expiry time has been reached certificates are automatically reloaded from the certificate store.<br />
+        /// Ensure your store has access to a replacement certificate before the last certificate reload prior to your active certificate expiry.<br />
+        /// Note:  Only certificates loaded from the <see cref="ICertificateStore"/> implementation are expired.
+        /// </summary>
+        /// <param name="certificateExpiry">The expiry time for all certificates loaded from the certificate store.</param>
+        /// <returns><see cref="ProviderBuilder"/> so additional calls can be chained.</returns>
+        public ProviderBuilder SetStoreSigningCertificateExpiry(TimeSpan certificateExpiry)
+        {
+            this.ProviderOptions.StoreSigningKeyExpiry = certificateExpiry;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the endpoint address to use to issue tokens.  Optional (defaults to "/connect/token")<br />
         /// See <see href="https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata"></see>.
         /// </summary>

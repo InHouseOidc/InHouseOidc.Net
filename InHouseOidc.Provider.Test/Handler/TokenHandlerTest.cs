@@ -18,7 +18,6 @@ using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
@@ -228,7 +227,7 @@ namespace InHouseOidc.Provider.Test.Handler
                             this.subject
                         )
                 )
-                .Returns(idToken);
+                .ReturnsAsync(idToken);
             var tokenHandler = new TokenHandler(
                 this.mockClientStore.Object,
                 this.mockJsonWebTokenHandler.Object,

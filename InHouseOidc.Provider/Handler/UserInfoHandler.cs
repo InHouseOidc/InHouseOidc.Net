@@ -50,14 +50,12 @@ namespace InHouseOidc.Provider.Handler
             if (string.IsNullOrEmpty(token) && HttpMethods.IsPost(httpRequest.Method))
             {
                 // Parse the form post body
-                var formDictionary = await httpRequest.GetFormDictionary();
-                if (formDictionary == null)
-                {
-                    throw new BadRequestException(
+                var formDictionary =
+                    await httpRequest.GetFormDictionary()
+                    ?? throw new BadRequestException(
                         ProviderConstant.InvalidContentType,
                         "User info post request used invalid content type"
                     );
-                }
                 formDictionary.TryGetValue(JsonWebTokenConstant.AccessToken, out token);
             }
             if (string.IsNullOrEmpty(token))
@@ -66,11 +64,9 @@ namespace InHouseOidc.Provider.Handler
             }
             // Validate the token
             var issuer = httpRequest.GetBaseUriString();
-            var claimsPrincipal = this.validationHandler.ValidateJsonWebToken(null, issuer, token, true);
-            if (claimsPrincipal == null)
-            {
-                throw new BadRequestException(ProviderConstant.InvalidToken, "Bearer token invalid");
-            }
+            var claimsPrincipal =
+                await this.validationHandler.ValidateJsonWebToken(null, issuer, token, true)
+                ?? throw new BadRequestException(ProviderConstant.InvalidToken, "Bearer token invalid");
             // Subject and scope claims must be included in the access token
             var subjectClaim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == JsonWebTokenClaim.Subject);
             var scopeClaims = claimsPrincipal.Claims.Where(c => c.Type == JsonWebTokenClaim.Scope).ToList();
@@ -88,11 +84,9 @@ namespace InHouseOidc.Provider.Handler
                 scopes = scopeClaims.Select(c => c.Value).ToList();
             }
             // Access the user claims
-            var claims = await this.userStore.GetUserClaims(issuer, subjectClaim.Value, scopes);
-            if (claims == null)
-            {
-                throw new BadRequestException(ProviderConstant.InvalidToken, "Unable to access user claims");
-            }
+            var claims =
+                await this.userStore.GetUserClaims(issuer, subjectClaim.Value, scopes)
+                ?? throw new BadRequestException(ProviderConstant.InvalidToken, "Unable to access user claims");
             // Include any non-standard claims returned
             var nonStandardClaims = claims.Where(c => !JsonWebTokenClaim.StandardClaims.Contains(c.Type));
             // Extract requested standard claims only
