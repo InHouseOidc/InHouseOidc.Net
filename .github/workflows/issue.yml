@@ -87,14 +87,6 @@ jobs:
       #    minimum_coverage: 100
       #    fail_below_threshold: true
           
-      - name: Make coverage badge
-        uses: action-badges/cobertura-coverage-xml-badges@0.2.1
-        with:
-          file-name: coverage.svg
-          badge-branch: badges
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
-          coverage-file-name: ./Coverage/Results/coverage.cobertura.xml
-
       - name: Archive packages
         uses: actions/upload-artifact@v3
         with:

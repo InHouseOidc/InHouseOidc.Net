@@ -16,7 +16,7 @@ namespace InHouseOidc.Api
         /// <param name="audience">The audience name for the API resource.</param>
         /// <param name="tenantProviders">The list of tuples of tenant hostnames + provider addresses to authenticate.</param>
         /// <param name="scopes">One or more valid scopes related to the audience in the OIDC Provider.</param>
-        /// <returns><see cref="IServiceCollection"/> so additional calls can be chained.</returns></returns>
+        /// <returns><see cref="IServiceCollection"/> so additional calls can be chained.</returns>
         public static IServiceCollection AddOidcMultiTenantApi(
             this IServiceCollection serviceCollection,
             string audience,
