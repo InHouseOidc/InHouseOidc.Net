@@ -1,24 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <PackageId>InHouseOidc.Common</PackageId>
-    <TargetFramework>net6.0</TargetFramework>
-    <Authors>Brent Johnson</Authors>
-    <Copyright>Copyright © Brent Johnson 2022</Copyright>
-    <Company>InHouseOidc</Company>
+    <DebugType>embedded</DebugType>
     <Description>InHouseOidc common library.</Description>
-    <RepositoryUrl>https://github.com/InHouseOidc/InHouseOidc.Net</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/InHouseOidc/InHouseOidc.Net/tree/main/InHouseOidc.Common</PackageProjectUrl>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsPackable>true</IsPackable>
+    <PackageId>InHouseOidc.Common</PackageId>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/InHouseOidc/InHouseOidc.Net/tree/main/InHouseOidc.Common</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/InHouseOidc/InHouseOidc.Net</RepositoryUrl>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

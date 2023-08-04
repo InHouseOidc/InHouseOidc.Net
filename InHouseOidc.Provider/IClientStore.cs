@@ -13,7 +13,7 @@ namespace InHouseOidc.Provider
         /// Get the OIDC client details for a client.
         /// </summary>
         /// <param name="clientId">The client identifier.</param>
-        /// <returns><see cref="OidcClient?"/> or null to indicate an inactive or unknown client.</returns>
+        /// <returns><see cref="OidcClient"/> or null to indicate an inactive or unknown client.</returns>
         Task<OidcClient?> GetClient(string clientId);
 
         /// <summary>

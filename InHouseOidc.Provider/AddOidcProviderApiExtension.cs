@@ -20,7 +20,7 @@ namespace InHouseOidc.Provider
         /// <param name="serviceCollection">The ServiceCollection being configured during startup.</param>
         /// <param name="audience">The audience name for the API resource.</param>
         /// <param name="scopes">One or more valid scopes related to the audience in the OIDC Provider.</param>
-        /// <returns><see cref="IServiceCollection"/> so additional calls can be chained.</returns></returns>
+        /// <returns><see cref="IServiceCollection"/> so additional calls can be chained.</returns>
         public static IServiceCollection AddOidcProviderApi(
             this IServiceCollection serviceCollection,
             string audience,
