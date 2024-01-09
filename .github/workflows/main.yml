@@ -2,9 +2,9 @@ name: main
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, net6 ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, net6 ]
 
 jobs:
   build:
@@ -32,7 +32,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0.301
+          dotnet-version: 6.0.320
 
       - name: Restore tools
         run: dotnet tool restore
