@@ -84,7 +84,7 @@ namespace InHouseOidc.Provider.Handler
             var queryDictionary = new Dictionary<string, string>();
             foreach (var item in queryCollection)
             {
-                queryDictionary.Add(item.Key, item.Value.First());
+                queryDictionary.Add(item.Key, item.Value.ToString());
             }
             var (_, authorizationError) = await this.validationHandler.ParseValidateAuthorizationRequest(
                 queryDictionary

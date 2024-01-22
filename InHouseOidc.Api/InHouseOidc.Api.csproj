@@ -23,7 +23,7 @@
   </ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.25" AllowedVersions="6.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.15" />
   </ItemGroup>
     
   <ItemGroup>

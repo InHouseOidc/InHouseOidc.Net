@@ -119,7 +119,7 @@ namespace InHouseOidc.Provider.Test.Handler
             // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(302, context.Response.StatusCode);
-            var location = context.Response.Headers.Location.First();
+            var location = context.Response.Headers.Location.First() ?? string.Empty;
             var redirectUri = new Uri(location);
             Assert.AreEqual(this.urlScheme, redirectUri.Scheme);
             StringAssert.StartsWith(redirectUri.OriginalString, this.redirectUri);
@@ -311,7 +311,7 @@ namespace InHouseOidc.Provider.Test.Handler
             // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(302, context.Response.StatusCode);
-            var location = context.Response.Headers.Location.First();
+            var location = context.Response.Headers.Location.First() ?? string.Empty;
             var redirectUri = new Uri(location, UriKind.Relative);
             Assert.IsNotNull(redirectUri);
             var pathQuery = location.Split('?');
@@ -481,7 +481,7 @@ namespace InHouseOidc.Provider.Test.Handler
             // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(302, context.Response.StatusCode);
-            var location = context.Response.Headers.Location.First();
+            var location = context.Response.Headers.Location.First() ?? string.Empty;
             if (isAgePassed)
             {
                 var redirectUri = new Uri(location, UriKind.Relative);

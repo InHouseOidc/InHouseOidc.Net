@@ -39,7 +39,7 @@ namespace InHouseOidc.Provider.Handler
             }
             // Check for the bearer authorisation header
             string? token = null;
-            string authorisationHeader = httpRequest.Headers[ApiConstant.Authorization];
+            string? authorisationHeader = httpRequest.Headers[ApiConstant.Authorization];
             if (
                 !string.IsNullOrEmpty(authorisationHeader)
                 && authorisationHeader.StartsWith(ApiConstant.Bearer, StringComparison.InvariantCultureIgnoreCase)

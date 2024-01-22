@@ -326,7 +326,7 @@ namespace InHouseOidc.Provider.Handler
                 ValidateIssuerSigningKey = true,
                 ValidateLifetime = validateLifetime,
             };
-            var tokenValidationResult = handler.ValidateToken(jwt, tokenValidationParameters);
+            var tokenValidationResult = await handler.ValidateTokenAsync(jwt, tokenValidationParameters);
             if (tokenValidationResult.IsValid)
             {
                 return new ClaimsPrincipal(tokenValidationResult.ClaimsIdentity);

@@ -45,7 +45,7 @@ const string audience = "certifyproviderapiresource";
 builder.Services.AddOidcProviderApi(audience, scope);
 
 // Setup OIDC Razor page client (authenticates user access to this site)
-string providerAddress = builder.Configuration["ProviderAddress"];
+string providerAddress = builder.Configuration["ProviderAddress"] ?? string.Empty;
 var clientOptions = new PageClientOptions
 {
     AccessDeniedPath = "/AccessDenied",

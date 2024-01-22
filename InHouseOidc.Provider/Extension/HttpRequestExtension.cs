@@ -57,7 +57,7 @@ namespace InHouseOidc.Provider.Extension
             var formDictionary = new Dictionary<string, string>();
             foreach (var item in formCollection)
             {
-                formDictionary.Add(item.Key, item.Value.First());
+                formDictionary.Add(item.Key, item.Value.ToString());
             }
             return formDictionary;
         }
@@ -72,7 +72,7 @@ namespace InHouseOidc.Provider.Extension
             var queryDictionary = new Dictionary<string, string>();
             foreach (var item in queryCollection)
             {
-                queryDictionary.Add(item.Key, item.Value.First());
+                queryDictionary.Add(item.Key, item.Value.ToString());
             }
             return queryDictionary;
         }

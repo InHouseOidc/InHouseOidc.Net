@@ -32,7 +32,7 @@ namespace InHouseOidc.Provider.Handler
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             // Check for the bearer authorisation header
-            string authorisationHeader = this.Request.Headers[ApiConstant.Authorization];
+            string? authorisationHeader = this.Request.Headers[ApiConstant.Authorization];
             if (
                 string.IsNullOrEmpty(authorisationHeader)
                 || !authorisationHeader.StartsWith(ApiConstant.Bearer, StringComparison.InvariantCultureIgnoreCase)

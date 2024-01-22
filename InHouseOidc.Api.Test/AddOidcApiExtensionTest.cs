@@ -5,12 +5,12 @@ using InHouseOidc.Test.Common;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.Generic;
 
 namespace InHouseOidc.Api.Test
 {
@@ -28,6 +28,13 @@ namespace InHouseOidc.Api.Test
             var serviceCollection = new TestServiceCollection();
             serviceCollection.AddSingleton(new Mock<ILoggerFactory>().Object);
             serviceCollection.AddSingleton(new Mock<ILogger<DefaultAuthorizationService>>().Object);
+            var configuration = new Mock<IConfiguration>();
+            serviceCollection.AddSingleton(configuration.Object);
+            var configurationSection = new Mock<IConfigurationSection>();
+            configurationSection.Setup(m => m.Path).Returns("Authentication");
+            configurationSection.Setup(m => m.Key).Returns("Authentication");
+            configurationSection.Setup(m => m.Value).Returns((string?)null);
+            configuration.Setup(m => m.GetSection("Authentication")).Returns(configurationSection.Object);
             // Act
             serviceCollection.AddOidcApi(providerAddress, audience, scopes);
             var serviceProvider = serviceCollection.BuildServiceProvider();
