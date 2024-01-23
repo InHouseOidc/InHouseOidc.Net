@@ -104,7 +104,8 @@ namespace InHouseOidc.Common.Extension
         {
             public HttpStatusCode StatusCode { get; private set; }
 
-            public HttpClientRetryableException(HttpStatusCode statusCode, string message) : base(message)
+            public HttpClientRetryableException(HttpStatusCode statusCode, string message)
+                : base(message)
             {
                 this.StatusCode = statusCode;
             }

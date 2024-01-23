@@ -23,7 +23,8 @@ namespace InHouseOidc.Provider.Handler
             ISystemClock systemClock,
             UrlEncoder urlEncoder,
             IValidationHandler validationHandler
-        ) : base(authenticationSchemeOptions, logger, urlEncoder, systemClock)
+        )
+            : base(authenticationSchemeOptions, logger, urlEncoder, systemClock)
         {
             this.apiAuthenticationOptions = apiAuthenticationOptions;
             this.validationHandler = validationHandler;

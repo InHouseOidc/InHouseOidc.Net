@@ -7,7 +7,8 @@ namespace InHouseOidc.Provider.Extension
 {
     internal static class EnumExtension
     {
-        public static List<string> ToStringList<T>(this List<T> values) where T : Enum
+        public static List<string> ToStringList<T>(this List<T> values)
+            where T : Enum
         {
             var type = typeof(T);
             var results = new List<string>();
@@ -26,7 +27,8 @@ namespace InHouseOidc.Provider.Extension
             return results;
         }
 
-        public static string? GetEnumMember<T>(this T value) where T : Enum
+        public static string? GetEnumMember<T>(this T value)
+            where T : Enum
         {
             var type = typeof(T);
             var memberInfo = type.GetMember(value.ToString());

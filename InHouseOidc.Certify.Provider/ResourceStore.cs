@@ -15,7 +15,7 @@ namespace InHouseOidc.Certify.Provider
             foreach (var resource in resources)
             {
                 var resourceConfig = resource.Get<ResourceConfig>();
-                this.resources.Add(resource.Key, resourceConfig.Scopes);
+                this.resources.Add(resource.Key, resourceConfig?.Scopes ?? Array.Empty<string>());
             }
         }
 

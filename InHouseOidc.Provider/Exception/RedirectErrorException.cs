@@ -17,7 +17,8 @@ namespace InHouseOidc.Provider.Exception
             string uri,
             string logMessage,
             params object[]? args
-        ) : base(logMessage, args)
+        )
+            : base(logMessage, args)
         {
             this.RedirectErrorType = redirectErrorType;
             this.Uri = uri;

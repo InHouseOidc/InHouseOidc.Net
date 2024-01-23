@@ -3,10 +3,6 @@
 
 using InHouseOidc.Common.Extension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
 
 namespace InHouseOidc.Common.Test.Extension
 {
@@ -112,7 +108,8 @@ namespace InHouseOidc.Common.Test.Extension
 
         private class WinHttpException : Exception
         {
-            public WinHttpException(string message) : base(message) { }
+            public WinHttpException(string message)
+                : base(message) { }
         }
     }
 }

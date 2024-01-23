@@ -10,5 +10,6 @@ namespace InHouseOidc.Provider.Handler
         Task<bool> HandleRequest(HttpRequest httpRequest);
     }
 
-    internal interface IEndpointHandler<THandler> : IEndpointHandler where THandler : class { }
+    internal interface IEndpointHandler<THandler> : IEndpointHandler
+        where THandler : class { }
 }

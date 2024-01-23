@@ -3,9 +3,6 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace InHouseOidc.Test.Common
 {
@@ -13,7 +10,8 @@ namespace InHouseOidc.Test.Common
     {
         public List<LogItem> LogItems { get; } = new List<LogItem>();
 
-        public IDisposable BeginScope<TState>(TState state)
+        public IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull
         {
             throw new NotImplementedException();
         }

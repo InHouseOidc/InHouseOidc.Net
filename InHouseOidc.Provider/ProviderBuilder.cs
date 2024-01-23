@@ -6,7 +6,6 @@ using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
 
 namespace InHouseOidc.Provider
