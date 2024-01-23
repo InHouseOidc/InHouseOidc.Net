@@ -41,7 +41,8 @@ namespace InHouseOidc.Common
             return false;
         }
 
-        public static T ParseEnumMember<T>(string value) where T : Enum
+        public static T ParseEnumMember<T>(string value)
+            where T : Enum
         {
             if (TryParseEnumMember<T>(value, out var enumValue))
             {

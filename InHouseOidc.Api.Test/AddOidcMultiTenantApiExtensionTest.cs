@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+using Moq;
 
 namespace InHouseOidc.Api.Test
 {
@@ -33,6 +34,13 @@ namespace InHouseOidc.Api.Test
             var scope = "tenantscope";
             var scopes = new List<string> { scope };
             var serviceCollection = new TestServiceCollection();
+            var configuration = new Mock<IConfiguration>();
+            serviceCollection.AddSingleton(configuration.Object);
+            var configurationSection = new Mock<IConfigurationSection>();
+            configurationSection.Setup(m => m.Path).Returns("Authentication");
+            configurationSection.Setup(m => m.Key).Returns("Authentication");
+            configurationSection.Setup(m => m.Value).Returns((string?)null);
+            configuration.Setup(m => m.GetSection("Authentication")).Returns(configurationSection.Object);
             // Act
             serviceCollection.AddOidcMultiTenantApi(audience, tenantProviders, scopes);
             var serviceProvider = serviceCollection.BuildServiceProvider();

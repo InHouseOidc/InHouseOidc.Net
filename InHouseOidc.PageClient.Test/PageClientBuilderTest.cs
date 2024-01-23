@@ -7,11 +7,11 @@ using InHouseOidc.Test.Common;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Net.Http;
+using Moq;
 
 namespace InHouseOidc.PageClient.Test
 {
@@ -24,6 +24,13 @@ namespace InHouseOidc.PageClient.Test
         public void Initialise()
         {
             this.serviceCollection = new();
+            var configuration = new Mock<IConfiguration>();
+            this.serviceCollection.AddSingleton(configuration.Object);
+            var configurationSection = new Mock<IConfigurationSection>();
+            configurationSection.Setup(m => m.Path).Returns("Authentication");
+            configurationSection.Setup(m => m.Key).Returns("Authentication");
+            configurationSection.Setup(m => m.Value).Returns((string?)null);
+            configuration.Setup(m => m.GetSection("Authentication")).Returns(configurationSection.Object);
         }
 
         [TestMethod]

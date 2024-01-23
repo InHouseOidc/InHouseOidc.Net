@@ -28,7 +28,8 @@ namespace InHouseOidc.Provider.Handler
             IServiceProvider serviceProvider,
             UrlEncoder urlEncoder,
             ISystemClock systemClock
-        ) : base(authenticationSchemeOptions, loggerFactory, urlEncoder, systemClock)
+        )
+            : base(authenticationSchemeOptions, loggerFactory, urlEncoder, systemClock)
         {
             this.loggerFactory = loggerFactory;
             this.providerOptions = providerOptions;

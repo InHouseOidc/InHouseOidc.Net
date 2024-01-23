@@ -23,7 +23,7 @@ namespace InHouseOidc.Certify.Provider
 
         public Login(IConfiguration configuration, IProviderSession providerSession, IUserStore userStore)
         {
-            this.issuer = configuration["ProviderAddress"];
+            this.issuer = configuration["ProviderAddress"] ?? string.Empty;
             this.providerSession = providerSession;
             this.userStore = userStore;
         }

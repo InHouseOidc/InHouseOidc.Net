@@ -16,7 +16,7 @@ namespace InHouseOidc.Certify.Provider
             var users = configuration.GetSection("UserStore").GetChildren();
             foreach (var user in users)
             {
-                var userConfig = user.Get<UserConfig>();
+                var userConfig = user.Get<UserConfig>() ?? throw new InvalidOperationException("No UserConfig found");
                 this.users.Add(user.Key, userConfig);
             }
         }

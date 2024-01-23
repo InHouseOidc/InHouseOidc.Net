@@ -23,7 +23,8 @@ namespace InHouseOidc.Provider.Handler
             ISystemClock systemClock,
             UrlEncoder urlEncoder,
             IValidationHandler validationHandler
-        ) : base(authenticationSchemeOptions, logger, urlEncoder, systemClock)
+        )
+            : base(authenticationSchemeOptions, logger, urlEncoder, systemClock)
         {
             this.apiAuthenticationOptions = apiAuthenticationOptions;
             this.validationHandler = validationHandler;
@@ -32,7 +33,7 @@ namespace InHouseOidc.Provider.Handler
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             // Check for the bearer authorisation header
-            string authorisationHeader = this.Request.Headers[ApiConstant.Authorization];
+            string? authorisationHeader = this.Request.Headers[ApiConstant.Authorization];
             if (
                 string.IsNullOrEmpty(authorisationHeader)
                 || !authorisationHeader.StartsWith(ApiConstant.Bearer, StringComparison.InvariantCultureIgnoreCase)

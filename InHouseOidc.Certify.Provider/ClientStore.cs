@@ -21,21 +21,21 @@ namespace InHouseOidc.Certify.Provider
                     (
                         new OidcClient
                         {
-                            ClientId = clientConfig.ClientId,
-                            ClientSecretRequired = !string.IsNullOrEmpty(clientConfig.ClientSecret),
-                            AccessTokenExpiry = TimeSpan.FromMinutes(clientConfig.AccessTokenExpiryMinutes ?? 0),
+                            ClientId = clientConfig?.ClientId ?? string.Empty,
+                            ClientSecretRequired = !string.IsNullOrEmpty(clientConfig?.ClientSecret ?? string.Empty),
+                            AccessTokenExpiry = TimeSpan.FromMinutes(clientConfig?.AccessTokenExpiryMinutes ?? 0),
                             GrantTypes =
-                                clientConfig.GrantTypes == null
+                                clientConfig?.GrantTypes == null
                                     ? new List<GrantType>()
                                     : clientConfig.GrantTypes
                                         .Select(gt => EnumHelper.ParseEnumMember<GrantType>(gt))
                                         .ToList(),
-                            IdentityTokenExpiry = TimeSpan.FromMinutes(clientConfig.IdentityTokenExpiryMinutes ?? 0),
-                            RedirectUris = clientConfig.RedirectUris,
-                            RedirectUrisPostLogout = clientConfig.RedirectUrisPostLogout,
-                            Scopes = clientConfig.Scopes,
+                            IdentityTokenExpiry = TimeSpan.FromMinutes(clientConfig?.IdentityTokenExpiryMinutes ?? 0),
+                            RedirectUris = clientConfig?.RedirectUris,
+                            RedirectUrisPostLogout = clientConfig?.RedirectUrisPostLogout,
+                            Scopes = clientConfig?.Scopes,
                         },
-                        clientConfig.ClientSecret
+                        clientConfig?.ClientSecret
                     )
                 );
             }

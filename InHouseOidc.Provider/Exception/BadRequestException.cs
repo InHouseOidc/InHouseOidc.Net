@@ -7,7 +7,8 @@ namespace InHouseOidc.Provider.Exception
     {
         public string Error { get; private set; }
 
-        public BadRequestException(string error, string logMessage, params object[]? args) : base(logMessage, args)
+        public BadRequestException(string error, string logMessage, params object[]? args)
+            : base(logMessage, args)
         {
             this.Error = error;
         }

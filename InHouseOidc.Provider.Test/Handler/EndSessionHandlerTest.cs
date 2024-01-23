@@ -253,7 +253,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 Assert.AreEqual(302, context.Response.StatusCode);
                 if (authenticateSuccess && (isValidPostLogoutRedirectUri ?? false) && (issueValidJwt ?? false))
                 {
-                    var location = context.Response.Headers.Location.First();
+                    var location = context.Response.Headers.Location.First() ?? string.Empty;
                     var redirectUri = new Uri(location, UriKind.Relative);
                     Assert.IsNotNull(redirectUri);
                     var pathQuery = location.Split('?');

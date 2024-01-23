@@ -5,6 +5,7 @@ namespace InHouseOidc.Provider.Exception
 {
     internal class InternalErrorException : LogMessageException
     {
-        public InternalErrorException(string logMessage, params object[]? args) : base(logMessage, args) { }
+        public InternalErrorException(string logMessage, params object[]? args)
+            : base(logMessage, args) { }
     }
 }

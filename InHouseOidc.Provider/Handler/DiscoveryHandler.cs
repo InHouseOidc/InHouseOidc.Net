@@ -3,7 +3,6 @@
 
 using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
-using InHouseOidc.Common.Extension;
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;

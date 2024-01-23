@@ -3,7 +3,6 @@
 
 using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
-using InHouseOidc.Common.Extension;
 using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
@@ -39,7 +38,7 @@ namespace InHouseOidc.Provider.Handler
             }
             // Check for the bearer authorisation header
             string? token = null;
-            string authorisationHeader = httpRequest.Headers[ApiConstant.Authorization];
+            string? authorisationHeader = httpRequest.Headers[ApiConstant.Authorization];
             if (
                 !string.IsNullOrEmpty(authorisationHeader)
                 && authorisationHeader.StartsWith(ApiConstant.Bearer, StringComparison.InvariantCultureIgnoreCase)
