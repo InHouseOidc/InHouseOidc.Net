@@ -20,11 +20,10 @@ namespace InHouseOidc.Provider.Handler
             ApiAuthenticationOptions apiAuthenticationOptions,
             IOptionsMonitor<AuthenticationSchemeOptions> authenticationSchemeOptions,
             ILoggerFactory logger,
-            ISystemClock systemClock,
             UrlEncoder urlEncoder,
             IValidationHandler validationHandler
         )
-            : base(authenticationSchemeOptions, logger, urlEncoder, systemClock)
+            : base(authenticationSchemeOptions, logger, urlEncoder)
         {
             this.apiAuthenticationOptions = apiAuthenticationOptions;
             this.validationHandler = validationHandler;

@@ -24,7 +24,7 @@ namespace InHouseOidc.Provider.Test.Handler
 
         private readonly TestLogger<ApiAuthenticationHandler> logger = new();
         private readonly Mock<ILoggerFactory> mockLoggerFactory = new();
-        private readonly Mock<ISystemClock> mockSystemClock = new(MockBehavior.Strict);
+
         private readonly Mock<IValidationHandler> mockValidationHandler = new(MockBehavior.Strict);
         private readonly ApiAuthenticationOptions apiAuthenticationOptions = new() { Audience = Audience };
 
@@ -41,7 +41,6 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.apiAuthenticationOptions,
                 mockIOptionsMonitor.Object,
                 this.mockLoggerFactory.Object,
-                this.mockSystemClock.Object,
                 UrlEncoder.Default,
                 this.mockValidationHandler.Object
             );

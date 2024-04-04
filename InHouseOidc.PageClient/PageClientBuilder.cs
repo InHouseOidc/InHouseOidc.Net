@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace InHouseOidc.PageClient
 {
@@ -84,7 +84,7 @@ namespace InHouseOidc.PageClient
             // Setup page client
             if (this.ClientOptions.PageClientOptions != null)
             {
-                JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+                JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
                 var authenticationBuilder = this.ServiceCollection.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
