@@ -30,10 +30,10 @@ namespace InHouseOidc.Common.Test.Extension
                 HttpMethod.Get,
                 uri,
                 formContent,
+                this.logger,
                 CancellationToken.None,
                 1,
-                50,
-                this.logger
+                50
             );
             // Assert
             Assert.IsNotNull(response);
@@ -55,10 +55,10 @@ namespace InHouseOidc.Common.Test.Extension
                 HttpMethod.Get,
                 uri,
                 objectContent,
+                this.logger,
                 CancellationToken.None,
                 1,
-                50,
-                this.logger
+                50
             );
             // Assert
             Assert.IsNotNull(response);
@@ -88,10 +88,10 @@ namespace InHouseOidc.Common.Test.Extension
                             HttpMethod.Get,
                             uri,
                             null,
+                            this.logger,
                             CancellationToken.None,
                             1,
-                            50,
-                            this.logger
+                            50
                         )
                 );
                 // Assert
@@ -109,10 +109,10 @@ namespace InHouseOidc.Common.Test.Extension
                     HttpMethod.Get,
                     uri,
                     null,
+                    this.logger,
                     CancellationToken.None,
                     1,
-                    50,
-                    this.logger
+                    50
                 );
                 // Assert
                 Assert.IsNotNull(response);
@@ -138,10 +138,10 @@ namespace InHouseOidc.Common.Test.Extension
                         HttpMethod.Get,
                         uri,
                         null,
+                        this.logger,
                         CancellationToken.None,
                         1,
-                        50,
-                        this.logger
+                        50
                     )
             );
             // Assert
@@ -170,10 +170,10 @@ namespace InHouseOidc.Common.Test.Extension
                         HttpMethod.Get,
                         uri,
                         null,
+                        this.logger,
                         CancellationToken.None,
                         1,
-                        50,
-                        this.logger
+                        50
                     )
             );
             // Assert

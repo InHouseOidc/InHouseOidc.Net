@@ -5,16 +5,10 @@ using InHouseOidc.Common;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class ProviderTokenHandler : IProviderToken
+    internal class ProviderTokenHandler(IJsonWebTokenHandler jsonWebTokenHandler, IUtcNow utcNow) : IProviderToken
     {
-        private readonly IJsonWebTokenHandler jsonWebTokenHandler;
-        private readonly IUtcNow utcNow;
-
-        public ProviderTokenHandler(IJsonWebTokenHandler jsonWebTokenHandler, IUtcNow utcNow)
-        {
-            this.jsonWebTokenHandler = jsonWebTokenHandler;
-            this.utcNow = utcNow;
-        }
+        private readonly IJsonWebTokenHandler jsonWebTokenHandler = jsonWebTokenHandler;
+        private readonly IUtcNow utcNow = utcNow;
 
         public async Task<string> GetProviderAccessToken(
             string clientId,

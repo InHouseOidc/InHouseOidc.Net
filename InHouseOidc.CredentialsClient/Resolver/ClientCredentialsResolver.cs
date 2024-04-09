@@ -142,10 +142,10 @@ namespace InHouseOidc.CredentialsClient.Resolver
                 HttpMethod.Post,
                 tokenEndpointUri,
                 formContent,
+                this.logger,
                 cancellationToken,
                 this.clientOptions.MaxRetryAttempts,
-                this.clientOptions.RetryDelayMilliseconds,
-                this.logger
+                this.clientOptions.RetryDelayMilliseconds
             );
             if (!response.IsSuccessStatusCode)
             {

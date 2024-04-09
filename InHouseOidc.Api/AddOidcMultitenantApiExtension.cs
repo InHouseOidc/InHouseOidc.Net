@@ -41,7 +41,7 @@ namespace InHouseOidc.Api
                             ValidateIssuer = true,
                             ValidateLifetime = true,
                             ValidateIssuerSigningKey = true,
-                            ValidAudiences = new[] { audience },
+                            ValidAudiences = [audience],
                             ValidIssuer = providerAddress,
                         };
                         options.RequireHttpsMetadata = providerAddress.StartsWith("https://");

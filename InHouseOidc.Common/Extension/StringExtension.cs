@@ -7,7 +7,7 @@ namespace InHouseOidc.Common.Extension
     {
         public static string EnsureEndsWithSlash(this string value)
         {
-            if (value.EndsWith("/"))
+            if (value.EndsWith('/'))
             {
                 return value;
             }

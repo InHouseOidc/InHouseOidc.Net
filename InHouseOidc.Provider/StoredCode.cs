@@ -3,37 +3,28 @@
 
 namespace InHouseOidc.Provider
 {
-    public class StoredCode
+    public class StoredCode(string code, CodeType codeType, string content, string issuer, string subject)
     {
-        public StoredCode(string code, CodeType codeType, string content, string issuer, string subject)
-        {
-            this.Code = code;
-            this.CodeType = codeType;
-            this.Content = content;
-            this.Issuer = issuer;
-            this.Subject = subject;
-        }
+        [StringLength(256)]
+        [Required]
+        public string Code { get; set; } = code;
 
         [StringLength(256)]
         [Required]
-        public string Code { get; set; }
-
-        [StringLength(256)]
-        [Required]
-        public CodeType CodeType { get; set; }
+        public CodeType CodeType { get; set; } = codeType;
         public int ConsumeCount { get; set; }
 
         [Required]
-        public string Content { get; set; }
+        public string Content { get; set; } = content;
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset Expiry { get; set; }
 
         [StringLength(256)]
         [Required]
-        public string Issuer { get; set; }
+        public string Issuer { get; set; } = issuer;
 
         [StringLength(256)]
         [Required]
-        public string Subject { get; set; }
+        public string Subject { get; set; } = subject;
     }
 }

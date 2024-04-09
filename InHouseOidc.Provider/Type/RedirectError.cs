@@ -35,20 +35,13 @@ namespace InHouseOidc.Provider.Type
         RequestNotSupported = 9,
     }
 
-    internal class RedirectError
+    internal class RedirectError(RedirectErrorType redirectErrorType, string logMessage, params object[]? args)
     {
-        public object[]? Args { get; private set; }
-        public RedirectErrorType RedirectErrorType { get; private set; }
-        public string LogMessage { get; private set; }
+        public object[]? Args { get; private set; } = args;
+        public RedirectErrorType RedirectErrorType { get; private set; } = redirectErrorType;
+        public string LogMessage { get; private set; } = logMessage;
         public string? RedirectUri { get; set; }
         public string? SessionState { get; set; }
         public string? State { get; set; }
-
-        public RedirectError(RedirectErrorType redirectErrorType, string logMessage, params object[]? args)
-        {
-            this.RedirectErrorType = redirectErrorType;
-            this.Args = args;
-            this.LogMessage = logMessage;
-        }
     }
 }

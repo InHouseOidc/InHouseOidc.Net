@@ -13,10 +13,10 @@ namespace InHouseOidc.Common.Extension
             HttpMethod httpMethod,
             Uri uri,
             object? content,
+            ILogger logger,
             CancellationToken cancellationToken,
             int maxRetryAttempts = 1,
             int retryDelayMilliseconds = 50,
-            ILogger? logger = null,
             [CallerMemberName] string? caller = null
         )
         {
@@ -29,7 +29,7 @@ namespace InHouseOidc.Common.Extension
                     i => CalculateDelay(i, retryDelayMilliseconds),
                     (exception, retryCount, context) =>
                     {
-                        logger?.LogWarning(
+                        logger.LogWarning(
                             exception,
                             "{caller} send retry {retryCount} of {context.PolicyKey} - uri: {targetUri}",
                             caller,

@@ -9,32 +9,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class SigningKeyHandler : ISigningKeyHandler
+    internal class SigningKeyHandler(
+        IAsyncLock<SigningKeyHandler> asyncLock,
+        ProviderOptions providerOptions,
+        IServiceProvider serviceProvider,
+        IUtcNow utcNow
+    ) : ISigningKeyHandler
     {
-        private readonly IAsyncLock<SigningKeyHandler> asyncLock;
-        private readonly ProviderOptions providerOptions;
-        private readonly IUtcNow utcNow;
-        private readonly ICertificateStore? certificateStore;
-        private readonly List<SigningKey> signingKeys = new();
+        private readonly IAsyncLock<SigningKeyHandler> asyncLock = asyncLock;
+        private readonly ProviderOptions providerOptions = providerOptions;
+        private readonly IUtcNow utcNow = utcNow;
+        private readonly ICertificateStore? certificateStore = serviceProvider.GetService<ICertificateStore>();
+        private readonly List<SigningKey> signingKeys = [];
         private DateTimeOffset? expiry = null;
-
-        public SigningKeyHandler(
-            IAsyncLock<SigningKeyHandler> asyncLock,
-            ProviderOptions providerOptions,
-            IServiceProvider serviceProvider,
-            IUtcNow utcNow
-        )
-        {
-            this.asyncLock = asyncLock;
-            this.providerOptions = providerOptions;
-            this.utcNow = utcNow;
-            this.certificateStore = serviceProvider.GetService<ICertificateStore>();
-        }
 
         public async Task<List<SigningKey>> Resolve()
         {
             // Check for previously resolved keys are still applicable
-            if (this.signingKeys.Any() && this.expiry.HasValue && this.expiry.Value > this.utcNow.UtcNow)
+            if (this.signingKeys.Count > 0 && this.expiry.HasValue && this.expiry.Value > this.utcNow.UtcNow)
             {
                 return this.signingKeys.ToList();
             }
@@ -52,7 +44,7 @@ namespace InHouseOidc.Provider.Handler
                 var storeSigningCertificates = await this.certificateStore.GetSigningCertificates();
                 this.signingKeys.StoreSigningKeys(storeSigningCertificates);
             }
-            if (!this.signingKeys.Any())
+            if (this.signingKeys.Count == 0)
             {
                 throw new InternalErrorException(
                     "No signing keys available.  Set via ProviderBuilder.SetSigningCertificates"

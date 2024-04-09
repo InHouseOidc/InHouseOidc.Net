@@ -41,10 +41,10 @@ namespace InHouseOidc.Discovery
                 HttpMethod.Get,
                 discoveryUri,
                 null,
+                this.logger,
                 cancellationToken,
                 discoveryOptions.MaxRetryAttempts,
-                discoveryOptions.RetryDelayMilliseconds,
-                this.logger
+                discoveryOptions.RetryDelayMilliseconds
             );
             response.EnsureSuccessStatusCode();
             var discoveryResponse = await response.Content.ReadJsonAs<DiscoveryResponse>();
