@@ -22,7 +22,7 @@ insert_final_newline = true
 
 # Organize usings
 dotnet_separate_import_directive_groups = false
-dotnet_sort_system_directives_first = false
+dotnet_sort_system_directives_first = true
 file_header_template = Copyright 2022 Brent Johnson.\nLicensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder). 
 
 # this. and Me. preferences
@@ -227,10 +227,13 @@ dotnet_diagnostic.IDE0003.severity = none
 # See: https://github.com/dotnet/aspnetcore/issues/47912
 # dotnet_diagnostic.IDE0005.severity = error
 dotnet_diagnostic.IDE0073.severity = warning
+dotnet_diagnostic.IDE0305.severity = none
 
 dotnet_diagnostic.SA0001.severity = none
 dotnet_diagnostic.SA1000.severity = none
 dotnet_diagnostic.SA1009.severity = none
+# See: https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3687
+dotnet_diagnostic.SA1010.severity = none
 dotnet_diagnostic.SA1011.severity = none
 dotnet_diagnostic.SA1111.severity = none
 dotnet_diagnostic.SA1118.severity = none

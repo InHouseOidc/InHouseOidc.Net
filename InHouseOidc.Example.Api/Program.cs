@@ -7,11 +7,10 @@ using Microsoft.AspNetCore.HttpLogging;
 var builder = WebApplication.CreateBuilder(args);
 
 // Setup logging
-builder.Services.AddLogging(
-    configure =>
-        configure.AddSimpleConsole(
-            simpleConsoleFormatterOptions => simpleConsoleFormatterOptions.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "
-        )
+builder.Services.AddLogging(configure =>
+    configure.AddSimpleConsole(simpleConsoleFormatterOptions =>
+        simpleConsoleFormatterOptions.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "
+    )
 );
 builder.Services.AddHttpLogging(httpLogging =>
 {
@@ -22,7 +21,7 @@ builder.Services.AddHttpLogging(httpLogging =>
 const string providerAddress = "http://localhost:5100";
 const string scope = "exampleapiscope";
 const string audience = "exampleapiresource";
-builder.Services.AddOidcApi(providerAddress, audience, new() { scope });
+builder.Services.AddOidcApi(providerAddress, audience, [scope]);
 
 // Build the services
 var app = builder.Build();

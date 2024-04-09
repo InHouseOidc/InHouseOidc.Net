@@ -18,15 +18,10 @@ namespace InHouseOidc.PageClient
     /// <summary>
     /// Builds the services required to support client access to APIs secured with OIDC Provider.
     /// </summary>
-    public class PageClientBuilder
+    public class PageClientBuilder(IServiceCollection serviceCollection)
     {
         internal ClientOptions ClientOptions { get; } = new ClientOptions();
-        internal IServiceCollection ServiceCollection { get; set; }
-
-        public PageClientBuilder(IServiceCollection serviceCollection)
-        {
-            this.ServiceCollection = serviceCollection;
-        }
+        internal IServiceCollection ServiceCollection { get; set; } = serviceCollection;
 
         /// <summary>
         /// Adds OIDC client support for an MVC or Razor page based website outgoing API calls.<br />
@@ -72,7 +67,7 @@ namespace InHouseOidc.PageClient
             this.ServiceCollection.AddHttpClient(this.ClientOptions.InternalHttpClientName);
             this.ServiceCollection.TryAddSingleton<IDiscoveryResolver, DiscoveryResolver>();
             // Setup any page API clients added
-            if (this.ClientOptions.PageApiClients.Any())
+            if (!this.ClientOptions.PageApiClients.IsEmpty)
             {
                 this.ServiceCollection.TryAddSingleton<IPageAccessTokenResolver, PageAccessTokenResolver>();
                 foreach (var clientName in this.ClientOptions.PageApiClients.Keys)

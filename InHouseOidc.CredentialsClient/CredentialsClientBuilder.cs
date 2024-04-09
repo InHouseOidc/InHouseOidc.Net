@@ -12,15 +12,10 @@ namespace InHouseOidc.CredentialsClient
     /// <summary>
     /// Builds the services required to support client access to APIs secured with OIDC Provider.
     /// </summary>
-    public class CredentialsClientBuilder
+    public class CredentialsClientBuilder(IServiceCollection serviceCollection)
     {
         internal ClientOptions ClientOptions { get; } = new ClientOptions();
-        internal IServiceCollection ServiceCollection { get; set; }
-
-        public CredentialsClientBuilder(IServiceCollection serviceCollection)
-        {
-            this.ServiceCollection = serviceCollection;
-        }
+        internal IServiceCollection ServiceCollection { get; set; } = serviceCollection;
 
         /// <summary>
         /// Sets up a named HttpClient with client credentials token access.
@@ -56,7 +51,7 @@ namespace InHouseOidc.CredentialsClient
             this.ServiceCollection.TryAddSingleton<IDiscoveryResolver, DiscoveryResolver>();
             this.ServiceCollection.TryAddSingleton<IClientCredentialsResolver, ClientCredentialsResolver>();
             // Setup the credentials clients added
-            if (this.ClientOptions.CredentialsClientsOptions.Any())
+            if (!this.ClientOptions.CredentialsClientsOptions.IsEmpty)
             {
                 var clientNames = this.ClientOptions.CredentialsClientsOptions.Keys;
                 foreach (var clientName in clientNames)

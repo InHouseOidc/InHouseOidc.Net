@@ -3,7 +3,6 @@
 
 using InHouseOidc.Provider.Extension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 
 namespace InHouseOidc.Provider.Test
 {

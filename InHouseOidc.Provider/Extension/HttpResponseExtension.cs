@@ -7,9 +7,6 @@ using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Exception;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using System.Net;
-using System.Text;
-using System.Text.Json;
 
 namespace InHouseOidc.Provider.Extension
 {
@@ -26,13 +23,11 @@ namespace InHouseOidc.Provider.Extension
         public static void WriteRedirect(this HttpResponse httpResponse, RedirectErrorException redirectErrorException)
         {
             // Redirect to the error URI indicated with the error as a query parameter
-            var errorCode = redirectErrorException.RedirectErrorType.GetEnumMember();
-            if (errorCode == null)
-            {
-                throw new InvalidOperationException(
+            var errorCode =
+                redirectErrorException.RedirectErrorType.GetEnumMember()
+                ?? throw new InvalidOperationException(
                     $"Unsupported ErrorCode value {redirectErrorException.RedirectErrorType}"
                 );
-            }
             var queryBuilder = new QueryBuilder { { AuthorizationEndpointConstant.Error, errorCode } };
             if (!string.IsNullOrEmpty(redirectErrorException.SessionState))
             {

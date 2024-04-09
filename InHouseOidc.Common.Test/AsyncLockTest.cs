@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Common.Test
 {
@@ -50,7 +48,7 @@ namespace InHouseOidc.Common.Test
             Assert.IsTrue(asyncLock.IsLocked);
             // Release the main thread lock
             releaser.Dispose();
-            await Task.WhenAll(new[] { waiter });
+            await Task.WhenAll([waiter]);
             Assert.IsTrue(waiter.IsCompleted);
             Assert.IsTrue(isDoneWaiting);
             Assert.IsFalse(asyncLock.IsLocked);
@@ -80,7 +78,7 @@ namespace InHouseOidc.Common.Test
             releaser.Dispose();
             Assert.IsTrue(asyncLock.IsLocked);
             signalFinished.Set();
-            await Task.WhenAll(new[] { waiter });
+            await Task.WhenAll([waiter]);
             Assert.IsFalse(asyncLock.IsLocked);
         }
 

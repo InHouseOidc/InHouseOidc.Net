@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace InHouseOidc.Common
 {
@@ -11,8 +9,7 @@ namespace InHouseOidc.Common
     {
         public static string HashCodeVerifierS256(string codeVerifier)
         {
-            using var sha256 = SHA256.Create();
-            var codeVerifierHashed = sha256.ComputeHash(Encoding.ASCII.GetBytes(codeVerifier));
+            var codeVerifierHashed = SHA256.HashData(Encoding.ASCII.GetBytes(codeVerifier));
             return Base64UrlEncoder.Encode(codeVerifierHashed);
         }
 
@@ -41,8 +38,7 @@ namespace InHouseOidc.Common
             var sessionStateBytes = Encoding.UTF8.GetBytes(
                 $"{clientId}{redirectUri.GetLeftPart(UriPartial.Authority)}{sessionId}{salt}"
             );
-            using var sha256 = SHA256.Create();
-            var sessionStateHashed = sha256.ComputeHash(sessionStateBytes);
+            var sessionStateHashed = SHA256.HashData(sessionStateBytes);
             return $"{Base64UrlEncoder.Encode(sessionStateHashed)}.{salt}";
         }
 

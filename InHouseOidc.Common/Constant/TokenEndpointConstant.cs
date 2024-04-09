@@ -18,10 +18,9 @@ namespace InHouseOidc.Common.Constant
         public const string Scope = "scope";
 
         public static readonly List<string> AuthorizationCodeValidFields =
-            new(new[] { ClientId, ClientSecret, Code, CodeVerifier, GrantType, RedirectUri, Scope });
+            new([ClientId, ClientSecret, Code, CodeVerifier, GrantType, RedirectUri, Scope]);
         public static readonly List<string> ClientCredentialsValidFields =
-            new(new[] { ClientId, ClientSecret, GrantType, Scope });
-        public static readonly List<string> RefreshTokenValidFields =
-            new(new[] { ClientId, GrantType, RefreshToken, Scope });
+            new([ClientId, ClientSecret, GrantType, Scope]);
+        public static readonly List<string> RefreshTokenValidFields = new([ClientId, GrantType, RefreshToken, Scope]);
     }
 }

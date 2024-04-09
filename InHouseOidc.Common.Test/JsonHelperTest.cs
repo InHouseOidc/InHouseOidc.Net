@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text.Encodings.Web;
 
 namespace InHouseOidc.Common.Test
 {

@@ -7,23 +7,14 @@ using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
 using Microsoft.AspNetCore.Http;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class UserInfoHandler : IEndpointHandler<UserInfoHandler>
+    internal class UserInfoHandler(IUserStore userStore, IValidationHandler validationHandler)
+        : IEndpointHandler<UserInfoHandler>
     {
-        private readonly IUserStore userStore;
-        private readonly IValidationHandler validationHandler;
-
-        public UserInfoHandler(IUserStore userStore, IValidationHandler validationHandler)
-        {
-            this.userStore = userStore;
-            this.validationHandler = validationHandler;
-        }
+        private readonly IUserStore userStore = userStore;
+        private readonly IValidationHandler validationHandler = validationHandler;
 
         public async Task<bool> HandleRequest(HttpRequest httpRequest)
         {

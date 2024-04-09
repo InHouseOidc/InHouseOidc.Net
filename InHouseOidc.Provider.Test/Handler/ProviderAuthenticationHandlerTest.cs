@@ -15,9 +15,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Net;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -249,7 +246,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.AreEqual(statusCode, context.Response.StatusCode);
             if (statusCode == (int)HttpStatusCode.Redirect)
             {
-                Assert.AreEqual(expectedBodyOrLocation, context.Response.Headers["location"].ToString());
+                Assert.AreEqual(expectedBodyOrLocation, context.Response.Headers.Location.ToString());
             }
             else
             {
@@ -270,28 +267,25 @@ namespace InHouseOidc.Provider.Test.Handler
         {
             get
             {
-                return new[]
-                {
-                    new object[]
-                    {
+                return
+                [
+                    [
                         new BadRequestException("test_error", "Message {value}", "value"),
                         (int)HttpStatusCode.BadRequest,
                         JsonSerializer.Serialize(new { error = "test_error" }, JsonHelper.JsonSerializerOptions),
                         LogLevel.Information,
                         "Message value",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new InternalErrorException("Message {value}", "value"),
                         (int)HttpStatusCode.InternalServerError,
                         ExceptionConstant.InternalError,
                         LogLevel.Error,
                         "Message value",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new RedirectErrorException(
                             RedirectErrorType.ServerError,
                             "http://localhost",
@@ -303,9 +297,8 @@ namespace InHouseOidc.Provider.Test.Handler
                         LogLevel.Information,
                         "Message value",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new RedirectErrorException(
                             RedirectErrorType.ServerError,
                             "http://localhost",
@@ -317,35 +310,32 @@ namespace InHouseOidc.Provider.Test.Handler
                         LogLevel.Error,
                         "Message value",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new System.Exception("unexpected"),
                         (int)HttpStatusCode.InternalServerError,
                         ExceptionConstant.InternalError,
                         LogLevel.Error,
                         "Unhandled exception",
                         true,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new System.Exception("unexpected"),
                         (int)HttpStatusCode.InternalServerError,
                         ExceptionConstant.InternalError,
                         LogLevel.Information,
                         "Unhandled exception",
                         true,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new InvalidOperationException("invalid_operation"),
                         (int)HttpStatusCode.InternalServerError,
                         ExceptionConstant.InternalError,
                         LogLevel.Information,
                         "Unhandled exception",
                         true,
-                    },
-                };
+                    ],
+                ];
             }
         }
 

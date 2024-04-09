@@ -9,18 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace InHouseOidc.Example.Mvc.Controllers
 {
     [Authorize(Roles = "UserRole1,UserRole2")]
-    public class HomeController : Controller
+    public class HomeController(IHttpClientFactory httpClientFactory) : Controller
     {
         private const string ClientName = "exampleapi";
         private const string ApiAddress = "http://localhost:5102";
         private const string ProviderAddress = "http://localhost:5100";
 
-        private readonly IHttpClientFactory httpClientFactory;
-
-        public HomeController(IHttpClientFactory httpClientFactory)
-        {
-            this.httpClientFactory = httpClientFactory;
-        }
+        private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
 
         public async Task<IActionResult> Index()
         {

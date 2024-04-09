@@ -1,10 +1,6 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
 namespace InHouseOidc.Common
 {
     public static class JsonHelper

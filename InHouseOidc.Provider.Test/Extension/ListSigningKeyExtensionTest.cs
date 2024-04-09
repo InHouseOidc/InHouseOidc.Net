@@ -4,7 +4,6 @@
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace InHouseOidc.Provider.Test.Extension
 {
@@ -19,10 +18,7 @@ namespace InHouseOidc.Provider.Test.Extension
             var providerBuilder = serviceCollection.AddOidcProvider();
             // Act
             var exception = Assert.ThrowsException<InternalErrorException>(
-                () =>
-                    providerBuilder.SetSigningCertificates(
-                        new[] { TestCertificate.CreatePublicOnly(DateTimeOffset.UtcNow) }
-                    )
+                () => providerBuilder.SetSigningCertificates([TestCertificate.CreatePublicOnly(DateTimeOffset.UtcNow)])
             );
             // Assert
             StringAssert.Contains(exception.LogMessage, "must include a private key");
@@ -36,10 +32,7 @@ namespace InHouseOidc.Provider.Test.Extension
             var providerBuilder = serviceCollection.AddOidcProvider();
             // Act
             var exception = Assert.ThrowsException<InternalErrorException>(
-                () =>
-                    providerBuilder.SetSigningCertificates(
-                        new[] { TestCertificate.CreateNonRS256(DateTimeOffset.UtcNow) }
-                    )
+                () => providerBuilder.SetSigningCertificates([TestCertificate.CreateNonRS256(DateTimeOffset.UtcNow)])
             );
             // Assert
             StringAssert.Contains(exception.LogMessage, "must support RS256 algorithm");

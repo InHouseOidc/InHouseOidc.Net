@@ -8,7 +8,7 @@ namespace InHouseOidc.Certify.Provider
 {
     public class ClientStore : IClientStore
     {
-        private readonly Dictionary<string, (OidcClient OidcClient, string? ClientSecret)> clients = new();
+        private readonly Dictionary<string, (OidcClient OidcClient, string? ClientSecret)> clients = [];
 
         public ClientStore(IConfiguration configuration)
         {
@@ -26,10 +26,8 @@ namespace InHouseOidc.Certify.Provider
                             AccessTokenExpiry = TimeSpan.FromMinutes(clientConfig?.AccessTokenExpiryMinutes ?? 0),
                             GrantTypes =
                                 clientConfig?.GrantTypes == null
-                                    ? new List<GrantType>()
-                                    : clientConfig.GrantTypes
-                                        .Select(gt => EnumHelper.ParseEnumMember<GrantType>(gt))
-                                        .ToList(),
+                                    ? []
+                                    : clientConfig.GrantTypes.Select(EnumHelper.ParseEnumMember<GrantType>).ToList(),
                             IdentityTokenExpiry = TimeSpan.FromMinutes(clientConfig?.IdentityTokenExpiryMinutes ?? 0),
                             RedirectUris = clientConfig?.RedirectUris,
                             RedirectUrisPostLogout = clientConfig?.RedirectUrisPostLogout,

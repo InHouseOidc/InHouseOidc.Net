@@ -9,10 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Extension
 {
@@ -124,9 +120,7 @@ namespace InHouseOidc.Provider.Test.Extension
             // Arrange
             var context = new DefaultHttpContext();
             context.Request.ContentType = ContentTypeConstant.ApplicationForm;
-            context.Request.Form = new FormCollection(
-                new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>()
-            );
+            context.Request.Form = new FormCollection([]);
             // Act
             var result = await context.Request.GetFormDictionary();
             // Assert

@@ -12,10 +12,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -27,16 +23,16 @@ namespace InHouseOidc.Provider.Test.Handler
         private readonly string codeChallenge = "wv95kX5SYAG4L3CRoJuiSfSYfcf1jM6dUwjn57Ily4I";
         private readonly string idTokenHint = "hint.hint";
         private readonly int maxAge = 1000;
+        private readonly Mock<ISigningKeyHandler> mockSigningKeyHandler = new(MockBehavior.Strict);
+        private readonly Mock<IUtcNow> mockUtcNow = new(MockBehavior.Strict);
         private readonly string nonce = "only.the.once";
         private readonly string redirectUri = "https://client.app/auth/callback";
         private readonly string scope1 = "scope1";
+        private readonly ServiceProvider serviceProvider = new TestServiceCollection().BuildServiceProvider();
         private readonly string state = "somevalue";
 
         private Mock<IClientStore> mockClientStore = new(MockBehavior.Strict);
-        private Mock<ISigningKeyHandler> mockSigningKeyHandler = new(MockBehavior.Strict);
-        private Mock<IUtcNow> mockUtcNow = new(MockBehavior.Strict);
         private ProviderOptions providerOptions = new();
-        private ServiceProvider serviceProvider = new TestServiceCollection().BuildServiceProvider();
 
         [TestInitialize]
         public void Initialise()
@@ -54,8 +50,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockClientStore.Object,
                 this.logger,
                 this.providerOptions,
-                this.mockSigningKeyHandler.Object,
-                this.mockUtcNow.Object
+                this.mockSigningKeyHandler.Object
             );
             var requestScope = $"openid {this.scope1}";
             var parameters = new Dictionary<string, string>
@@ -75,10 +70,10 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 AccessTokenExpiry = TimeSpan.FromMinutes(15),
                 ClientId = this.clientId,
-                GrantTypes = new() { GrantType.AuthorizationCode },
+                GrantTypes = [GrantType.AuthorizationCode],
                 IdentityTokenExpiry = TimeSpan.FromMinutes(60),
-                RedirectUris = new List<string> { this.redirectUri },
-                Scopes = new List<string> { "openid", this.scope1 },
+                RedirectUris = [this.redirectUri],
+                Scopes = ["openid", this.scope1],
             };
             this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
             this.providerOptions.AuthorizationCodePkceRequired = false;
@@ -283,8 +278,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockClientStore.Object,
                 this.logger,
                 this.providerOptions,
-                this.mockSigningKeyHandler.Object,
-                this.mockUtcNow.Object
+                this.mockSigningKeyHandler.Object
             );
             var parameters = new Dictionary<string, string>();
             var oidcClient = new OidcClient
@@ -293,22 +287,22 @@ namespace InHouseOidc.Provider.Test.Handler
                 ClientId = this.clientId,
                 GrantTypes = valCliEx switch
                 {
-                    ValCliEx.GrantMissing => new(),
+                    ValCliEx.GrantMissing => [],
                     ValCliEx.GrantsNull => null,
-                    _ => new() { GrantType.AuthorizationCode }
+                    _ => [GrantType.AuthorizationCode]
                 },
                 IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                 RedirectUris = valCliEx switch
                 {
-                    ValCliEx.RedirectUriBad => new List<string>(),
+                    ValCliEx.RedirectUriBad => [],
                     ValCliEx.RedirectUriEmpty => null,
-                    _ => new List<string> { this.redirectUri }
+                    _ => [this.redirectUri]
                 },
                 Scopes = valCliEx switch
                 {
-                    ValCliEx.ScopeInvalid => new(),
+                    ValCliEx.ScopeInvalid => [],
                     ValCliEx.ScopesNull => null,
-                    _ => new List<string> { "openid", this.scope1 }
+                    _ => ["openid", this.scope1]
                 },
             };
             switch (valReqEx)
@@ -500,14 +494,13 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockClientStore.Object,
                 this.logger,
                 this.providerOptions,
-                this.mockSigningKeyHandler.Object,
-                this.mockUtcNow.Object
+                this.mockSigningKeyHandler.Object
             );
             var issuer = "https://localhost";
             var audience = "something.interested";
             var x509SecurityKey = new X509SecurityKey(TestCertificate.Create(DateTimeOffset.UtcNow));
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(new List<SigningKey> { signingKey });
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync([signingKey]);
             this.providerOptions.LogFailuresAsInformation = logAsInformation;
             var utcNow = DateTimeOffset.UtcNow;
             var expiry = utcNow.AddMinutes(isExpired ? -5 : 5);

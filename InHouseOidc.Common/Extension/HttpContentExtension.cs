@@ -1,12 +1,13 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using System.Text.Json;
-
 namespace InHouseOidc.Common.Extension
 {
     public static class HttpContentExtension
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions =
+            new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
         public static async Task<TContentType?> ReadJsonAs<TContentType>(this HttpContent httpContent)
             where TContentType : class
         {
@@ -15,10 +16,7 @@ namespace InHouseOidc.Common.Extension
             {
                 return default;
             }
-            return JsonSerializer.Deserialize<TContentType>(
-                serialisedResponse,
-                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
-            );
+            return JsonSerializer.Deserialize<TContentType>(serialisedResponse, JsonSerializerOptions);
         }
     }
 }

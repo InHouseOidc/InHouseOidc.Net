@@ -5,7 +5,6 @@ using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Common.Type;
 using InHouseOidc.Discovery;
-using InHouseOidc.PageClient;
 using InHouseOidc.PageClient.Resolver;
 using InHouseOidc.PageClient.Type;
 using InHouseOidc.Test.Common;
@@ -15,13 +14,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.PageClient.Test.Resolver
 {
@@ -66,8 +58,7 @@ namespace InHouseOidc.PageClient.Test.Resolver
             this.mockDiscoveryResolver = new(MockBehavior.Strict);
             this.mockHttpClientFactory = new(MockBehavior.Strict);
             this.testMessageHandler = new TestMessageHandler();
-            this.mockHttpClientFactory
-                .Setup(m => m.CreateClient(this.clientOptions.InternalHttpClientName))
+            this.mockHttpClientFactory.Setup(m => m.CreateClient(this.clientOptions.InternalHttpClientName))
                 .Returns(new HttpClient(this.testMessageHandler));
             this.mockUtcNow = new Mock<IUtcNow>(MockBehavior.Strict);
             this.mockUtcNow.Setup(m => m.UtcNow).Returns(this.utcNow);
@@ -82,10 +73,10 @@ namespace InHouseOidc.PageClient.Test.Resolver
                 null,
                 null,
                 DateTimeOffset.MaxValue,
-                new List<string> { "code" },
+                ["code"],
                 this.clientOptions.PageClientOptions.OidcProviderAddress,
                 "/token",
-                new List<string> { DiscoveryConstant.ClientSecretPost }
+                [DiscoveryConstant.ClientSecretPost]
             );
         }
 
@@ -101,10 +92,8 @@ namespace InHouseOidc.PageClient.Test.Resolver
                 this.logger,
                 this.mockUtcNow.Object
             );
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(this.clientOptions.DiscoveryOptions, OidcProviderAddress, CancellationToken.None)
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(this.clientOptions.DiscoveryOptions, OidcProviderAddress, CancellationToken.None)
                 )
                 .ReturnsAsync(this.discovery);
             this.testMessageHandler.ResponseMessage = new HttpResponseMessage
@@ -209,12 +198,10 @@ namespace InHouseOidc.PageClient.Test.Resolver
             var authenticateResult = AuthenticateResult.Fail(new Exception());
             var httpContext = new DefaultHttpContext();
             this.mockHttpContextAccessor.Setup(m => m.HttpContext).Returns(httpContext);
-            this.mockAuthenticationService
-                .Setup(m => m.AuthenticateAsync(httpContext, null))
+            this.mockAuthenticationService.Setup(m => m.AuthenticateAsync(httpContext, null))
                 .ReturnsAsync(authenticateResult);
             httpContext.RequestServices = this.mockServiceProvider.Object;
-            this.mockServiceProvider
-                .Setup(p => p.GetService(typeof(IAuthenticationService)))
+            this.mockServiceProvider.Setup(p => p.GetService(typeof(IAuthenticationService)))
                 .Returns(this.mockAuthenticationService.Object);
             var pageAccessTokenResolver = new PageAccessTokenResolver(
                 this.clientOptions,
@@ -290,10 +277,8 @@ namespace InHouseOidc.PageClient.Test.Resolver
                 this.logger,
                 this.mockUtcNow.Object
             );
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(this.clientOptions.DiscoveryOptions, OidcProviderAddress, CancellationToken.None)
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(this.clientOptions.DiscoveryOptions, OidcProviderAddress, CancellationToken.None)
                 )
                 .ReturnsAsync((Discovery.Discovery?)null);
             this.SetupHttpContext("at", this.utcNow, "rt1", out var resultAuthenticationProperties1);
@@ -317,10 +302,8 @@ namespace InHouseOidc.PageClient.Test.Resolver
                 this.logger,
                 this.mockUtcNow.Object
             );
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(this.clientOptions.DiscoveryOptions, OidcProviderAddress, CancellationToken.None)
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(this.clientOptions.DiscoveryOptions, OidcProviderAddress, CancellationToken.None)
                 )
                 .ReturnsAsync(this.discovery);
             this.testMessageHandler.ResponseMessage = new HttpResponseMessage
@@ -349,10 +332,8 @@ namespace InHouseOidc.PageClient.Test.Resolver
                 this.logger,
                 this.mockUtcNow.Object
             );
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(this.clientOptions.DiscoveryOptions, OidcProviderAddress, CancellationToken.None)
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(this.clientOptions.DiscoveryOptions, OidcProviderAddress, CancellationToken.None)
                 )
                 .ReturnsAsync(this.discovery);
             this.testMessageHandler.ResponseMessage = new HttpResponseMessage
@@ -416,19 +397,16 @@ namespace InHouseOidc.PageClient.Test.Resolver
                     CookieAuthenticationDefaults.AuthenticationScheme
                 )
             );
-            this.mockAuthenticationService
-                .Setup(m => m.AuthenticateAsync(httpContext, null))
+            this.mockAuthenticationService.Setup(m => m.AuthenticateAsync(httpContext, null))
                 .ReturnsAsync(authenticateResult);
             AuthenticationProperties localAuthenticateProperties = new();
-            this.mockAuthenticationService
-                .Setup(
-                    m =>
-                        m.SignInAsync(
-                            httpContext,
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            claimsPrincipal,
-                            authenticationProperties
-                        )
+            this.mockAuthenticationService.Setup(m =>
+                    m.SignInAsync(
+                        httpContext,
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        claimsPrincipal,
+                        authenticationProperties
+                    )
                 )
                 .Callback(
                     (
@@ -445,8 +423,7 @@ namespace InHouseOidc.PageClient.Test.Resolver
                     }
                 )
                 .Returns(Task.CompletedTask);
-            this.mockServiceProvider
-                .Setup(p => p.GetService(typeof(IAuthenticationService)))
+            this.mockServiceProvider.Setup(p => p.GetService(typeof(IAuthenticationService)))
                 .Returns(this.mockAuthenticationService.Object);
             httpContext.RequestServices = this.mockServiceProvider.Object;
             this.mockHttpContextAccessor.Setup(m => m.HttpContext).Returns(httpContext);

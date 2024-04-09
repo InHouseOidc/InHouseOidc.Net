@@ -2,20 +2,14 @@
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common.Constant;
-using System.Net.Http.Headers;
 
 namespace InHouseOidc.CredentialsClient.Handler
 {
-    internal class ClientCredentialsHandler : DelegatingHandler
+    internal class ClientCredentialsHandler(IClientCredentialsResolver clientCredentialsResolver, string clientName)
+        : DelegatingHandler
     {
-        private readonly IClientCredentialsResolver clientCredentialsResolver;
-        private readonly string clientName;
-
-        public ClientCredentialsHandler(IClientCredentialsResolver clientCredentialsResolver, string clientName)
-        {
-            this.clientCredentialsResolver = clientCredentialsResolver;
-            this.clientName = clientName;
-        }
+        private readonly IClientCredentialsResolver clientCredentialsResolver = clientCredentialsResolver;
+        private readonly string clientName = clientName;
 
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage httpRequestMessage,

@@ -8,14 +8,6 @@ using InHouseOidc.Provider.Handler;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -86,14 +78,13 @@ namespace InHouseOidc.Provider.Test.Handler
             if (useMultipleScopes)
             {
                 extraClaims.AddRange(
-                    new[]
-                    {
+                    [
                         new Claim(JsonWebTokenClaim.Scope, "address"),
                         new Claim(JsonWebTokenClaim.Scope, "email"),
                         new Claim(JsonWebTokenClaim.Scope, "phone"),
                         new Claim(JsonWebTokenClaim.Scope, "profile"),
                         new Claim(JsonWebTokenClaim.Scope, "role"),
-                    }
+                    ]
                 );
             }
             else
@@ -108,8 +99,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.utcNow,
                 extraClaims
             );
-            this.mockValidationHandler
-                .Setup(m => m.ValidateJsonWebToken(null, issuer, accessToken, true))
+            this.mockValidationHandler.Setup(m => m.ValidateJsonWebToken(null, issuer, accessToken, true))
                 .ReturnsAsync(tokenClaimsPrincipal);
             var address = JsonSerializer.Serialize(this.address, JsonHelper.JsonSerializerOptions);
             var email = "joe@bloggs.name";
@@ -119,23 +109,22 @@ namespace InHouseOidc.Provider.Test.Handler
             var role2 = "special";
             var userClaims = new List<Claim>
             {
-                new Claim(JsonWebTokenClaim.Address, address, "json"),
-                new Claim(JsonWebTokenClaim.Email, email),
-                new Claim(JsonWebTokenClaim.Name, name),
-                new Claim(JsonWebTokenClaim.PhoneNumber, phoneNumber),
-                new Claim(JsonWebTokenClaim.Role, role1),
-                new Claim(JsonWebTokenClaim.Role, role2),
-                new Claim("little_int1", int.MaxValue.ToString(), ClaimValueTypes.Integer),
-                new Claim("little_int2", int.MaxValue.ToString(), ClaimValueTypes.Integer32),
-                new Claim("bad_int1", "bad", ClaimValueTypes.Integer),
-                new Claim("big_int", long.MaxValue.ToString(), ClaimValueTypes.Integer64),
-                new Claim("bad_bigint", "bad", ClaimValueTypes.Integer64),
-                new Claim("bool1", "true", ClaimValueTypes.Boolean),
-                new Claim("bool2", "False", ClaimValueTypes.Boolean),
-                new Claim("bad_bool", "negative", ClaimValueTypes.Boolean),
+                new(JsonWebTokenClaim.Address, address, "json"),
+                new(JsonWebTokenClaim.Email, email),
+                new(JsonWebTokenClaim.Name, name),
+                new(JsonWebTokenClaim.PhoneNumber, phoneNumber),
+                new(JsonWebTokenClaim.Role, role1),
+                new(JsonWebTokenClaim.Role, role2),
+                new("little_int1", int.MaxValue.ToString(), ClaimValueTypes.Integer),
+                new("little_int2", int.MaxValue.ToString(), ClaimValueTypes.Integer32),
+                new("bad_int1", "bad", ClaimValueTypes.Integer),
+                new("big_int", long.MaxValue.ToString(), ClaimValueTypes.Integer64),
+                new("bad_bigint", "bad", ClaimValueTypes.Integer64),
+                new("bool1", "true", ClaimValueTypes.Boolean),
+                new("bool2", "False", ClaimValueTypes.Boolean),
+                new("bad_bool", "negative", ClaimValueTypes.Boolean),
             };
-            this.mockUserStore
-                .Setup(m => m.GetUserClaims(issuer, this.subject, It.IsAny<List<string>>()))
+            this.mockUserStore.Setup(m => m.GetUserClaims(issuer, this.subject, It.IsAny<List<string>>()))
                 .ReturnsAsync(userClaims);
             var userInfoHandler = new UserInfoHandler(this.mockUserStore.Object, this.mockValidationHandler.Object);
             // Act
@@ -282,14 +271,12 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             if (!string.IsNullOrEmpty(accessToken))
             {
-                this.mockValidationHandler
-                    .Setup(m => m.ValidateJsonWebToken(null, issuer, accessToken, true))
+                this.mockValidationHandler.Setup(m => m.ValidateJsonWebToken(null, issuer, accessToken, true))
                     .ReturnsAsync(accessToken == "good.token" ? tokenClaimsPrincipal : null);
             }
             if (returnEmptyUserClaims && subject != null)
             {
-                this.mockUserStore
-                    .Setup(m => m.GetUserClaims(issuer, subject, It.IsAny<List<string>>()))
+                this.mockUserStore.Setup(m => m.GetUserClaims(issuer, subject, It.IsAny<List<string>>()))
                     .ReturnsAsync((List<Claim>?)null);
             }
             var userInfoHandler = new UserInfoHandler(this.mockUserStore.Object, this.mockValidationHandler.Object);

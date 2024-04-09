@@ -39,16 +39,15 @@ namespace InHouseOidc.Common.Constant
         public const string X5t = "x5t";
         public const string ZoneInfo = "zoneinfo";
 
-        public static readonly List<string> AddressClaims = new(new[] { Address });
+        public static readonly List<string> AddressClaims = new([Address]);
 
-        public static readonly List<string> EmailClaims = new(new[] { Email, EmailVerified });
+        public static readonly List<string> EmailClaims = new([Email, EmailVerified]);
 
-        public static readonly List<string> PhoneClaims = new(new[] { PhoneNumber, PhoneNumberVerified });
+        public static readonly List<string> PhoneClaims = new([PhoneNumber, PhoneNumberVerified]);
 
         public static readonly List<string> ProfileClaims =
             new(
-                new[]
-                {
+                [
                     Name,
                     FamilyName,
                     GivenName,
@@ -63,10 +62,10 @@ namespace InHouseOidc.Common.Constant
                     ZoneInfo,
                     Locale,
                     UpdatedAt,
-                }
+                ]
             );
 
-        public static readonly List<string> RoleClaims = new(new[] { Role });
+        public static readonly List<string> RoleClaims = new([Role]);
 
         public static readonly List<string> StandardClaims = AddressClaims
             .Concat(EmailClaims)

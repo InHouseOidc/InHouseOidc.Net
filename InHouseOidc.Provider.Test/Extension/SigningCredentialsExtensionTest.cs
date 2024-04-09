@@ -5,8 +5,6 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Test.Common;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Security.Cryptography;
 
 namespace InHouseOidc.Provider.Test.Extension
 {

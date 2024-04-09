@@ -11,11 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -24,7 +19,7 @@ namespace InHouseOidc.Provider.Test.Handler
     {
         private readonly string host = "localhost";
         private readonly string urlScheme = "https";
-        private Mock<ISigningKeyHandler> mockSigningKeyHandler = new(MockBehavior.Strict);
+        private readonly Mock<ISigningKeyHandler> mockSigningKeyHandler = new(MockBehavior.Strict);
 
         [DataTestMethod]
         [DataRow("GET", true, null)]

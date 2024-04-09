@@ -72,7 +72,7 @@ namespace InHouseOidc.Common.Test.Extension
             // Assert 1
             Assert.IsFalse(result1);
             // Arrange 2
-            var exception2 = new AggregateException(new List<Exception> { new Exception(this.message) });
+            var exception2 = new AggregateException(new List<Exception> { new(this.message) });
             // Act 2
             var result2 = ExceptionExtension.IsRetryableAggregateException(exception2);
             // Assert 2
@@ -106,10 +106,6 @@ namespace InHouseOidc.Common.Test.Extension
             Assert.IsTrue(result3, "Assert 3");
         }
 
-        private class WinHttpException : Exception
-        {
-            public WinHttpException(string message)
-                : base(message) { }
-        }
+        private class WinHttpException(string message) : Exception(message) { }
     }
 }

@@ -12,12 +12,6 @@ using InHouseOidc.Test.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.ClientCredentials.Test.Resolver
 {
@@ -53,8 +47,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             this.mockDiscoveryResolver = new(MockBehavior.Strict);
             this.mockHttpClientFactory = new(MockBehavior.Strict);
             this.testMessageHandler = new TestMessageHandler();
-            this.mockHttpClientFactory
-                .Setup(m => m.CreateClient(this.clientOptions.InternalHttpClientName))
+            this.mockHttpClientFactory.Setup(m => m.CreateClient(this.clientOptions.InternalHttpClientName))
                 .Returns(new HttpClient(this.testMessageHandler));
             this.mockServiceProvider = new(MockBehavior.Strict);
             this.mockUtcNow = new Mock<IUtcNow>(MockBehavior.Strict);
@@ -71,10 +64,10 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 null,
                 null,
                 DateTimeOffset.MaxValue,
-                new List<string> { "code" },
+                ["code"],
                 this.credentialsClientOptions.OidcProviderAddress,
                 "/token",
-                new List<string> { DiscoveryConstant.ClientSecretPost }
+                [DiscoveryConstant.ClientSecretPost]
             );
         }
 
@@ -97,14 +90,12 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 StatusCode = HttpStatusCode.OK,
             };
             Assert.IsNotNull(this.credentialsClientOptions.OidcProviderAddress);
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(
-                            this.clientOptions.DiscoveryOptions,
-                            this.credentialsClientOptions.OidcProviderAddress,
-                            CancellationToken.None
-                        )
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(
+                        this.clientOptions.DiscoveryOptions,
+                        this.credentialsClientOptions.OidcProviderAddress,
+                        CancellationToken.None
+                    )
                 )
                 .ReturnsAsync(this.discovery);
             // Act 1 (uncached)
@@ -158,8 +149,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 mockCredentialsStore
                     .Setup(m => m.GetCredentialsClientOptions(clientName))
                     .Returns(Task.FromResult<CredentialsClientOptions?>(null));
-                this.mockServiceProvider
-                    .Setup(m => m.GetService(typeof(ICredentialsStore)))
+                this.mockServiceProvider.Setup(m => m.GetService(typeof(ICredentialsStore)))
                     .Returns(mockCredentialsStore.Object);
             }
             else
@@ -190,8 +180,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             mockCredentialsStore
                 .Setup(m => m.GetCredentialsClientOptions(this.clientName))
                 .ReturnsAsync(this.credentialsClientOptions);
-            this.mockServiceProvider
-                .Setup(m => m.GetService(typeof(ICredentialsStore)))
+            this.mockServiceProvider.Setup(m => m.GetService(typeof(ICredentialsStore)))
                 .Returns(mockCredentialsStore.Object);
             this.testMessageHandler.ResponseMessage = new HttpResponseMessage
             {
@@ -199,14 +188,12 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 StatusCode = HttpStatusCode.OK,
             };
             Assert.IsNotNull(this.credentialsClientOptions.OidcProviderAddress);
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(
-                            this.clientOptions.DiscoveryOptions,
-                            this.credentialsClientOptions.OidcProviderAddress,
-                            CancellationToken.None
-                        )
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(
+                        this.clientOptions.DiscoveryOptions,
+                        this.credentialsClientOptions.OidcProviderAddress,
+                        CancellationToken.None
+                    )
                 )
                 .ReturnsAsync(this.discovery);
             // Act
@@ -255,14 +242,12 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 this.mockUtcNow.Object
             );
             Assert.IsNotNull(this.credentialsClientOptions.OidcProviderAddress);
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(
-                            this.clientOptions.DiscoveryOptions,
-                            this.credentialsClientOptions.OidcProviderAddress,
-                            CancellationToken.None
-                        )
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(
+                        this.clientOptions.DiscoveryOptions,
+                        this.credentialsClientOptions.OidcProviderAddress,
+                        CancellationToken.None
+                    )
                 )
                 .ReturnsAsync((Discovery.Discovery?)null);
             // Act
@@ -289,19 +274,17 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 null,
                 null,
                 DateTimeOffset.MaxValue,
-                new List<string> { "code" },
+                ["code"],
                 this.credentialsClientOptions.OidcProviderAddress,
                 "/token",
-                new List<string>()
+                []
             );
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(
-                            this.clientOptions.DiscoveryOptions,
-                            this.credentialsClientOptions.OidcProviderAddress,
-                            CancellationToken.None
-                        )
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(
+                        this.clientOptions.DiscoveryOptions,
+                        this.credentialsClientOptions.OidcProviderAddress,
+                        CancellationToken.None
+                    )
                 )
                 .ReturnsAsync(discovery);
             // Act
@@ -332,14 +315,12 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 StatusCode = HttpStatusCode.BadRequest,
             };
             Assert.IsNotNull(this.credentialsClientOptions.OidcProviderAddress);
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(
-                            this.clientOptions.DiscoveryOptions,
-                            this.credentialsClientOptions.OidcProviderAddress,
-                            CancellationToken.None
-                        )
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(
+                        this.clientOptions.DiscoveryOptions,
+                        this.credentialsClientOptions.OidcProviderAddress,
+                        CancellationToken.None
+                    )
                 )
                 .ReturnsAsync(this.discovery);
             // Act
@@ -368,14 +349,12 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 StatusCode = HttpStatusCode.OK,
             };
             Assert.IsNotNull(this.credentialsClientOptions.OidcProviderAddress);
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(
-                            this.clientOptions.DiscoveryOptions,
-                            this.credentialsClientOptions.OidcProviderAddress,
-                            CancellationToken.None
-                        )
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(
+                        this.clientOptions.DiscoveryOptions,
+                        this.credentialsClientOptions.OidcProviderAddress,
+                        CancellationToken.None
+                    )
                 )
                 .ReturnsAsync(this.discovery);
             // Act
@@ -409,14 +388,12 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                 OidcProviderAddress = "https://localhost",
                 Scope = "scope1",
             };
-            this.mockDiscoveryResolver
-                .Setup(
-                    m =>
-                        m.GetDiscovery(
-                            this.clientOptions.DiscoveryOptions,
-                            credentialsClientOptions.OidcProviderAddress,
-                            CancellationToken.None
-                        )
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(
+                        this.clientOptions.DiscoveryOptions,
+                        credentialsClientOptions.OidcProviderAddress,
+                        CancellationToken.None
+                    )
                 )
                 .ReturnsAsync(this.discovery);
             // Act 1 (uncached)

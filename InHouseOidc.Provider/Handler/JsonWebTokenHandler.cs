@@ -6,29 +6,20 @@ using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Type;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class JsonWebTokenHandler : IJsonWebTokenHandler
+    internal class JsonWebTokenHandler(
+        ProviderOptions providerOptions,
+        IResourceStore resourceStore,
+        ISigningKeyHandler signingKeyHandler,
+        IUtcNow utcNow
+    ) : IJsonWebTokenHandler
     {
-        private readonly ProviderOptions providerOptions;
-        private readonly IResourceStore resourceStore;
-        private readonly ISigningKeyHandler signingKeyHandler;
-        private readonly IUtcNow utcNow;
-
-        public JsonWebTokenHandler(
-            ProviderOptions providerOptions,
-            IResourceStore resourceStore,
-            ISigningKeyHandler signingKeyHandler,
-            IUtcNow utcNow
-        )
-        {
-            this.providerOptions = providerOptions;
-            this.resourceStore = resourceStore;
-            this.signingKeyHandler = signingKeyHandler;
-            this.utcNow = utcNow;
-        }
+        private readonly ProviderOptions providerOptions = providerOptions;
+        private readonly IResourceStore resourceStore = resourceStore;
+        private readonly ISigningKeyHandler signingKeyHandler = signingKeyHandler;
+        private readonly IUtcNow utcNow = utcNow;
 
         public async Task<string> GetAccessToken(
             string clientId,
@@ -151,7 +142,7 @@ namespace InHouseOidc.Provider.Handler
                 )
                 .Select(c => c.Value)
                 .ToArray();
-            if (roles.Any())
+            if (roles.Length > 0)
             {
                 securityTokenDescriptor.Claims.Add(JsonWebTokenClaim.Role, roles);
             }
@@ -173,7 +164,7 @@ namespace InHouseOidc.Provider.Handler
                     .Select(c => new Claim(c.Type, c.Value))
                     .ToList();
             }
-            return new List<Claim>();
+            return [];
         }
 
         private async Task<SecurityTokenDescriptor> GetSecurityTokenDescriptor(string tokenType)
@@ -181,14 +172,12 @@ namespace InHouseOidc.Provider.Handler
             // Filter out not-before and expired, sort so longest expiry period appears first
             var utcNow = this.utcNow.UtcNow;
             var signingKeys = await this.signingKeyHandler.Resolve();
-            var signingKey = signingKeys
-                .Where(sk => sk.NotAfter >= utcNow && sk.NotBefore <= utcNow)
-                .OrderByDescending(sk => (sk.NotAfter - utcNow).TotalSeconds)
-                .FirstOrDefault();
-            if (signingKey == null)
-            {
-                throw new InternalErrorException("Unable to resolve signing credentials for JWT");
-            }
+            var signingKey =
+                signingKeys
+                    .Where(sk => sk.NotAfter >= utcNow && sk.NotBefore <= utcNow)
+                    .OrderByDescending(sk => (sk.NotAfter - utcNow).TotalSeconds)
+                    .FirstOrDefault()
+                ?? throw new InternalErrorException("Unable to resolve signing credentials for JWT");
             // Setup the token descriptor
             var securityTokenDescriptor = new SecurityTokenDescriptor
             {

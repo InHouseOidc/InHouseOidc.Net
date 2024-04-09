@@ -11,13 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -106,12 +99,12 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 State = this.state,
             };
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync((authorizationRequest, null));
             var storedCodeCaptured = (StoredCode?)null;
-            this.mockCodeStore
-                .Setup(m => m.SaveCode(It.IsAny<StoredCode>()))
+            this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>()))
                 .Callback((StoredCode storedCodePassed) => storedCodeCaptured = storedCodePassed)
                 .Returns(Task.CompletedTask);
             // Act
@@ -228,8 +221,9 @@ namespace InHouseOidc.Provider.Test.Handler
                 {
                     State = this.state,
                 };
-                this.mockValidationHandler
-                    .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+                this.mockValidationHandler.Setup(m =>
+                        m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                    )
                     .ReturnsAsync((authorizationRequest, null));
             }
             else if (returnError)
@@ -240,15 +234,17 @@ namespace InHouseOidc.Provider.Test.Handler
                 {
                     authorizationError.RedirectUri = this.redirectUri;
                 }
-                this.mockValidationHandler
-                    .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+                this.mockValidationHandler.Setup(m =>
+                        m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                    )
                     .ReturnsAsync((null, authorizationError));
             }
             else
             {
                 errorLogged = "Unable to parse and validate authorization request";
-                this.mockValidationHandler
-                    .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+                this.mockValidationHandler.Setup(m =>
+                        m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                    )
                     .ReturnsAsync((null, null));
             }
             // Act
@@ -302,8 +298,9 @@ namespace InHouseOidc.Provider.Test.Handler
                 Prompt = Prompt.Login,
                 State = this.state,
             };
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act
@@ -365,8 +362,9 @@ namespace InHouseOidc.Provider.Test.Handler
                 Prompt = Prompt.None,
                 State = this.state,
             };
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act
@@ -417,8 +415,9 @@ namespace InHouseOidc.Provider.Test.Handler
                 Prompt = Prompt.NotSpecified,
                 State = this.state,
             };
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act
@@ -471,8 +470,9 @@ namespace InHouseOidc.Provider.Test.Handler
                 MaxAge = isAgePassed ? 60 : 120,
                 State = this.state,
             };
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             this.mockUtcNow.Setup(m => m.UtcNow).Returns(this.utcNow.AddSeconds(90));
@@ -557,12 +557,12 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 IdTokenHint = jwt,
             };
-            this.mockValidationHandler
-                .Setup(m => m.ValidateJsonWebToken(null, issuer, jwt, true))
+            this.mockValidationHandler.Setup(m => m.ValidateJsonWebToken(null, issuer, jwt, true))
                 .ReturnsAsync(issueValidJwt ? tokenClaimsPrincipal : null);
             authorizationRequest.State = this.state;
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act/Assert
@@ -593,7 +593,7 @@ namespace InHouseOidc.Provider.Test.Handler
             context.Request.Method = "GET";
             context.Request.Scheme = this.urlScheme;
             context.Request.QueryString = new QueryString($"?state={this.state}");
-            context.Request.Headers["Cookie"] = new[]
+            context.Request.Headers.Cookie = new[]
             {
                 $"{this.providerOptions.CheckSessionCookieName}={cookieSessionId}",
             };
@@ -623,8 +623,9 @@ namespace InHouseOidc.Provider.Test.Handler
                 ResponseType.Code,
                 this.scope
             );
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act
@@ -690,8 +691,9 @@ namespace InHouseOidc.Provider.Test.Handler
                 Prompt = Prompt.None,
                 State = this.state,
             };
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act

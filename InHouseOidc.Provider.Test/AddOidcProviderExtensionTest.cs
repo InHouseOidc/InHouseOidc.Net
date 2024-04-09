@@ -26,7 +26,7 @@ namespace InHouseOidc.Provider.Test
             serviceCollection.AddSingleton(mockResourceStore.Object);
             // Act
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(System.DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             providerBuilder.Build();
             // Assert
             var serviceProvider = serviceCollection.BuildServiceProvider();

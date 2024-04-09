@@ -3,17 +3,10 @@
 
 namespace InHouseOidc.Provider.Type
 {
-    public class RefreshTokenRequest
+    public class RefreshTokenRequest(string clientId, string scope, DateTimeOffset sessionExpiryUtc)
     {
-        public string ClientId { get; set; }
-        public string Scope { get; set; }
-        public DateTimeOffset SessionExpiryUtc { get; set; }
-
-        public RefreshTokenRequest(string clientId, string scope, DateTimeOffset sessionExpiryUtc)
-        {
-            this.ClientId = clientId;
-            this.Scope = scope;
-            this.SessionExpiryUtc = sessionExpiryUtc;
-        }
+        public string ClientId { get; set; } = clientId;
+        public string Scope { get; set; } = scope;
+        public DateTimeOffset SessionExpiryUtc { get; set; } = sessionExpiryUtc;
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace InHouseOidc.Example.Provider.Pages
 {
-    public class Logout : PageModel
+    public class Logout(IProviderSession providerSession) : PageModel
     {
         public enum LogoutStatus
         {
@@ -30,12 +30,7 @@ namespace InHouseOidc.Example.Provider.Pages
         [ViewData]
         public string? State { get; set; }
 
-        private readonly IProviderSession providerSession;
-
-        public Logout(IProviderSession providerSession)
-        {
-            this.providerSession = providerSession;
-        }
+        private readonly IProviderSession providerSession = providerSession;
 
         public async Task OnGetAsync([FromQuery(Name = "logout_code")] string? logoutCode)
         {

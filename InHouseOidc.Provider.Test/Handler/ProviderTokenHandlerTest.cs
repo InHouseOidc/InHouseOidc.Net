@@ -3,12 +3,8 @@
 
 using InHouseOidc.Common;
 using InHouseOidc.Provider.Handler;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {

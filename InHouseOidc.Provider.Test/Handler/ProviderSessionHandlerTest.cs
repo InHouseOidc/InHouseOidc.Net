@@ -10,12 +10,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -85,12 +79,10 @@ namespace InHouseOidc.Provider.Test.Handler
             if (returnStoredCode && storedCode != null)
             {
                 storedCode.Expiry = this.utcNow.AddMinutes(isExpired ? -1 : 1);
-                this.mockCodeStore
-                    .Setup(m => m.DeleteCode(logoutCode, CodeType.LogoutCode, this.issuer))
+                this.mockCodeStore.Setup(m => m.DeleteCode(logoutCode, CodeType.LogoutCode, this.issuer))
                     .Returns(Task.CompletedTask);
             }
-            this.mockCodeStore
-                .Setup(m => m.GetCode(logoutCode, CodeType.LogoutCode, this.issuer))
+            this.mockCodeStore.Setup(m => m.GetCode(logoutCode, CodeType.LogoutCode, this.issuer))
                 .ReturnsAsync(storedCode);
             // Act
             var result = await providerSessionHandler.GetLogoutRequest(logoutCode);
@@ -143,8 +135,9 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockUtcNow.Object,
                 this.mockValidationHandler.Object
             );
-            this.mockValidationHandler
-                .Setup(m => m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>()))
+            this.mockValidationHandler.Setup(m =>
+                    m.ParseValidateAuthorizationRequest(It.IsAny<Dictionary<string, string>>())
+                )
                 .ReturnsAsync(
                     (
                         (AuthorizationRequest?)null,
@@ -187,14 +180,13 @@ namespace InHouseOidc.Provider.Test.Handler
             var mockServiceProvider = new Mock<IServiceProvider>(MockBehavior.Strict);
             var mockAuthenticationService = new Mock<IAuthenticationService>(MockBehavior.Strict);
             mockAuthenticationService
-                .Setup(
-                    m =>
-                        m.SignInAsync(
-                            this.context,
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            It.IsAny<ClaimsPrincipal>(),
-                            It.IsAny<AuthenticationProperties>()
-                        )
+                .Setup(m =>
+                    m.SignInAsync(
+                        this.context,
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        It.IsAny<ClaimsPrincipal>(),
+                        It.IsAny<AuthenticationProperties>()
+                    )
                 )
                 .Returns(Task.CompletedTask);
             mockServiceProvider
@@ -208,7 +200,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockUtcNow.Object,
                 this.mockValidationHandler.Object
             );
-            var claims = new List<Claim> { new Claim(JsonWebTokenClaim.Subject, this.subject) };
+            var claims = new List<Claim> { new(JsonWebTokenClaim.Subject, this.subject) };
             this.providerOptions.CheckSessionEndpointEnabled = checkSessionEndpointEnabled;
             // Act
             var result = await providerSessionHandler.Login(this.context, claims, TimeSpan.FromMinutes(60));
@@ -224,7 +216,7 @@ namespace InHouseOidc.Provider.Test.Handler
             CollectionAssert.AreEqual(expectedClaimTypes, result.Claims.Select(c => c.Type).ToList());
             if (checkSessionEndpointEnabled)
             {
-                var cookie = this.context.Response.Headers["Set-Cookie"];
+                var cookie = this.context.Response.Headers.SetCookie;
                 Assert.IsNotNull(cookie);
             }
             mockAuthenticationService.VerifyAll();
@@ -269,13 +261,12 @@ namespace InHouseOidc.Provider.Test.Handler
             var mockAuthenticationService = new Mock<IAuthenticationService>(MockBehavior.Strict);
             var authenticationPropertiesCaptured = (AuthenticationProperties?)null;
             mockAuthenticationService
-                .Setup(
-                    m =>
-                        m.SignOutAsync(
-                            this.context,
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            It.IsAny<AuthenticationProperties>()
-                        )
+                .Setup(m =>
+                    m.SignOutAsync(
+                        this.context,
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        It.IsAny<AuthenticationProperties>()
+                    )
                 )
                 .Callback(
                     (HttpContext context, string? scheme, AuthenticationProperties? properties) =>
@@ -291,8 +282,7 @@ namespace InHouseOidc.Provider.Test.Handler
             if (passLogoutCode)
             {
                 logoutCode = "logmeout";
-                this.mockCodeStore
-                    .Setup(m => m.DeleteCode(logoutCode, CodeType.LogoutCode, this.issuer))
+                this.mockCodeStore.Setup(m => m.DeleteCode(logoutCode, CodeType.LogoutCode, this.issuer))
                     .Returns(Task.CompletedTask);
             }
             mockServiceProvider
@@ -320,7 +310,7 @@ namespace InHouseOidc.Provider.Test.Handler
             mockAuthenticationService.VerifyAll();
             if (enableCheckSessionEndpoint)
             {
-                var cookie = this.context.Response.Headers["Set-Cookie"].Single();
+                var cookie = this.context.Response.Headers.SetCookie.Single();
                 Assert.IsNotNull(cookie);
                 StringAssert.Contains(cookie, this.providerOptions.CheckSessionCookieName);
                 StringAssert.Contains(cookie, "expires=");

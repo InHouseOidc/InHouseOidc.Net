@@ -3,10 +3,6 @@
 
 using Microsoft.Extensions.Logging;
 using Polly;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.Json;
 
 namespace InHouseOidc.Common.Extension
 {
@@ -33,17 +29,14 @@ namespace InHouseOidc.Common.Extension
                     i => CalculateDelay(i, retryDelayMilliseconds),
                     (exception, retryCount, context) =>
                     {
-                        if (logger != null)
-                        {
-                            logger.LogWarning(
-                                exception,
-                                "{caller} send retry {retryCount} of {context.PolicyKey} - uri: {targetUri}",
-                                caller,
-                                retryCount,
-                                context.PolicyKey,
-                                uri
-                            );
-                        }
+                        logger?.LogWarning(
+                            exception,
+                            "{caller} send retry {retryCount} of {context.PolicyKey} - uri: {targetUri}",
+                            caller,
+                            retryCount,
+                            context.PolicyKey,
+                            uri
+                        );
                     }
                 )
                 .ExecuteAsync(async () =>
@@ -87,28 +80,16 @@ namespace InHouseOidc.Common.Extension
             return TimeSpan.FromMilliseconds(Math.Pow(2, retryAttempt - 1) * retryDelayMilliseconds);
         }
 
-        internal class JsonContent : StringContent
+        internal class JsonContent(object obj)
+            : StringContent(JsonSerializer.Serialize(obj, JsonSerializerOptions), Encoding.UTF8, "application/json")
         {
-            public JsonContent(object obj)
-                : base(
-                    JsonSerializer.Serialize(
-                        obj,
-                        new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
-                    ),
-                    Encoding.UTF8,
-                    "application/json"
-                ) { }
+            private static readonly JsonSerializerOptions JsonSerializerOptions =
+                new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         }
 
-        internal class HttpClientRetryableException : Exception
+        internal class HttpClientRetryableException(HttpStatusCode statusCode, string message) : Exception(message)
         {
-            public HttpStatusCode StatusCode { get; private set; }
-
-            public HttpClientRetryableException(HttpStatusCode statusCode, string message)
-                : base(message)
-            {
-                this.StatusCode = statusCode;
-            }
+            public HttpStatusCode StatusCode { get; private set; } = statusCode;
         }
     }
 }

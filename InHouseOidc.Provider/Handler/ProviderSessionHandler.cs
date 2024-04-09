@@ -9,33 +9,22 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Security.Claims;
-using System.Text.Json;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class ProviderSessionHandler : IProviderSession
+    internal class ProviderSessionHandler(
+        ICodeStore codeStore,
+        IHttpContextAccessor httpContextAccessor,
+        ProviderOptions providerOptions,
+        IUtcNow utcNow,
+        IValidationHandler validationHandler
+    ) : IProviderSession
     {
-        private readonly ICodeStore codeStore;
-        private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly ProviderOptions providerOptions;
-        private readonly IUtcNow utcNow;
-        private readonly IValidationHandler validationHandler;
-
-        public ProviderSessionHandler(
-            ICodeStore codeStore,
-            IHttpContextAccessor httpContextAccessor,
-            ProviderOptions providerOptions,
-            IUtcNow utcNow,
-            IValidationHandler validationHandler
-        )
-        {
-            this.codeStore = codeStore;
-            this.httpContextAccessor = httpContextAccessor;
-            this.providerOptions = providerOptions;
-            this.utcNow = utcNow;
-            this.validationHandler = validationHandler;
-        }
+        private readonly ICodeStore codeStore = codeStore;
+        private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
+        private readonly ProviderOptions providerOptions = providerOptions;
+        private readonly IUtcNow utcNow = utcNow;
+        private readonly IValidationHandler validationHandler = validationHandler;
 
         public async Task<LogoutRequest?> GetLogoutRequest(string logoutCode)
         {

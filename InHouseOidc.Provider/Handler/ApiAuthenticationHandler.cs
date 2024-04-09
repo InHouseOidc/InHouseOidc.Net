@@ -7,27 +7,19 @@ using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Text.Encodings.Web;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class ApiAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+    internal class ApiAuthenticationHandler(
+        ApiAuthenticationOptions apiAuthenticationOptions,
+        IOptionsMonitor<AuthenticationSchemeOptions> authenticationSchemeOptions,
+        ILoggerFactory logger,
+        UrlEncoder urlEncoder,
+        IValidationHandler validationHandler
+    ) : AuthenticationHandler<AuthenticationSchemeOptions>(authenticationSchemeOptions, logger, urlEncoder)
     {
-        private readonly ApiAuthenticationOptions apiAuthenticationOptions;
-        private readonly IValidationHandler validationHandler;
-
-        public ApiAuthenticationHandler(
-            ApiAuthenticationOptions apiAuthenticationOptions,
-            IOptionsMonitor<AuthenticationSchemeOptions> authenticationSchemeOptions,
-            ILoggerFactory logger,
-            UrlEncoder urlEncoder,
-            IValidationHandler validationHandler
-        )
-            : base(authenticationSchemeOptions, logger, urlEncoder)
-        {
-            this.apiAuthenticationOptions = apiAuthenticationOptions;
-            this.validationHandler = validationHandler;
-        }
+        private readonly ApiAuthenticationOptions apiAuthenticationOptions = apiAuthenticationOptions;
+        private readonly IValidationHandler validationHandler = validationHandler;
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {

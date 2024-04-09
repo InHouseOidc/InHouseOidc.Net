@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.PageClient.Test
 {
@@ -26,23 +24,21 @@ namespace InHouseOidc.PageClient.Test
             var mockAuthenticationService = new Mock<IAuthenticationService>(MockBehavior.Strict);
             var authenticationPropertiesCaptured = (AuthenticationProperties?)null;
             mockAuthenticationService
-                .Setup(
-                    m =>
-                        m.SignOutAsync(
-                            context,
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            It.IsAny<AuthenticationProperties>()
-                        )
+                .Setup(m =>
+                    m.SignOutAsync(
+                        context,
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        It.IsAny<AuthenticationProperties>()
+                    )
                 )
                 .Returns(Task.CompletedTask);
             mockAuthenticationService
-                .Setup(
-                    m =>
-                        m.SignOutAsync(
-                            context,
-                            OpenIdConnectDefaults.AuthenticationScheme,
-                            It.IsAny<AuthenticationProperties>()
-                        )
+                .Setup(m =>
+                    m.SignOutAsync(
+                        context,
+                        OpenIdConnectDefaults.AuthenticationScheme,
+                        It.IsAny<AuthenticationProperties>()
+                    )
                 )
                 .Callback(
                     (HttpContext context, string? scheme, AuthenticationProperties? properties) =>
@@ -70,13 +66,12 @@ namespace InHouseOidc.PageClient.Test
             var mockAuthenticationService = new Mock<IAuthenticationService>(MockBehavior.Strict);
             var authenticationPropertiesCaptured = (AuthenticationProperties?)null;
             mockAuthenticationService
-                .Setup(
-                    m =>
-                        m.SignOutAsync(
-                            context,
-                            OpenIdConnectDefaults.AuthenticationScheme,
-                            It.IsAny<AuthenticationProperties>()
-                        )
+                .Setup(m =>
+                    m.SignOutAsync(
+                        context,
+                        OpenIdConnectDefaults.AuthenticationScheme,
+                        It.IsAny<AuthenticationProperties>()
+                    )
                 )
                 .Callback(
                     (HttpContext context, string? scheme, AuthenticationProperties? properties) =>

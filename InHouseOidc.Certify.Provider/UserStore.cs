@@ -1,15 +1,15 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
+using System.Security.Claims;
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider;
-using System.Security.Claims;
 
 namespace InHouseOidc.Certify.Provider
 {
     public class UserStore : IUserStore
     {
-        private readonly Dictionary<string, UserConfig> users = new();
+        private readonly Dictionary<string, UserConfig> users = [];
 
         public UserStore(IConfiguration configuration)
         {
@@ -25,7 +25,7 @@ namespace InHouseOidc.Certify.Provider
         {
             if (this.users.TryGetValue(subject, out var userConfig))
             {
-                var claims = new List<Claim> { new Claim(JsonWebTokenClaim.Subject, subject) };
+                var claims = new List<Claim> { new(JsonWebTokenClaim.Subject, subject) };
                 foreach (var claim in userConfig.Claims)
                 {
                     var claimValue = claim.Value.ToString();
@@ -56,7 +56,7 @@ namespace InHouseOidc.Certify.Provider
 
         private class UserConfig
         {
-            private Dictionary<string, object> claims = new();
+            private Dictionary<string, object> claims = [];
 
             public Dictionary<string, object> Claims
             {

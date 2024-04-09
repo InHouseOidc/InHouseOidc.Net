@@ -3,7 +3,6 @@
 
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider;
-using System.Security.Claims;
 
 namespace InHouseOidc.Example.Provider
 {
@@ -13,8 +12,8 @@ namespace InHouseOidc.Example.Provider
         {
             var claims = new List<Claim>
             {
-                new Claim(JsonWebTokenClaim.Subject, subject),
-                new Claim(JsonWebTokenClaim.PhoneNumber, "+64 (21) 1111111"),
+                new(JsonWebTokenClaim.Subject, subject),
+                new(JsonWebTokenClaim.PhoneNumber, "+64 (21) 1111111"),
             };
             return Task.FromResult<List<Claim>?>(claims);
         }

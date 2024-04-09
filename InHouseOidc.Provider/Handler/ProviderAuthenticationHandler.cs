@@ -8,8 +8,6 @@ using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Collections.Concurrent;
-using System.Text.Encodings.Web;
 
 namespace InHouseOidc.Provider.Handler
 {

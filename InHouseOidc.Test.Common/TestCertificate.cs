@@ -1,10 +1,6 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using System;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-
 namespace InHouseOidc.Test.Common
 {
     public static class TestCertificate

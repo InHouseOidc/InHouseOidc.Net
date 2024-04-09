@@ -4,13 +4,6 @@
 using InHouseOidc.Common.Extension;
 using InHouseOidc.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using static InHouseOidc.Common.Extension.HttpClientExtension;
 
 namespace InHouseOidc.Common.Test.Extension

@@ -5,23 +5,16 @@ using InHouseOidc.Provider.Type;
 
 namespace InHouseOidc.Provider.Exception
 {
-    internal class RedirectErrorException : LogMessageException
+    internal class RedirectErrorException(
+        RedirectErrorType redirectErrorType,
+        string uri,
+        string logMessage,
+        params object[]? args
+    ) : LogMessageException(logMessage, args)
     {
-        public RedirectErrorType RedirectErrorType { get; private set; }
+        public RedirectErrorType RedirectErrorType { get; private set; } = redirectErrorType;
         public string? SessionState { get; set; }
         public string? State { get; set; }
-        public string Uri { get; private set; }
-
-        public RedirectErrorException(
-            RedirectErrorType redirectErrorType,
-            string uri,
-            string logMessage,
-            params object[]? args
-        )
-            : base(logMessage, args)
-        {
-            this.RedirectErrorType = redirectErrorType;
-            this.Uri = uri;
-        }
+        public string Uri { get; private set; } = uri;
     }
 }

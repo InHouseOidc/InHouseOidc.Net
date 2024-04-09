@@ -7,32 +7,20 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class ValidationHandler : IValidationHandler
+    internal class ValidationHandler(
+        IClientStore clientStore,
+        ILogger<ValidationHandler> logger,
+        ProviderOptions providerOptions,
+        ISigningKeyHandler signingKeyHandler
+    ) : IValidationHandler
     {
-        private readonly IClientStore clientStore;
-        private readonly ILogger<ValidationHandler> logger;
-        private readonly ProviderOptions providerOptions;
-        private readonly ISigningKeyHandler signingKeyHandler;
-        private readonly IUtcNow utcNow;
-
-        public ValidationHandler(
-            IClientStore clientStore,
-            ILogger<ValidationHandler> logger,
-            ProviderOptions providerOptions,
-            ISigningKeyHandler signingKeyHandler,
-            IUtcNow utcNow
-        )
-        {
-            this.clientStore = clientStore;
-            this.logger = logger;
-            this.providerOptions = providerOptions;
-            this.signingKeyHandler = signingKeyHandler;
-            this.utcNow = utcNow;
-        }
+        private readonly IClientStore clientStore = clientStore;
+        private readonly ILogger<ValidationHandler> logger = logger;
+        private readonly ProviderOptions providerOptions = providerOptions;
+        private readonly ISigningKeyHandler signingKeyHandler = signingKeyHandler;
 
         public async Task<(AuthorizationRequest?, RedirectError?)> ParseValidateAuthorizationRequest(
             Dictionary<string, string> parameters
@@ -238,9 +226,9 @@ namespace InHouseOidc.Provider.Handler
             {
                 authorizationRequest.IdTokenHint = idTokenHint;
             }
-            if (parameters.ContainsKey(AuthorizationEndpointConstant.MaxAge))
+            if (parameters.TryGetValue(AuthorizationEndpointConstant.MaxAge, out string? value))
             {
-                if (int.TryParse(parameters[AuthorizationEndpointConstant.MaxAge], out var maxAge))
+                if (int.TryParse(value, out var maxAge))
                 {
                     authorizationRequest.MaxAge = maxAge;
                 }
@@ -251,7 +239,7 @@ namespace InHouseOidc.Provider.Handler
                         state,
                         RedirectErrorType.InvalidRequest,
                         "Invalid max age: {maxAge}",
-                        parameters[AuthorizationEndpointConstant.MaxAge]
+                        value
                     );
                 }
             }

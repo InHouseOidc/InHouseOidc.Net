@@ -6,20 +6,18 @@ using InHouseOidc.Discovery;
 using InHouseOidc.Test.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Net.Http;
 
 namespace InHouseOidc.CredentialsClient.Test
 {
     [TestClass]
     public class CredentialsClientBuilderTest
     {
-        private TestServiceCollection serviceCollection = new();
+        private TestServiceCollection serviceCollection = [];
 
         [TestInitialize]
         public void Initialise()
         {
-            this.serviceCollection = new();
+            this.serviceCollection = [];
         }
 
         [TestMethod]
@@ -61,8 +59,8 @@ namespace InHouseOidc.CredentialsClient.Test
             var maxRetryAttempts = 10;
             var retryDelayMilliseconds = 25;
             // Act
-            var clientBuilder = this.serviceCollection
-                .AddOidcCredentialsClient()
+            var clientBuilder = this
+                .serviceCollection.AddOidcCredentialsClient()
                 .EnableDiscoveryGrantTypeValidation(false)
                 .EnableDiscoveryIssuerValidation(false)
                 .SetDiscoveryCacheTime(discoveryCacheTime)

@@ -6,9 +6,6 @@ using InHouseOidc.PageClient.Resolver;
 using InHouseOidc.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.PageClient.Test.Handler
 {
@@ -39,8 +36,7 @@ namespace InHouseOidc.PageClient.Test.Handler
                 InnerHandler = this.testMessageHandler,
             };
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
-            this.mockPageAccessTokenResolver
-                .Setup(m => m.GetClientToken(this.clientName, CancellationToken.None))
+            this.mockPageAccessTokenResolver.Setup(m => m.GetClientToken(this.clientName, CancellationToken.None))
                 .ReturnsAsync("token");
             var httpMessageInvoker = new HttpMessageInvoker(pageApiClientHandler);
             // Act

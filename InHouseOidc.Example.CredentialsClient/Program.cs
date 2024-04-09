@@ -1,19 +1,18 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
+using System.Net.Http.Headers;
 using InHouseOidc.Common.Constant;
 using InHouseOidc.CredentialsClient;
 using InHouseOidc.Example.CredentialsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Net.Http.Headers;
 
 var serviceCollection = new ServiceCollection();
-serviceCollection.AddLogging(
-    configure =>
-        configure.AddSimpleConsole(
-            simpleConsoleFormatterOptions => simpleConsoleFormatterOptions.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "
-        )
+serviceCollection.AddLogging(configure =>
+    configure.AddSimpleConsole(simpleConsoleFormatterOptions =>
+        simpleConsoleFormatterOptions.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "
+    )
 );
 
 // Setup the OIDC client

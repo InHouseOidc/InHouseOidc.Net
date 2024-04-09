@@ -4,7 +4,6 @@
 using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Type;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
 
 namespace InHouseOidc.Provider.Extension
 {

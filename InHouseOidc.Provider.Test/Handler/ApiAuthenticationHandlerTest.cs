@@ -11,9 +11,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -96,8 +93,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var validationResult = isValidToken
                 ? new ClaimsPrincipal(new ClaimsIdentity(ApiConstant.AuthenticationScheme))
                 : null;
-            this.mockValidationHandler
-                .Setup(m => m.ValidateJsonWebToken(Audience, $"https://{issuer}", token, true))
+            this.mockValidationHandler.Setup(m => m.ValidateJsonWebToken(Audience, $"https://{issuer}", token, true))
                 .ReturnsAsync(validationResult);
             // Act
             var result = await this.apiAuthenticationHandler.AuthenticateAsync();

@@ -6,18 +6,12 @@ using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class JsonWebKeySetHandler : IEndpointHandler<JsonWebKeySetHandler>
+    internal class JsonWebKeySetHandler(ISigningKeyHandler signingKeyHandler) : IEndpointHandler<JsonWebKeySetHandler>
     {
-        private readonly ISigningKeyHandler signingKeyHandler;
-
-        public JsonWebKeySetHandler(ISigningKeyHandler signingKeyHandler)
-        {
-            this.signingKeyHandler = signingKeyHandler;
-        }
+        private readonly ISigningKeyHandler signingKeyHandler = signingKeyHandler;
 
         public async Task<bool> HandleRequest(HttpRequest httpRequest)
         {

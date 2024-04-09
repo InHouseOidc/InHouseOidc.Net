@@ -1,18 +1,18 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using InHouseOidc.Provider;
 using System.Collections.Concurrent;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using InHouseOidc.Provider;
 
 namespace InHouseOidc.Certify.Provider
 {
-    public class CodeStore : ICodeStore
+    public class CodeStore(ILogger<CodeStore> logger) : ICodeStore
     {
         private readonly ConcurrentDictionary<string, StoredCode> codes = new();
-        private readonly ILogger<CodeStore> logger;
+        private readonly ILogger<CodeStore> logger = logger;
         private readonly JsonSerializerOptions jsonSerializerOptions =
             new()
             {
@@ -21,11 +21,6 @@ namespace InHouseOidc.Certify.Provider
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 WriteIndented = true,
             };
-
-        public CodeStore(ILogger<CodeStore> logger)
-        {
-            this.logger = logger;
-        }
 
         public Task ConsumeCode(string code, CodeType codeType, string issuer)
         {

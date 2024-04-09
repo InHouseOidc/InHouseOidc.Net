@@ -8,12 +8,6 @@ using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Extension
 {
@@ -58,7 +52,7 @@ namespace InHouseOidc.Provider.Test.Extension
             context.Response.WriteRedirect(redirectErrorException);
             // Assert
             Assert.AreEqual(302, context.Response.StatusCode);
-            Assert.AreEqual("http://localhost?error=server_error", context.Response.Headers["location"].ToString());
+            Assert.AreEqual("http://localhost?error=server_error", context.Response.Headers.Location.ToString());
         }
 
         [TestMethod]
@@ -105,7 +99,7 @@ namespace InHouseOidc.Provider.Test.Extension
             Assert.AreEqual(302, context.Response.StatusCode);
             Assert.AreEqual(
                 "http://localhost?error=server_error&session_state=sessionstate&state=state",
-                context.Response.Headers["location"].ToString()
+                context.Response.Headers.Location.ToString()
             );
         }
 

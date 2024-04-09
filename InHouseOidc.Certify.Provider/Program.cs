@@ -1,17 +1,16 @@
 // Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
+using System.Security.Cryptography.X509Certificates;
 using InHouseOidc.PageClient;
 using InHouseOidc.Provider;
 using Microsoft.AspNetCore.HttpLogging;
-using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddLogging(
-    configure =>
-        configure.AddSimpleConsole(
-            simpleConsoleFormatterOptions => simpleConsoleFormatterOptions.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "
-        )
+builder.Services.AddLogging(configure =>
+    configure.AddSimpleConsole(simpleConsoleFormatterOptions =>
+        simpleConsoleFormatterOptions.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "
+    )
 );
 builder.Services.AddHttpLogging(httpLogging =>
 {
@@ -22,15 +21,15 @@ builder.Services.AddRazorPages();
 // Setup the OIDC provider
 var signingCertificate = new X509Certificate2("InHouseOidcCertify.pfx", "Internal");
 
-builder.Services
-    .AddOidcProvider()
+builder
+    .Services.AddOidcProvider()
     .EnableAuthorizationCodeFlow(false)
     .EnableCheckSessionEndpoint()
     .EnableClientCredentialsFlow()
     .EnableRefreshTokenGrant()
     .EnableUserInfoEndpoint()
     .LogFailuresAsInformation(false)
-    .SetSigningCertificates(new[] { signingCertificate })
+    .SetSigningCertificates([signingCertificate])
     .Build();
 
 // Setup the stores the provider relies on

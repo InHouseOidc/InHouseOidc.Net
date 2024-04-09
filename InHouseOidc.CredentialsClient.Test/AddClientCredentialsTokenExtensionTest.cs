@@ -5,7 +5,6 @@ using InHouseOidc.Test.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Net.Http;
 
 namespace InHouseOidc.CredentialsClient.Test
 {

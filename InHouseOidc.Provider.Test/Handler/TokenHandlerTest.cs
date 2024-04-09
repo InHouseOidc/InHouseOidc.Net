@@ -12,13 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -161,7 +154,7 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 AccessTokenExpiry = TimeSpan.FromMinutes(15),
                 ClientId = this.clientId,
-                GrantTypes = new() { GrantType.AuthorizationCode },
+                GrantTypes = [GrantType.AuthorizationCode],
                 IdentityTokenExpiry = TimeSpan.FromMinutes(60),
             };
             this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
@@ -189,43 +182,37 @@ namespace InHouseOidc.Provider.Test.Handler
                 Created = this.utcNow,
                 Expiry = this.utcNow.AddMinutes(5),
             };
-            this.mockCodeStore
-                .Setup(m => m.ConsumeCode(code, CodeType.AuthorizationCode, issuer))
+            this.mockCodeStore.Setup(m => m.ConsumeCode(code, CodeType.AuthorizationCode, issuer))
                 .Returns(Task.CompletedTask);
             this.mockCodeStore.Setup(m => m.GetCode(code, CodeType.AuthorizationCode, issuer)).ReturnsAsync(storedCode);
             var storedCodeCaptured = (StoredCode?)null;
             if (issueRefreshToken)
             {
-                this.mockCodeStore
-                    .Setup(m => m.SaveCode(It.IsAny<StoredCode>()))
+                this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>()))
                     .Callback((StoredCode storedCodePassed) => storedCodeCaptured = storedCodePassed)
                     .Returns(Task.CompletedTask);
             }
             this.mockUserStore.Setup(m => m.IsUserActive(issuer, this.subject)).ReturnsAsync(true);
             var accessToken = "access.token";
-            this.mockJsonWebTokenHandler
-                .Setup(
-                    m =>
-                        m.GetAccessToken(
-                            this.clientId,
-                            this.utcNow + oidcClient.AccessTokenExpiry,
-                            issuer,
-                            It.IsAny<List<string>>(),
-                            this.subject
-                        )
+            this.mockJsonWebTokenHandler.Setup(m =>
+                    m.GetAccessToken(
+                        this.clientId,
+                        this.utcNow + oidcClient.AccessTokenExpiry,
+                        issuer,
+                        It.IsAny<List<string>>(),
+                        this.subject
+                    )
                 )
                 .ReturnsAsync(accessToken);
             var idToken = "id.token";
-            this.mockJsonWebTokenHandler
-                .Setup(
-                    m =>
-                        m.GetIdToken(
-                            It.IsAny<AuthorizationRequest>(),
-                            this.clientId,
-                            issuer,
-                            It.IsAny<List<string>>(),
-                            this.subject
-                        )
+            this.mockJsonWebTokenHandler.Setup(m =>
+                    m.GetIdToken(
+                        It.IsAny<AuthorizationRequest>(),
+                        this.clientId,
+                        issuer,
+                        It.IsAny<List<string>>(),
+                        this.subject
+                    )
                 )
                 .ReturnsAsync(idToken);
             var tokenHandler = new TokenHandler(
@@ -438,8 +425,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var issuer = $"{this.urlScheme}://{this.host}";
             var serviceCollection = new TestServiceCollection();
             this.providerOptions.GrantTypes.Add(GrantType.AuthorizationCode);
-            this.mockCodeStore
-                .Setup(m => m.ConsumeCode(code, CodeType.AuthorizationCode, issuer))
+            this.mockCodeStore.Setup(m => m.ConsumeCode(code, CodeType.AuthorizationCode, issuer))
                 .Returns(Task.CompletedTask);
             var authorizationRequest = new AuthorizationRequest(
                 this.clientId,
@@ -508,8 +494,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 Created = this.utcNow,
                 Expiry = this.utcNow.AddMinutes(authCodeEx == AuthCdeEx.Expired ? -5 : 5),
             };
-            this.mockUserStore
-                .Setup(m => m.IsUserActive(issuer, storedCode.Subject))
+            this.mockUserStore.Setup(m => m.IsUserActive(issuer, storedCode.Subject))
                 .ReturnsAsync(authCodeEx != AuthCdeEx.UserInactive);
             serviceCollection.AddSingleton(this.mockCodeStore.Object);
             serviceCollection.AddSingleton(this.mockUserStore.Object);
@@ -530,14 +515,12 @@ namespace InHouseOidc.Provider.Test.Handler
                 case AuthCdeEx.SessionExpiryMissing:
                 case AuthCdeEx.UserInactive:
                     formParams.Add(TokenEndpointConstant.Code, code);
-                    this.mockCodeStore
-                        .Setup(m => m.GetCode(code, CodeType.AuthorizationCode, issuer))
+                    this.mockCodeStore.Setup(m => m.GetCode(code, CodeType.AuthorizationCode, issuer))
                         .ReturnsAsync(storedCode);
                     break;
                 case AuthCdeEx.NotFound:
                     formParams.Add(TokenEndpointConstant.Code, code);
-                    this.mockCodeStore
-                        .Setup(m => m.GetCode(code, CodeType.AuthorizationCode, issuer))
+                    this.mockCodeStore.Setup(m => m.GetCode(code, CodeType.AuthorizationCode, issuer))
                         .ReturnsAsync((StoredCode?)null);
                     break;
                 case AuthCdeEx.Rubbish:
@@ -547,8 +530,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             if (authCodeEx == AuthCdeEx.None)
             {
-                this.mockCodeStore
-                    .Setup(m => m.ConsumeCode(code, CodeType.AuthorizationCode, issuer))
+                this.mockCodeStore.Setup(m => m.ConsumeCode(code, CodeType.AuthorizationCode, issuer))
                     .Returns(Task.CompletedTask);
             }
             var oidcClient = new OidcClient
@@ -558,8 +540,8 @@ namespace InHouseOidc.Provider.Test.Handler
                 GrantTypes = authClientEx switch
                 {
                     AuthCliEx.ValidMissingGrant => null,
-                    AuthCliEx.ValidNoGrants => new(),
-                    _ => new() { GrantType.AuthorizationCode }
+                    AuthCliEx.ValidNoGrants => [],
+                    _ => [GrantType.AuthorizationCode]
                 },
                 IdentityTokenExpiry = TimeSpan.FromMinutes(60),
             };
@@ -639,25 +621,22 @@ namespace InHouseOidc.Provider.Test.Handler
                 AccessTokenExpiry = TimeSpan.FromMinutes(15),
                 ClientId = this.clientId,
                 ClientSecretRequired = true,
-                GrantTypes = new() { GrantType.ClientCredentials },
-                Scopes = new() { this.scope1 },
+                GrantTypes = [GrantType.ClientCredentials],
+                Scopes = [this.scope1],
             };
             this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
-            this.mockClientStore
-                .Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
+            this.mockClientStore.Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
                 .ReturnsAsync(true);
             var issuer = $"{this.urlScheme}://{this.host}";
             var accessToken = "access.token";
-            this.mockJsonWebTokenHandler
-                .Setup(
-                    m =>
-                        m.GetAccessToken(
-                            this.clientId,
-                            this.utcNow + oidcClient.AccessTokenExpiry,
-                            issuer,
-                            It.IsAny<List<string>>(),
-                            null
-                        )
+            this.mockJsonWebTokenHandler.Setup(m =>
+                    m.GetAccessToken(
+                        this.clientId,
+                        this.utcNow + oidcClient.AccessTokenExpiry,
+                        issuer,
+                        It.IsAny<List<string>>(),
+                        null
+                    )
                 )
                 .ReturnsAsync(accessToken);
             var tokenHandler = new TokenHandler(
@@ -891,22 +870,21 @@ namespace InHouseOidc.Provider.Test.Handler
                 GrantTypes = credClientEx switch
                 {
                     CredCliEx.NoGrants => null,
-                    CredCliEx.MissingGrant => new(),
-                    _ => new() { GrantType.ClientCredentials }
+                    CredCliEx.MissingGrant => [],
+                    _ => [GrantType.ClientCredentials]
                 },
                 Scopes = credClientEx switch
                 {
                     CredCliEx.NoScopes => null,
-                    CredCliEx.BadScope => new() { "other" },
-                    _ => new() { this.scope1 }
+                    CredCliEx.BadScope => ["other"],
+                    _ => [this.scope1]
                 },
             };
             switch (credClientEx)
             {
                 case CredCliEx.BadSecret:
                     this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
-                    this.mockClientStore
-                        .Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
+                    this.mockClientStore.Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
                         .ReturnsAsync(false);
                     break;
                 case CredCliEx.BadScope:
@@ -915,8 +893,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 case CredCliEx.None:
                 case CredCliEx.NoScopes:
                     this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
-                    this.mockClientStore
-                        .Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
+                    this.mockClientStore.Setup(m => m.IsCorrectClientSecret(this.clientId, this.clientSecret))
                         .ReturnsAsync(true);
                     break;
             }
@@ -971,14 +948,14 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 AccessTokenExpiry = TimeSpan.FromMinutes(15),
                 ClientId = this.clientId,
-                GrantTypes = new() { GrantType.RefreshToken },
-                Scopes = new() { this.scope1, this.scope2 },
+                GrantTypes = [GrantType.RefreshToken],
+                Scopes = [this.scope1, this.scope2],
             };
             this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
             var issuer = $"{this.urlScheme}://{this.host}";
             var refreshTokenRequest = new RefreshTokenRequest(
                 this.clientId,
-                string.Join(',', new[] { this.scope1, this.scope2 }),
+                string.Join(',', [this.scope1, this.scope2]),
                 this.utcNow.AddHours(1)
             );
             var content = JsonSerializer.Serialize(refreshTokenRequest, JsonHelper.JsonSerializerOptions);
@@ -987,30 +964,25 @@ namespace InHouseOidc.Provider.Test.Handler
                 Created = this.utcNow,
                 Expiry = this.utcNow.AddMinutes(5),
             };
-            this.mockCodeStore
-                .Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
+            this.mockCodeStore.Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
                 .ReturnsAsync(storedCode);
             var storedCodeCaptured = (StoredCode?)null;
-            this.mockCodeStore
-                .Setup(m => m.SaveCode(It.IsAny<StoredCode>()))
+            this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>()))
                 .Callback((StoredCode storedCodePassed) => storedCodeCaptured = storedCodePassed)
                 .Returns(Task.CompletedTask);
             this.mockUserStore.Setup(m => m.IsUserActive(issuer, this.subject)).ReturnsAsync(true);
             var refreshedToken = "nowfresher";
-            this.mockJsonWebTokenHandler
-                .Setup(
-                    m =>
-                        m.GetAccessToken(
-                            this.clientId,
-                            this.utcNow + oidcClient.AccessTokenExpiry,
-                            issuer,
-                            It.IsAny<List<string>>(),
-                            this.subject
-                        )
+            this.mockJsonWebTokenHandler.Setup(m =>
+                    m.GetAccessToken(
+                        this.clientId,
+                        this.utcNow + oidcClient.AccessTokenExpiry,
+                        issuer,
+                        It.IsAny<List<string>>(),
+                        this.subject
+                    )
                 )
                 .ReturnsAsync(refreshedToken);
-            this.mockCodeStore
-                .Setup(m => m.DeleteCode(refreshToken, CodeType.RefreshTokenCode, issuer))
+            this.mockCodeStore.Setup(m => m.DeleteCode(refreshToken, CodeType.RefreshTokenCode, issuer))
                 .Returns(Task.CompletedTask);
             this.providerOptions.GrantTypes.Add(GrantType.AuthorizationCode);
             this.providerOptions.GrantTypes.Add(GrantType.RefreshToken);
@@ -1200,10 +1172,10 @@ namespace InHouseOidc.Provider.Test.Handler
                 GrantTypes = refrClientEx switch
                 {
                     RefrCliEx.NoGrants => null,
-                    RefrCliEx.MissingGrant => new(),
-                    _ => new() { GrantType.RefreshToken }
+                    RefrCliEx.MissingGrant => [],
+                    _ => [GrantType.RefreshToken]
                 },
-                Scopes = new() { this.scope1 },
+                Scopes = [this.scope1],
             };
             var issuer = $"{this.urlScheme}://{this.host}";
             switch (refrClientEx)
@@ -1234,32 +1206,26 @@ namespace InHouseOidc.Provider.Test.Handler
             switch (refrCodeEx)
             {
                 case RefrCdeEx.Expired:
-                    this.mockCodeStore
-                        .Setup(m => m.DeleteCode(refreshToken, CodeType.RefreshTokenCode, issuer))
+                    this.mockCodeStore.Setup(m => m.DeleteCode(refreshToken, CodeType.RefreshTokenCode, issuer))
                         .Returns(Task.CompletedTask);
-                    this.mockCodeStore
-                        .Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
+                    this.mockCodeStore.Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
                         .ReturnsAsync(storedCode);
                     break;
                 case RefrCdeEx.NoContent:
                 case RefrCdeEx.ClientMismatch:
-                    this.mockCodeStore
-                        .Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
+                    this.mockCodeStore.Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
                         .ReturnsAsync(storedCode);
                     break;
                 case RefrCdeEx.BadScope:
                 case RefrCdeEx.UserInactive:
                 case RefrCdeEx.Nothing:
-                    this.mockCodeStore
-                        .Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
+                    this.mockCodeStore.Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
                         .ReturnsAsync(storedCode);
-                    this.mockUserStore
-                        .Setup(m => m.IsUserActive(issuer, storedCode.Subject))
+                    this.mockUserStore.Setup(m => m.IsUserActive(issuer, storedCode.Subject))
                         .ReturnsAsync(refrCodeEx != RefrCdeEx.UserInactive);
                     break;
                 case RefrCdeEx.NotFound:
-                    this.mockCodeStore
-                        .Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
+                    this.mockCodeStore.Setup(m => m.GetCode(refreshToken, CodeType.RefreshTokenCode, issuer))
                         .ReturnsAsync((StoredCode?)null);
                     break;
             }
