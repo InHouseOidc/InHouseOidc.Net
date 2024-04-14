@@ -3,15 +3,9 @@
 
 namespace InHouseOidc.Provider.Exception
 {
-    internal class LogMessageException : System.Exception
+    internal class LogMessageException(string logMessage, params object[]? args) : System.Exception
     {
-        public object[] Args { get; private set; }
-        public string LogMessage { get; private set; }
-
-        public LogMessageException(string logMessage, params object[]? args)
-        {
-            this.Args = args ?? Array.Empty<object>();
-            this.LogMessage = logMessage;
-        }
+        public object[] Args { get; private set; } = args ?? [];
+        public string LogMessage { get; private set; } = logMessage;
     }
 }

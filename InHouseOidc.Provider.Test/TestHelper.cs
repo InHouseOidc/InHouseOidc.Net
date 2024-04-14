@@ -7,12 +7,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test
 {
@@ -37,8 +31,8 @@ namespace InHouseOidc.Provider.Test
         {
             var claims = new List<Claim>
             {
-                new Claim(JsonWebTokenClaim.SessionId, sessionId),
-                new Claim(
+                new(JsonWebTokenClaim.SessionId, sessionId),
+                new(
                     JsonWebTokenClaim.AuthenticationTime,
                     (utcNow + authenticationOffset).ToUnixTimeSeconds().ToString()
                 ),
@@ -53,8 +47,10 @@ namespace InHouseOidc.Provider.Test
             }
             var claimsIdentity = new ClaimsIdentity(claims, scheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            var authenticationProperties = new AuthenticationProperties(new Dictionary<string, string?>()) { };
-            authenticationProperties.ExpiresUtc = utcNow + (sessionExpiry ?? TimeSpan.FromHours(1));
+            var authenticationProperties = new AuthenticationProperties(new Dictionary<string, string?>())
+            {
+                ExpiresUtc = utcNow + (sessionExpiry ?? TimeSpan.FromHours(1)),
+            };
             return (claimsPrincipal, authenticationProperties);
         }
 

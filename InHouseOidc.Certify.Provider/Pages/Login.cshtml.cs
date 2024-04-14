@@ -1,32 +1,25 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
+using System.Security.Claims;
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Security.Claims;
 
 namespace InHouseOidc.Certify.Provider
 {
-    public class Login : PageModel
+    public class Login(IConfiguration configuration, IProviderSession providerSession, IUserStore userStore) : PageModel
     {
-        private readonly IProviderSession providerSession;
-        private readonly IUserStore userStore;
-        private readonly string issuer;
+        private readonly IProviderSession providerSession = providerSession;
+        private readonly IUserStore userStore = userStore;
+        private readonly string issuer = configuration["ProviderAddress"] ?? string.Empty;
 
         [BindProperty]
         public string Subject { get; set; } = string.Empty;
 
         [BindProperty]
         public string? ReturnUrl { get; set; }
-
-        public Login(IConfiguration configuration, IProviderSession providerSession, IUserStore userStore)
-        {
-            this.issuer = configuration["ProviderAddress"] ?? string.Empty;
-            this.providerSession = providerSession;
-            this.userStore = userStore;
-        }
 
         public IActionResult OnGet(string returnUrl)
         {
@@ -54,8 +47,8 @@ namespace InHouseOidc.Certify.Provider
             // Login
             var claims = new List<Claim>
             {
-                new Claim(JsonWebTokenClaim.AuthenticationMethodReference, AuthenticationMethodReference.Password),
-                new Claim(JsonWebTokenClaim.Subject, this.Subject),
+                new(JsonWebTokenClaim.AuthenticationMethodReference, AuthenticationMethodReference.Password),
+                new(JsonWebTokenClaim.Subject, this.Subject),
             };
             await this.providerSession.Login(this.HttpContext, claims, TimeSpan.FromMinutes(60));
             return this.Page();

@@ -5,7 +5,7 @@ namespace InHouseOidc.Common
 {
     public class AsyncLock<TInstance> : IAsyncLock<TInstance>
     {
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim semaphore = new(1);
         private readonly Releaser<TInstance> releaser;
 
         public AsyncLock()
@@ -40,14 +40,9 @@ namespace InHouseOidc.Common
             this.semaphore.Release();
         }
 
-        internal class Releaser<TReleaser> : IDisposable
+        internal class Releaser<TReleaser>(AsyncLock<TReleaser> asyncLock) : IDisposable
         {
-            private readonly AsyncLock<TReleaser> asyncLock;
-
-            public Releaser(AsyncLock<TReleaser> asyncLock)
-            {
-                this.asyncLock = asyncLock;
-            }
+            private readonly AsyncLock<TReleaser> asyncLock = asyncLock;
 
             public void Dispose()
             {

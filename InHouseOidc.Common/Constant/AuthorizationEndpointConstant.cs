@@ -26,9 +26,9 @@ namespace InHouseOidc.Common.Constant
         public const string State = "state";
 
         public static readonly List<string> AuthorizationCodeRequiredFields =
-            new(new[] { ClientId, CodeChallenge, CodeChallengeMethod, RedirectUri, ResponseType, Scope });
+            new([ClientId, CodeChallenge, CodeChallengeMethod, RedirectUri, ResponseType, Scope]);
 
         public static readonly List<string> AuthorizationCodeWithoutPkceRequiredFields =
-            new(new[] { ClientId, RedirectUri, ResponseType, Scope });
+            new([ClientId, RedirectUri, ResponseType, Scope]);
     }
 }

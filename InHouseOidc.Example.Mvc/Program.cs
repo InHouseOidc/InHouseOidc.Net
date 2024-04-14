@@ -5,11 +5,10 @@ using InHouseOidc.PageClient;
 using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddLogging(
-    configure =>
-        configure.AddSimpleConsole(
-            simpleConsoleFormatterOptions => simpleConsoleFormatterOptions.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "
-        )
+builder.Services.AddLogging(configure =>
+    configure.AddSimpleConsole(simpleConsoleFormatterOptions =>
+        simpleConsoleFormatterOptions.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "
+    )
 );
 builder.Services.AddHttpLogging(httpLogging =>
 {

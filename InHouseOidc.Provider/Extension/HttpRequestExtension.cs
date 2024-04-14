@@ -5,8 +5,6 @@ using InHouseOidc.Common.Constant;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Headers;
-using System.Security.Claims;
 
 namespace InHouseOidc.Provider.Extension
 {
@@ -28,17 +26,15 @@ namespace InHouseOidc.Provider.Extension
         )
         {
             var authenticationSchemeProvider = serviceProvider.GetRequiredService<IAuthenticationSchemeProvider>();
-            var scheme = await authenticationSchemeProvider.GetDefaultAuthenticateSchemeAsync();
-            if (scheme == null)
-            {
-                throw new InvalidOperationException("No default authentication scheme configured");
-            }
+            var scheme =
+                await authenticationSchemeProvider.GetDefaultAuthenticateSchemeAsync()
+                ?? throw new InvalidOperationException("No default authentication scheme configured");
             var authenticationHandlerProvider = serviceProvider.GetRequiredService<IAuthenticationHandlerProvider>();
-            var handler = await authenticationHandlerProvider.GetHandlerAsync(httpRequest.HttpContext, scheme.Name);
-            if (handler == null)
-            {
-                throw new InvalidOperationException("Unable to resolve authentication handler for configured scheme");
-            }
+            var handler =
+                await authenticationHandlerProvider.GetHandlerAsync(httpRequest.HttpContext, scheme.Name)
+                ?? throw new InvalidOperationException(
+                    "Unable to resolve authentication handler for configured scheme"
+                );
             var authenticate = await handler.AuthenticateAsync();
             return (authenticate.Principal, authenticate.Properties);
         }

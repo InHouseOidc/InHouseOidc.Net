@@ -3,20 +3,14 @@
 
 using InHouseOidc.Common.Constant;
 using InHouseOidc.PageClient.Resolver;
-using System.Net.Http.Headers;
 
 namespace InHouseOidc.PageClient.Handler
 {
-    internal class PageApiClientHandler : DelegatingHandler
+    internal class PageApiClientHandler(IPageAccessTokenResolver pageAccessTokenResolver, string clientName)
+        : DelegatingHandler
     {
-        private readonly IPageAccessTokenResolver pageAccessTokenResolver;
-        private readonly string clientName;
-
-        public PageApiClientHandler(IPageAccessTokenResolver pageAccessTokenResolver, string clientName)
-        {
-            this.pageAccessTokenResolver = pageAccessTokenResolver;
-            this.clientName = clientName;
-        }
+        private readonly IPageAccessTokenResolver pageAccessTokenResolver = pageAccessTokenResolver;
+        private readonly string clientName = clientName;
 
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage httpRequestMessage,

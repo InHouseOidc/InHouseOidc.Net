@@ -4,11 +4,6 @@
 using InHouseOidc.Common;
 using InHouseOidc.Provider.Extension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace InHouseOidc.Provider.Test.Extension
 {
@@ -85,7 +80,7 @@ namespace InHouseOidc.Provider.Test.Extension
             using var utf8JsonWriter = new Utf8JsonWriter(memoryStream, JsonHelper.JsonWriterOptions);
             // Act
             utf8JsonWriter.WriteStartObject();
-            utf8JsonWriter.WriteNameValues("array", new[] { "one", "two" });
+            utf8JsonWriter.WriteNameValues("array", ["one", "two"]);
             utf8JsonWriter.WriteEndObject();
             utf8JsonWriter.Flush();
             var result = Encoding.UTF8.GetString(memoryStream.ToArray());
@@ -93,7 +88,7 @@ namespace InHouseOidc.Provider.Test.Extension
             Assert.IsNotNull(result);
             Assert.AreEqual(
                 JsonSerializer.Serialize(
-                    new TestNamesValues { Array = new string[] { "one", "two" }, },
+                    new TestNamesValues { Array = ["one", "two"], },
                     JsonHelper.JsonSerializerOptions
                 ),
                 result

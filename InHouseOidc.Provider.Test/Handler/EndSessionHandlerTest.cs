@@ -11,12 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -199,8 +193,7 @@ namespace InHouseOidc.Provider.Test.Handler
                     EndSessionEndpointConstant.PostLogoutRedirectUri,
                     this.postLogoutRedirectUri
                 );
-                this.mockClientStore
-                    .Setup(m => m.IsKnownPostLogoutRedirectUri(this.postLogoutRedirectUri))
+                this.mockClientStore.Setup(m => m.IsKnownPostLogoutRedirectUri(this.postLogoutRedirectUri))
                     .ReturnsAsync(isValidPostLogoutRedirectUri.Value);
             }
             var serviceCollection = new TestServiceCollection();
@@ -227,14 +220,12 @@ namespace InHouseOidc.Provider.Test.Handler
                     EndSessionEndpointConstant.IdTokenHint,
                     jwt
                 );
-                this.mockValidationHandler
-                    .Setup(m => m.ValidateJsonWebToken(null, issuer, jwt, false))
+                this.mockValidationHandler.Setup(m => m.ValidateJsonWebToken(null, issuer, jwt, false))
                     .ReturnsAsync(issueValidJwt.Value ? tokenClaimsPrincipal : null);
             }
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var storedCodeCaptured = (StoredCode?)null;
-            this.mockCodeStore
-                .Setup(m => m.SaveCode(It.IsAny<StoredCode>()))
+            this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>()))
                 .Callback((StoredCode storedCodePassed) => storedCodeCaptured = storedCodePassed)
                 .Returns(Task.CompletedTask);
             var endSessionHandler = new EndSessionHandler(

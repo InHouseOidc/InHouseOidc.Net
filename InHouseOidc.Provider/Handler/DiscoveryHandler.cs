@@ -7,18 +7,12 @@ using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class DiscoveryHandler : IEndpointHandler<DiscoveryHandler>
+    internal class DiscoveryHandler(ProviderOptions providerOptions) : IEndpointHandler<DiscoveryHandler>
     {
-        private readonly ProviderOptions providerOptions;
-
-        public DiscoveryHandler(ProviderOptions providerOptions)
-        {
-            this.providerOptions = providerOptions;
-        }
+        private readonly ProviderOptions providerOptions = providerOptions;
 
         public async Task<bool> HandleRequest(HttpRequest httpRequest)
         {
@@ -82,43 +76,36 @@ namespace InHouseOidc.Provider.Handler
             );
             utf8JsonWriter.WriteNameValues(
                 DiscoveryConstant.ScopesSupported,
-                new string[]
-                {
+                [
                     JsonWebTokenConstant.OpenId,
                     JsonWebTokenConstant.Address,
                     JsonWebTokenConstant.Email,
                     JsonWebTokenConstant.Phone,
                     JsonWebTokenConstant.Profile,
                     JsonWebTokenConstant.Role,
-                }
+                ]
             );
-            utf8JsonWriter.WriteNameValues(
-                DiscoveryConstant.ClaimsSupported,
-                new string[] { JsonWebTokenClaim.Subject }
-            );
+            utf8JsonWriter.WriteNameValues(DiscoveryConstant.ClaimsSupported, [JsonWebTokenClaim.Subject]);
             if (this.providerOptions.GrantTypes.Contains(GrantType.AuthorizationCode))
             {
                 utf8JsonWriter.WriteNameValues(
                     DiscoveryConstant.ResponseModesSupported,
-                    new string[] { DiscoveryConstant.ResponseModeQuery }
+                    [DiscoveryConstant.ResponseModeQuery]
                 );
                 utf8JsonWriter.WriteNameValues(
                     DiscoveryConstant.ResponseTypesSupported,
-                    new string[] { DiscoveryConstant.ResponseTypeCode }
+                    [DiscoveryConstant.ResponseTypeCode]
                 );
                 utf8JsonWriter.WriteNameValues(
                     DiscoveryConstant.CodeChallengeMethodsSupported,
-                    new string[] { DiscoveryConstant.S256 }
+                    [DiscoveryConstant.S256]
                 );
             }
             utf8JsonWriter.WriteNameValues(
                 DiscoveryConstant.IdTokenSigningAlgValuesSupported,
-                new string[] { DiscoveryConstant.RS256 }
+                [DiscoveryConstant.RS256]
             );
-            utf8JsonWriter.WriteNameValues(
-                DiscoveryConstant.SubjectTypesSupported,
-                new string[] { DiscoveryConstant.Public }
-            );
+            utf8JsonWriter.WriteNameValues(DiscoveryConstant.SubjectTypesSupported, [DiscoveryConstant.Public]);
             utf8JsonWriter.WriteNameValue(DiscoveryConstant.RequestParameterSupported, false);
             utf8JsonWriter.WriteEndObject();
             utf8JsonWriter.Flush();

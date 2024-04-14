@@ -11,9 +11,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -24,7 +21,7 @@ namespace InHouseOidc.Provider.Test.Handler
 
         private readonly TestLogger<ApiAuthenticationHandler> logger = new();
         private readonly Mock<ILoggerFactory> mockLoggerFactory = new();
-        private readonly Mock<ISystemClock> mockSystemClock = new(MockBehavior.Strict);
+
         private readonly Mock<IValidationHandler> mockValidationHandler = new(MockBehavior.Strict);
         private readonly ApiAuthenticationOptions apiAuthenticationOptions = new() { Audience = Audience };
 
@@ -41,7 +38,6 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.apiAuthenticationOptions,
                 mockIOptionsMonitor.Object,
                 this.mockLoggerFactory.Object,
-                this.mockSystemClock.Object,
                 UrlEncoder.Default,
                 this.mockValidationHandler.Object
             );
@@ -97,8 +93,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var validationResult = isValidToken
                 ? new ClaimsPrincipal(new ClaimsIdentity(ApiConstant.AuthenticationScheme))
                 : null;
-            this.mockValidationHandler
-                .Setup(m => m.ValidateJsonWebToken(Audience, $"https://{issuer}", token, true))
+            this.mockValidationHandler.Setup(m => m.ValidateJsonWebToken(Audience, $"https://{issuer}", token, true))
                 .ReturnsAsync(validationResult);
             // Act
             var result = await this.apiAuthenticationHandler.AuthenticateAsync();

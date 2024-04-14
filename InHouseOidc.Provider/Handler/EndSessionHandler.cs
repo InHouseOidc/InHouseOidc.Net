@@ -9,35 +9,24 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using System.Security.Claims;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class EndSessionHandler : IEndpointHandler<EndSessionHandler>
+    internal class EndSessionHandler(
+        IClientStore clientStore,
+        ICodeStore codeStore,
+        ProviderOptions providerOptions,
+        IServiceProvider serviceProvider,
+        IUtcNow utcNow,
+        IValidationHandler validationHandler
+    ) : IEndpointHandler<EndSessionHandler>
     {
-        private readonly IClientStore clientStore;
-        private readonly ICodeStore codeStore;
-        private readonly ProviderOptions providerOptions;
-        private readonly IServiceProvider serviceProvider;
-        private readonly IUtcNow utcNow;
-        private readonly IValidationHandler validationHandler;
-
-        public EndSessionHandler(
-            IClientStore clientStore,
-            ICodeStore codeStore,
-            ProviderOptions providerOptions,
-            IServiceProvider serviceProvider,
-            IUtcNow utcNow,
-            IValidationHandler validationHandler
-        )
-        {
-            this.clientStore = clientStore;
-            this.codeStore = codeStore;
-            this.providerOptions = providerOptions;
-            this.serviceProvider = serviceProvider;
-            this.utcNow = utcNow;
-            this.validationHandler = validationHandler;
-        }
+        private readonly IClientStore clientStore = clientStore;
+        private readonly ICodeStore codeStore = codeStore;
+        private readonly ProviderOptions providerOptions = providerOptions;
+        private readonly IServiceProvider serviceProvider = serviceProvider;
+        private readonly IUtcNow utcNow = utcNow;
+        private readonly IValidationHandler validationHandler = validationHandler;
 
         public async Task<bool> HandleRequest(HttpRequest httpRequest)
         {
@@ -47,13 +36,12 @@ namespace InHouseOidc.Provider.Handler
                 throw this.EndSessionError(httpRequest, "HttpMethod not supported: {method}", httpRequest.Method);
             }
             // Extract parameters to a dictionary
-            var parameters = HttpMethods.IsGet(httpRequest.Method)
-                ? httpRequest.GetQueryDictionary()
-                : await httpRequest.GetFormDictionary();
-            if (parameters == null)
-            {
-                throw this.EndSessionError(httpRequest, "Unable to resolve end session parameters");
-            }
+            var parameters =
+                (
+                    HttpMethods.IsGet(httpRequest.Method)
+                        ? httpRequest.GetQueryDictionary()
+                        : await httpRequest.GetFormDictionary()
+                ) ?? throw this.EndSessionError(httpRequest, "Unable to resolve end session parameters");
             // Parse and validate the request
             var issuer = httpRequest.GetBaseUriString();
             parameters.TryGetNonEmptyValue(EndSessionEndpointConstant.IdTokenHint, out var idTokenHint);

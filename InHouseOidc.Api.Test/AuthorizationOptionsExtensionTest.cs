@@ -1,14 +1,11 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
+using System.Security.Claims;
 using InHouseOidc.Common.Constant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Api.Test
 {
@@ -38,7 +35,7 @@ namespace InHouseOidc.Api.Test
                 typeof(AssertionRequirement)
             );
             // Arrange 2
-            var claims = new List<Claim> { new Claim(JsonWebTokenClaim.Scope, "ignorescope testscope") };
+            var claims = new List<Claim> { new(JsonWebTokenClaim.Scope, "ignorescope testscope") };
             var claimsIdentity = new ClaimsIdentity(claims, scheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var context = new AuthorizationHandlerContext(policyScheme.Requirements, claimsPrincipal, null);

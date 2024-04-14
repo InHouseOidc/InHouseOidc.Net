@@ -18,12 +18,12 @@ namespace InHouseOidc.PageClient.Test
     [TestClass]
     public class PageClientBuilderTest
     {
-        private TestServiceCollection serviceCollection = new();
+        private TestServiceCollection serviceCollection = [];
 
         [TestInitialize]
         public void Initialise()
         {
-            this.serviceCollection = new();
+            this.serviceCollection = [];
             var configuration = new Mock<IConfiguration>();
             this.serviceCollection.AddSingleton(configuration.Object);
             var configurationSection = new Mock<IConfigurationSection>();
@@ -112,8 +112,8 @@ namespace InHouseOidc.PageClient.Test
             var maxRetryAttempts = 10;
             var retryDelayMilliseconds = 25;
             // Act
-            var pageClientBuilder = this.serviceCollection
-                .AddOidcPageClient()
+            var pageClientBuilder = this
+                .serviceCollection.AddOidcPageClient()
                 .EnableDiscoveryGrantTypeValidation(false)
                 .EnableDiscoveryIssuerValidation(false)
                 .SetDiscoveryCacheTime(discoveryCacheTime)

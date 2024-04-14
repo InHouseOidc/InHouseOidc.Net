@@ -8,7 +8,7 @@ namespace InHouseOidc.Test.Common
 {
     public class TestLogger<TType> : ILogger<TType>
     {
-        public List<LogItem> LogItems { get; } = new List<LogItem>();
+        public List<LogItem> LogItems { get; } = [];
 
         public IDisposable? BeginScope<TState>(TState state)
             where TState : notnull

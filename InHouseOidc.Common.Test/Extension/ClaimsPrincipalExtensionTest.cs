@@ -4,9 +4,6 @@
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Common.Extension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 
 namespace InHouseOidc.Common.Test.Extension
 {
@@ -20,7 +17,7 @@ namespace InHouseOidc.Common.Test.Extension
             var time = new DateTimeOffset(2022, 5, 4, 8, 18, 0, 0, TimeSpan.FromHours(12));
             var claims = new List<Claim>
             {
-                new Claim(JsonWebTokenClaim.AuthenticationTime, time.ToUnixTimeSeconds().ToString()),
+                new(JsonWebTokenClaim.AuthenticationTime, time.ToUnixTimeSeconds().ToString()),
             };
             var claimsIdentity = new ClaimsIdentity(claims, "testscheme");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -50,7 +47,7 @@ namespace InHouseOidc.Common.Test.Extension
         {
             // Arrange
             var sessionId = "id";
-            var claims = new List<Claim> { new Claim(JsonWebTokenClaim.SessionId, sessionId) };
+            var claims = new List<Claim> { new(JsonWebTokenClaim.SessionId, sessionId) };
             var claimsIdentity = new ClaimsIdentity(claims, "testscheme");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             // Act
@@ -79,7 +76,7 @@ namespace InHouseOidc.Common.Test.Extension
         {
             // Arrange 1 (JsonWebTokenClaim.Subject)
             var subject = "subject";
-            var claims = new List<Claim> { new Claim(JsonWebTokenClaim.Subject, subject) };
+            var claims = new List<Claim> { new(JsonWebTokenClaim.Subject, subject) };
             var claimsIdentity = new ClaimsIdentity(claims, "testscheme");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             // Act 1
@@ -87,7 +84,7 @@ namespace InHouseOidc.Common.Test.Extension
             // Assert 1
             Assert.AreEqual(subject, result1);
             // Arrange 2 (ClaimTypes.NameIdentifier)
-            claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, subject) };
+            claims = [new(ClaimTypes.NameIdentifier, subject)];
             claimsIdentity = new ClaimsIdentity(claims, "testscheme");
             claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             // Act 2

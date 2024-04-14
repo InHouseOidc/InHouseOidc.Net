@@ -6,22 +6,16 @@ using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
-using System.Security.Cryptography.X509Certificates;
 
 namespace InHouseOidc.Provider
 {
     /// <summary>
     /// Builds the services required to support an OIDC Provider.
     /// </summary>
-    public class ProviderBuilder
+    public class ProviderBuilder(IServiceCollection serviceCollection)
     {
         internal ProviderOptions ProviderOptions { get; } = new ProviderOptions();
-        internal IServiceCollection ServiceCollection { get; set; }
-
-        public ProviderBuilder(IServiceCollection serviceCollection)
-        {
-            this.ServiceCollection = serviceCollection;
-        }
+        internal IServiceCollection ServiceCollection { get; set; } = serviceCollection;
 
         /// <summary>
         /// Builds the final services for the provider. Required as the final step of the provider setup.

@@ -8,8 +8,6 @@ using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Collections.Concurrent;
-using System.Text.Encodings.Web;
 
 namespace InHouseOidc.Provider.Handler
 {
@@ -26,10 +24,9 @@ namespace InHouseOidc.Provider.Handler
             ILoggerFactory loggerFactory,
             ProviderOptions providerOptions,
             IServiceProvider serviceProvider,
-            UrlEncoder urlEncoder,
-            ISystemClock systemClock
+            UrlEncoder urlEncoder
         )
-            : base(authenticationSchemeOptions, loggerFactory, urlEncoder, systemClock)
+            : base(authenticationSchemeOptions, loggerFactory, urlEncoder)
         {
             this.loggerFactory = loggerFactory;
             this.providerOptions = providerOptions;

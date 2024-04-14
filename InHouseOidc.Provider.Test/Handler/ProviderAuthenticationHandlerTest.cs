@@ -15,14 +15,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -31,16 +23,7 @@ namespace InHouseOidc.Provider.Test.Handler
     {
         private readonly Mock<IOptionsMonitor<AuthenticationSchemeOptions>> mockIOptionsMonitor =
             new(MockBehavior.Strict);
-        private readonly Mock<ISystemClock> mockSystemClock = new(MockBehavior.Strict);
-        private readonly DateTimeOffset utcNow = new DateTimeOffset(
-            2022,
-            5,
-            17,
-            17,
-            13,
-            00,
-            TimeSpan.Zero
-        ).ToUniversalTime();
+
         private readonly TestLogger<ProviderAuthenticationHandler> logger = new();
 
         private Mock<ILoggerFactory> mockLoggerFactory = new(MockBehavior.Strict);
@@ -55,7 +38,6 @@ namespace InHouseOidc.Provider.Test.Handler
             this.mockIOptionsMonitor.Setup(m => m.Get(It.IsAny<string>())).Returns(new AuthenticationSchemeOptions());
             var mockIOptionsMonitor = new Mock<IOptionsMonitor<AuthenticationSchemeOptions>>(MockBehavior.Strict);
             this.providerOptions = new();
-            this.mockSystemClock.Setup(m => m.UtcNow).Returns(this.utcNow);
         }
 
         [DataTestMethod]
@@ -79,8 +61,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockLoggerFactory.Object,
                 this.providerOptions,
                 serviceProvider,
-                UrlEncoder.Default,
-                this.mockSystemClock.Object
+                UrlEncoder.Default
             );
             await providerAuthenticationHandler.InitializeAsync(authenticationScheme, context);
             context.Request.Path = pathString == "{null}" ? null : new PathString(pathString);
@@ -114,8 +95,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockLoggerFactory.Object,
                 this.providerOptions,
                 serviceProvider,
-                UrlEncoder.Default,
-                this.mockSystemClock.Object
+                UrlEncoder.Default
             );
             await providerAuthenticationHandler.InitializeAsync(authenticationScheme, context);
             context.Request.Path = new PathString(this.providerOptions.AuthorizationEndpointUri.OriginalString);
@@ -149,8 +129,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockLoggerFactory.Object,
                 this.providerOptions,
                 serviceProvider,
-                UrlEncoder.Default,
-                this.mockSystemClock.Object
+                UrlEncoder.Default
             );
             await providerAuthenticationHandler.InitializeAsync(authenticationScheme, context);
             Assert.IsNotNull(this.providerOptions.CheckSessionEndpointUri);
@@ -185,8 +164,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockLoggerFactory.Object,
                 this.providerOptions,
                 serviceProvider,
-                UrlEncoder.Default,
-                this.mockSystemClock.Object
+                UrlEncoder.Default
             );
             await providerAuthenticationHandler.InitializeAsync(authenticationScheme, context);
             Assert.IsNotNull(this.providerOptions.UserInfoEndpointUri);
@@ -215,8 +193,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockLoggerFactory.Object,
                 this.providerOptions,
                 serviceProvider,
-                UrlEncoder.Default,
-                this.mockSystemClock.Object
+                UrlEncoder.Default
             );
             await providerAuthenticationHandler.InitializeAsync(authenticationScheme, context);
             context.Request.Path = "/connect/authorize";
@@ -260,8 +237,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockLoggerFactory.Object,
                 this.providerOptions,
                 serviceProvider,
-                UrlEncoder.Default,
-                this.mockSystemClock.Object
+                UrlEncoder.Default
             );
             await providerAuthenticationHandler.InitializeAsync(authenticationScheme, context);
             // Act
@@ -270,7 +246,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.AreEqual(statusCode, context.Response.StatusCode);
             if (statusCode == (int)HttpStatusCode.Redirect)
             {
-                Assert.AreEqual(expectedBodyOrLocation, context.Response.Headers["location"].ToString());
+                Assert.AreEqual(expectedBodyOrLocation, context.Response.Headers.Location.ToString());
             }
             else
             {
@@ -291,28 +267,25 @@ namespace InHouseOidc.Provider.Test.Handler
         {
             get
             {
-                return new[]
-                {
-                    new object[]
-                    {
+                return
+                [
+                    [
                         new BadRequestException("test_error", "Message {value}", "value"),
                         (int)HttpStatusCode.BadRequest,
                         JsonSerializer.Serialize(new { error = "test_error" }, JsonHelper.JsonSerializerOptions),
                         LogLevel.Information,
                         "Message value",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new InternalErrorException("Message {value}", "value"),
                         (int)HttpStatusCode.InternalServerError,
                         ExceptionConstant.InternalError,
                         LogLevel.Error,
                         "Message value",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new RedirectErrorException(
                             RedirectErrorType.ServerError,
                             "http://localhost",
@@ -324,9 +297,8 @@ namespace InHouseOidc.Provider.Test.Handler
                         LogLevel.Information,
                         "Message value",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new RedirectErrorException(
                             RedirectErrorType.ServerError,
                             "http://localhost",
@@ -338,35 +310,32 @@ namespace InHouseOidc.Provider.Test.Handler
                         LogLevel.Error,
                         "Message value",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new System.Exception("unexpected"),
                         (int)HttpStatusCode.InternalServerError,
                         ExceptionConstant.InternalError,
                         LogLevel.Error,
                         "Unhandled exception",
                         true,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new System.Exception("unexpected"),
                         (int)HttpStatusCode.InternalServerError,
                         ExceptionConstant.InternalError,
                         LogLevel.Information,
                         "Unhandled exception",
                         true,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new InvalidOperationException("invalid_operation"),
                         (int)HttpStatusCode.InternalServerError,
                         ExceptionConstant.InternalError,
                         LogLevel.Information,
                         "Unhandled exception",
                         true,
-                    },
-                };
+                    ],
+                ];
             }
         }
 
@@ -387,8 +356,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockLoggerFactory.Object,
                 this.providerOptions,
                 serviceProvider,
-                UrlEncoder.Default,
-                this.mockSystemClock.Object
+                UrlEncoder.Default
             );
             await providerAuthenticationHandler.InitializeAsync(authenticationScheme, context);
             // Act

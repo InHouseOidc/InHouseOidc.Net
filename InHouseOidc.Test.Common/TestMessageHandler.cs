@@ -1,11 +1,6 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace InHouseOidc.Test.Common
 {
     public class TestMessageHandler : HttpMessageHandler

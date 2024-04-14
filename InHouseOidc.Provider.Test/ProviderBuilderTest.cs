@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 
 namespace InHouseOidc.Provider.Test
 {
@@ -23,7 +22,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var mockClientStore = new Mock<IClientStore>(MockBehavior.Strict);
             serviceCollection.AddSingleton(mockClientStore.Object);
             var mockResourceStore = new Mock<IResourceStore>(MockBehavior.Strict);
@@ -55,7 +54,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var mockClientStore = new Mock<IClientStore>(MockBehavior.Strict);
             serviceCollection.AddSingleton(mockClientStore.Object);
             var mockCodeStore = new Mock<ICodeStore>(MockBehavior.Strict);
@@ -82,7 +81,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             // Act
             providerBuilder.EnableCheckSessionEndpoint();
             providerBuilder.Build();
@@ -100,7 +99,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var mockResourceStore = new Mock<IResourceStore>(MockBehavior.Strict);
             serviceCollection.AddSingleton(mockResourceStore.Object);
             // Act
@@ -120,7 +119,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             // Act
             providerBuilder.EnableRefreshTokenGrant();
             providerBuilder.Build();
@@ -137,7 +136,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var mockClientStore = new Mock<IClientStore>(MockBehavior.Strict);
             serviceCollection.AddSingleton(mockClientStore.Object);
             var mockUserStore = new Mock<IUserStore>(MockBehavior.Strict);
@@ -159,7 +158,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             // Act
             providerBuilder.LogFailuresAsInformation(false);
             providerBuilder.Build();
@@ -176,7 +175,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var path = "/authorize";
             // Act
             providerBuilder.SetAuthorizationEndpointAddress(path);
@@ -194,7 +193,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var uri = new Uri("/authorize", UriKind.Relative);
             // Act
             providerBuilder.SetAuthorizationEndpointUri(uri);
@@ -212,7 +211,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             // var uri = new Uri("/authorize", UriKind.Relative);
             var expiryTimeSpan = TimeSpan.FromMinutes(5);
             // Act
@@ -231,7 +230,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var path = "/checksession";
             // Act
             providerBuilder.SetCheckSessionEndpointAddress(path);
@@ -249,7 +248,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var uri = new Uri("/checksession", UriKind.Relative);
             // Act
             providerBuilder.SetCheckSessionEndpointUri(uri);
@@ -267,7 +266,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var path = "/endsession";
             // Act
             providerBuilder.SetEndSessionEndpointAddress(path);
@@ -285,7 +284,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var uri = new Uri("/endsession", UriKind.Relative);
             // Act
             providerBuilder.SetEndSessionEndpointUri(uri);
@@ -303,7 +302,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var identityProvider = "unittest";
             // Act
             providerBuilder.SetIdentityProvider(identityProvider);
@@ -322,7 +321,7 @@ namespace InHouseOidc.Provider.Test
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
             // Act
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             providerBuilder.Build();
             // Assert
             var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -353,7 +352,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var path = "/token";
             // Act
             providerBuilder.SetTokenEndpointAddress(path);
@@ -371,7 +370,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var uri = new Uri("/token", UriKind.Relative);
             // Act
             providerBuilder.SetTokenEndpointUri(uri);
@@ -389,7 +388,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var path = "/userinfo";
             // Act
             providerBuilder.SetUserInfoEndpointAddress(path);
@@ -407,7 +406,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             var uri = new Uri("/userinfo", UriKind.Relative);
             // Act
             providerBuilder.SetUserInfoEndpointUri(uri);
@@ -425,7 +424,7 @@ namespace InHouseOidc.Provider.Test
             // Arrange
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
-            providerBuilder.SetSigningCertificates(new[] { TestCertificate.Create(DateTimeOffset.UtcNow) });
+            providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             // Act/Assert 1
             var exception1 = Assert.ThrowsException<ArgumentException>(
                 () => providerBuilder.SetUserInfoEndpointUri(new Uri("%2c%/userinfo", UriKind.Relative))

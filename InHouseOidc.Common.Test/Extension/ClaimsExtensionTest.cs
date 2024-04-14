@@ -3,8 +3,6 @@
 
 using InHouseOidc.Common.Constant;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Security.Claims;
 
 namespace InHouseOidc.Common.Test.Extension
 {
@@ -25,54 +23,32 @@ namespace InHouseOidc.Common.Test.Extension
         {
             get
             {
-                return new[]
-                {
-                    new object[] { new List<Claim>(), "scope1", false },
-                    new object[]
-                    {
+                return
+                [
+                    [new List<Claim>(), "scope1", false],
+                    [
                         new List<Claim>
                         {
-                            new Claim(JsonWebTokenClaim.Scope, "scope1"),
-                            new Claim(JsonWebTokenClaim.Scope, "scope2"),
+                            new(JsonWebTokenClaim.Scope, "scope1"),
+                            new(JsonWebTokenClaim.Scope, "scope2"),
                         },
                         "scope3",
                         false,
-                    },
-                    new object[]
-                    {
+                    ],
+                    [
                         new List<Claim>
                         {
-                            new Claim(JsonWebTokenClaim.Scope, "scope1"),
-                            new Claim(JsonWebTokenClaim.Scope, "scope2"),
+                            new(JsonWebTokenClaim.Scope, "scope1"),
+                            new(JsonWebTokenClaim.Scope, "scope2"),
                         },
                         "scope2",
                         true,
-                    },
-                    new object[]
-                    {
-                        new List<Claim> { new Claim(JsonWebTokenClaim.Scope, "scope1 scope2") },
-                        "scope3",
-                        false,
-                    },
-                    new object[]
-                    {
-                        new List<Claim> { new Claim(JsonWebTokenClaim.Scope, "scope1 scope2") },
-                        "scope1",
-                        true,
-                    },
-                    new object[]
-                    {
-                        new List<Claim> { new Claim(JsonWebTokenClaim.Scope, "scope1") },
-                        "scope2",
-                        false,
-                    },
-                    new object[]
-                    {
-                        new List<Claim> { new Claim(JsonWebTokenClaim.Scope, "scope1") },
-                        "scope1",
-                        true,
-                    },
-                };
+                    ],
+                    [new List<Claim> { new(JsonWebTokenClaim.Scope, "scope1 scope2") }, "scope3", false,],
+                    [new List<Claim> { new(JsonWebTokenClaim.Scope, "scope1 scope2") }, "scope1", true,],
+                    [new List<Claim> { new(JsonWebTokenClaim.Scope, "scope1") }, "scope2", false,],
+                    [new List<Claim> { new(JsonWebTokenClaim.Scope, "scope1") }, "scope1", true,],
+                ];
             }
         }
     }

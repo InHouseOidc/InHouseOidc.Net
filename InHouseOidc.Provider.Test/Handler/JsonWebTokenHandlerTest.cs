@@ -11,10 +11,6 @@ using InHouseOidc.Test.Common;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
@@ -22,12 +18,12 @@ namespace InHouseOidc.Provider.Test.Handler
     public class JsonWebTokenHandlerTest
     {
         private readonly Mock<IUtcNow> mockUtcNow = new(MockBehavior.Strict);
-        private readonly List<string> audiences = new() { "https://api1.app", "https://api2.app" };
+        private readonly List<string> audiences = ["https://api1.app", "https://api2.app"];
         private readonly string clientId = "clientid";
         private readonly string email = "joe@bloggs.name";
         private readonly string issuer = "https://localhost";
         private readonly string redirectUri = "https://client.app/auth/callback";
-        private readonly List<string> scopes = new() { "scope1", "scope2" };
+        private readonly List<string> scopes = ["scope1", "scope2"];
         private readonly string sessionId = "session";
         private readonly string subject = "subjectid";
         private readonly DateTimeOffset expiry = new DateTimeOffset(
@@ -71,7 +67,7 @@ namespace InHouseOidc.Provider.Test.Handler
             // Arrange
             var x509SecurityKey = new X509SecurityKey(TestCertificate.Create(this.utcNow));
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(new List<SigningKey> { signingKey });
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync([signingKey]);
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
@@ -118,7 +114,7 @@ namespace InHouseOidc.Provider.Test.Handler
             // Arrange
             var x509SecurityKey = new X509SecurityKey(TestCertificate.Create(this.utcNow));
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(new List<SigningKey> { signingKey });
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync([signingKey]);
             var jsonWebTokenHandler = new JsonWebTokenHandler(
                 this.providerOptions,
                 this.mockResourceStore.Object,
@@ -152,8 +148,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             authorizationRequest.SessionExpiryUtc = this.expiry;
             authorizationRequest.AuthorizationRequestClaims.AddRange(
-                new AuthorizationRequestClaim[]
-                {
+                [
                     new AuthorizationRequestClaim(
                         JsonWebTokenClaim.AuthenticationTime,
                         this.utcNow.ToUnixTimeSeconds().ToString()
@@ -167,7 +162,7 @@ namespace InHouseOidc.Provider.Test.Handler
                     new AuthorizationRequestClaim(JsonWebTokenClaim.Email, this.email),
                     new AuthorizationRequestClaim(JsonWebTokenClaim.PhoneNumber, phoneNumber),
                     new AuthorizationRequestClaim(JsonWebTokenClaim.Name, name),
-                }
+                ]
             );
             if (!string.IsNullOrEmpty(amr))
             {
@@ -202,22 +197,18 @@ namespace InHouseOidc.Provider.Test.Handler
             AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Email, this.email);
             AssertHasClaim(jsonWebToken, JsonWebTokenClaim.PhoneNumber, phoneNumber);
             AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Name, name);
-            AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Audience, new[] { this.clientId });
+            AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Audience, [this.clientId]);
             if (!string.IsNullOrEmpty(nonce))
             {
                 AssertHasClaim(jsonWebToken, JsonWebTokenClaim.Nonce, nonce);
             }
             if (!string.IsNullOrEmpty(amr))
             {
-                AssertHasClaims(
-                    jsonWebToken,
-                    JsonWebTokenClaim.AuthenticationMethodReference,
-                    new List<string> { amr }
-                );
+                AssertHasClaims(jsonWebToken, JsonWebTokenClaim.AuthenticationMethodReference, [amr]);
             }
             if (!string.IsNullOrEmpty(role))
             {
-                AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Role, new List<string> { role });
+                AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Role, [role]);
             }
         }
 
@@ -235,7 +226,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 setExpiredCertificate ? TestCertificate.CreateExpired(this.utcNow) : TestCertificate.Create(this.utcNow)
             );
             var signingKey = new SigningCredentials(x509SecurityKey, SecurityAlgorithms.RsaSha256).ToSigningKey();
-            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync(new List<SigningKey> { signingKey });
+            this.mockSigningKeyHandler.Setup(m => m.Resolve()).ReturnsAsync([signingKey]);
             var scopes = new List<string> { JsonWebTokenConstant.Email };
             var authorizationRequest = new AuthorizationRequest(
                 this.clientId,
@@ -244,8 +235,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 string.Join(' ', scopes)
             );
             authorizationRequest.AuthorizationRequestClaims.AddRange(
-                new AuthorizationRequestClaim[]
-                {
+                [
                     new AuthorizationRequestClaim(
                         JsonWebTokenClaim.AuthenticationTime,
                         this.utcNow.ToUnixTimeSeconds().ToString()
@@ -256,7 +246,7 @@ namespace InHouseOidc.Provider.Test.Handler
                     ),
                     new AuthorizationRequestClaim(JsonWebTokenClaim.SessionId, this.sessionId),
                     new AuthorizationRequestClaim(JsonWebTokenClaim.Email, this.email),
-                }
+                ]
             );
             if (setExpiry)
             {
@@ -317,8 +307,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 string.Join(' ', scopes)
             );
             authorizationRequest.AuthorizationRequestClaims.AddRange(
-                new AuthorizationRequestClaim[]
-                {
+                [
                     new AuthorizationRequestClaim(
                         JsonWebTokenClaim.AuthenticationTime,
                         this.utcNow.ToUnixTimeSeconds().ToString()
@@ -329,7 +318,7 @@ namespace InHouseOidc.Provider.Test.Handler
                     ),
                     new AuthorizationRequestClaim(JsonWebTokenClaim.SessionId, this.sessionId),
                     new AuthorizationRequestClaim(JsonWebTokenClaim.Email, this.email),
-                }
+                ]
             );
             authorizationRequest.SessionExpiryUtc = this.expiry;
             var jsonWebTokenHandler = new JsonWebTokenHandler(
@@ -361,7 +350,7 @@ namespace InHouseOidc.Provider.Test.Handler
         )
         {
             var claims = jsonWebToken.Claims.Where(c => c.Type == claimType).ToList();
-            if (!claims.Any())
+            if (claims.Count == 0)
             {
                 Assert.Fail($"Unable to find claimType: {claimType}");
             }
@@ -379,7 +368,7 @@ namespace InHouseOidc.Provider.Test.Handler
         )
         {
             var claims = jsonWebToken.Claims.Where(c => c.Type == claimType).Select(c => c.Value).ToList();
-            if (!claims.Any())
+            if (claims.Count == 0)
             {
                 Assert.Fail($"Unable to find claimType: {claimType}");
             }

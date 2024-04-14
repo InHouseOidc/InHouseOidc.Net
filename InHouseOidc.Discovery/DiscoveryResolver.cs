@@ -5,28 +5,19 @@ using InHouseOidc.Common;
 using InHouseOidc.Common.Extension;
 using InHouseOidc.Common.Type;
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
 
 namespace InHouseOidc.Discovery
 {
-    public class DiscoveryResolver : IDiscoveryResolver
+    public class DiscoveryResolver(
+        IHttpClientFactory httpClientFactory,
+        ILogger<DiscoveryResolver> logger,
+        IUtcNow utcNow
+    ) : IDiscoveryResolver
     {
-        private readonly IHttpClientFactory httpClientFactory;
-        private readonly ILogger<DiscoveryResolver> logger;
-        private readonly IUtcNow utcNow;
-        private readonly ConcurrentDictionary<string, Discovery> discoveryDictionary;
-
-        public DiscoveryResolver(
-            IHttpClientFactory httpClientFactory,
-            ILogger<DiscoveryResolver> logger,
-            IUtcNow utcNow
-        )
-        {
-            this.httpClientFactory = httpClientFactory;
-            this.logger = logger;
-            this.utcNow = utcNow;
-            this.discoveryDictionary = new ConcurrentDictionary<string, Discovery>();
-        }
+        private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
+        private readonly ILogger<DiscoveryResolver> logger = logger;
+        private readonly IUtcNow utcNow = utcNow;
+        private readonly ConcurrentDictionary<string, Discovery> discoveryDictionary = new();
 
         public async Task<Discovery?> GetDiscovery(
             DiscoveryOptions discoveryOptions,
@@ -50,10 +41,10 @@ namespace InHouseOidc.Discovery
                 HttpMethod.Get,
                 discoveryUri,
                 null,
+                this.logger,
                 cancellationToken,
                 discoveryOptions.MaxRetryAttempts,
-                discoveryOptions.RetryDelayMilliseconds,
-                this.logger
+                discoveryOptions.RetryDelayMilliseconds
             );
             response.EnsureSuccessStatusCode();
             var discoveryResponse = await response.Content.ReadJsonAs<DiscoveryResponse>();
@@ -98,7 +89,7 @@ namespace InHouseOidc.Discovery
                 discoveryResponse.AuthorizationEndpoint,
                 discoveryResponse.EndSessionEndpoint,
                 this.utcNow.UtcNow.Add(discoveryOptions.CacheTime),
-                discoveryResponse.GrantTypesSupported ?? new List<string>(),
+                discoveryResponse.GrantTypesSupported ?? [],
                 discoveryResponse.Issuer ?? string.Empty,
                 discoveryResponse.TokenEndpoint,
                 discoveryResponse.TokenEndpointAuthMethodsSupported

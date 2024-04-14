@@ -23,11 +23,15 @@
   </ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
   </ItemGroup>
     
   <ItemGroup>
     <ProjectReference Include="..\InHouseOidc.Common\InHouseOidc.Common.csproj" />
+  </ItemGroup>
+    
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
   </ItemGroup>
 
 </Project>

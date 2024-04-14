@@ -3,33 +3,22 @@
 
 namespace InHouseOidc.Discovery
 {
-    public class Discovery
+    public class Discovery(
+        string? authorizationEndpoint,
+        string? endSessionEndpoint,
+        DateTimeOffset expiryUtc,
+        List<string> grantTypesSupported,
+        string issuer,
+        string? tokenEndpoint,
+        List<string> tokenEndpointAuthMethodsSupported
+    )
     {
-        public Discovery(
-            string? authorizationEndpoint,
-            string? endSessionEndpoint,
-            DateTimeOffset expiryUtc,
-            List<string> grantTypesSupported,
-            string issuer,
-            string? tokenEndpoint,
-            List<string> tokenEndpointAuthMethodsSupported
-        )
-        {
-            this.AuthorizationEndpoint = authorizationEndpoint;
-            this.EndSessionEndpoint = endSessionEndpoint;
-            this.ExpiryUtc = expiryUtc;
-            this.GrantTypesSupported = grantTypesSupported;
-            this.Issuer = issuer;
-            this.TokenEndpoint = tokenEndpoint;
-            this.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupported;
-        }
-
-        public string? AuthorizationEndpoint { get; private set; }
-        public string? EndSessionEndpoint { get; private set; }
-        public DateTimeOffset ExpiryUtc { get; private set; }
-        public List<string> GrantTypesSupported { get; private set; }
-        public string Issuer { get; private set; }
-        public string? TokenEndpoint { get; private set; }
-        public List<string> TokenEndpointAuthMethodsSupported { get; private set; }
+        public string? AuthorizationEndpoint { get; private set; } = authorizationEndpoint;
+        public string? EndSessionEndpoint { get; private set; } = endSessionEndpoint;
+        public DateTimeOffset ExpiryUtc { get; private set; } = expiryUtc;
+        public List<string> GrantTypesSupported { get; private set; } = grantTypesSupported;
+        public string Issuer { get; private set; } = issuer;
+        public string? TokenEndpoint { get; private set; } = tokenEndpoint;
+        public List<string> TokenEndpointAuthMethodsSupported { get; private set; } = tokenEndpointAuthMethodsSupported;
     }
 }

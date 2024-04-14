@@ -5,13 +5,12 @@ using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Security.Claims;
 
 namespace InHouseOidc.Example.Provider
 {
-    public class Login : PageModel
+    public class Login(IProviderSession providerSession) : PageModel
     {
-        private readonly IProviderSession providerSession;
+        private readonly IProviderSession providerSession = providerSession;
 
         [BindProperty]
         public string Email { get; set; } = "joe@bloggs.name";
@@ -30,11 +29,6 @@ namespace InHouseOidc.Example.Provider
 
         [BindProperty]
         public string? ReturnUrl { get; set; }
-
-        public Login(IProviderSession providerSession)
-        {
-            this.providerSession = providerSession;
-        }
 
         public IActionResult OnGet(string returnUrl)
         {
@@ -57,9 +51,9 @@ namespace InHouseOidc.Example.Provider
             // Login
             var claims = new List<Claim>
             {
-                new Claim(JsonWebTokenClaim.AuthenticationMethodReference, AuthenticationMethodReference.Password),
-                new Claim(JsonWebTokenClaim.Email, this.Email),
-                new Claim(JsonWebTokenClaim.Website, this.Website),
+                new(JsonWebTokenClaim.AuthenticationMethodReference, AuthenticationMethodReference.Password),
+                new(JsonWebTokenClaim.Email, this.Email),
+                new(JsonWebTokenClaim.Website, this.Website),
             };
             if (!string.IsNullOrEmpty(this.Roles))
             {

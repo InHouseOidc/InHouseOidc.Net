@@ -5,9 +5,6 @@ using InHouseOidc.CredentialsClient.Handler;
 using InHouseOidc.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.CredentialsClient.Test.Handler
 {
@@ -38,8 +35,7 @@ namespace InHouseOidc.CredentialsClient.Test.Handler
                 InnerHandler = this.testMessageHandler,
             };
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
-            this.mockClientCredentialsResolver
-                .Setup(m => m.GetClientToken(this.clientName, CancellationToken.None))
+            this.mockClientCredentialsResolver.Setup(m => m.GetClientToken(this.clientName, CancellationToken.None))
                 .ReturnsAsync("token");
             var httpMessageInvoker = new HttpMessageInvoker(clientCredentialsHandler);
             // Act
@@ -64,11 +60,9 @@ namespace InHouseOidc.CredentialsClient.Test.Handler
             };
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost");
             this.testMessageHandler.ResponseMessage = new HttpResponseMessage(System.Net.HttpStatusCode.Unauthorized);
-            this.mockClientCredentialsResolver
-                .Setup(m => m.GetClientToken(this.clientName, CancellationToken.None))
+            this.mockClientCredentialsResolver.Setup(m => m.GetClientToken(this.clientName, CancellationToken.None))
                 .ReturnsAsync("token");
-            this.mockClientCredentialsResolver
-                .Setup(m => m.ClearClientToken(this.clientName))
+            this.mockClientCredentialsResolver.Setup(m => m.ClearClientToken(this.clientName))
                 .Returns(Task.CompletedTask);
             var httpMessageInvoker = new HttpMessageInvoker(clientCredentialsHandler);
             // Act

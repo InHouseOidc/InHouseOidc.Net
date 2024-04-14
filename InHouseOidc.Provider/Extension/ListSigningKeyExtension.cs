@@ -4,7 +4,6 @@
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Type;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography.X509Certificates;
 
 namespace InHouseOidc.Provider.Extension
 {

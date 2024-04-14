@@ -14,31 +14,21 @@ using Microsoft.Extensions.Logging;
 
 namespace InHouseOidc.PageClient.Resolver
 {
-    internal class PageAccessTokenResolver : IPageAccessTokenResolver
+    internal class PageAccessTokenResolver(
+        ClientOptions clientConfiguration,
+        IDiscoveryResolver discoveryResolver,
+        IHttpClientFactory httpClientFactory,
+        IHttpContextAccessor httpContextAccessor,
+        ILogger<PageAccessTokenResolver> logger,
+        IUtcNow utcNow
+    ) : IPageAccessTokenResolver
     {
-        private readonly ClientOptions clientOptions;
-        private readonly IDiscoveryResolver discoveryResolver;
-        private readonly IHttpClientFactory httpClientFactory;
-        private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly ILogger<PageAccessTokenResolver> logger;
-        private readonly IUtcNow utcNow;
-
-        public PageAccessTokenResolver(
-            ClientOptions clientConfiguration,
-            IDiscoveryResolver discoveryResolver,
-            IHttpClientFactory httpClientFactory,
-            IHttpContextAccessor httpContextAccessor,
-            ILogger<PageAccessTokenResolver> logger,
-            IUtcNow utcNow
-        )
-        {
-            this.clientOptions = clientConfiguration;
-            this.discoveryResolver = discoveryResolver;
-            this.httpClientFactory = httpClientFactory;
-            this.httpContextAccessor = httpContextAccessor;
-            this.logger = logger;
-            this.utcNow = utcNow;
-        }
+        private readonly ClientOptions clientOptions = clientConfiguration;
+        private readonly IDiscoveryResolver discoveryResolver = discoveryResolver;
+        private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
+        private readonly IHttpContextAccessor httpContextAccessor = httpContextAccessor;
+        private readonly ILogger<PageAccessTokenResolver> logger = logger;
+        private readonly IUtcNow utcNow = utcNow;
 
         public async Task<string?> GetClientToken(string clientName, CancellationToken cancellationToken)
         {
@@ -114,10 +104,10 @@ namespace InHouseOidc.PageClient.Resolver
                 HttpMethod.Post,
                 tokenEndpointUri,
                 formContent,
+                this.logger,
                 cancellationToken,
                 this.clientOptions.MaxRetryAttempts,
-                this.clientOptions.RetryDelayMilliseconds,
-                this.logger
+                this.clientOptions.RetryDelayMilliseconds
             );
             if (!response.IsSuccessStatusCode)
             {

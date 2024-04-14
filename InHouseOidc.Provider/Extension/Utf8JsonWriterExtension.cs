@@ -1,8 +1,6 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using System.Text.Json;
-
 namespace InHouseOidc.Provider.Extension
 {
     internal static class Utf8JsonWriterExtension
@@ -39,14 +37,8 @@ namespace InHouseOidc.Provider.Extension
 
         public static void WriteNameUri(this Utf8JsonWriter utf8JsonWriter, string name, string? issuer, Uri? valueUri)
         {
-            if (issuer == null)
-            {
-                throw new ArgumentNullException(nameof(issuer));
-            }
-            if (valueUri == null)
-            {
-                throw new ArgumentNullException(nameof(valueUri));
-            }
+            ArgumentNullException.ThrowIfNull(issuer);
+            ArgumentNullException.ThrowIfNull(valueUri);
             utf8JsonWriter.WritePropertyName(name);
             utf8JsonWriter.WriteStringValue(new Uri(new Uri(issuer), valueUri).AbsoluteUri.ToString());
         }

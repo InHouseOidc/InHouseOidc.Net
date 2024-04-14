@@ -6,9 +6,6 @@ using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {

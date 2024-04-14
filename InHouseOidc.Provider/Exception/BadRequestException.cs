@@ -3,14 +3,9 @@
 
 namespace InHouseOidc.Provider.Exception
 {
-    internal class BadRequestException : LogMessageException
+    internal class BadRequestException(string error, string logMessage, params object[]? args)
+        : LogMessageException(logMessage, args)
     {
-        public string Error { get; private set; }
-
-        public BadRequestException(string error, string logMessage, params object[]? args)
-            : base(logMessage, args)
-        {
-            this.Error = error;
-        }
+        public string Error { get; private set; } = error;
     }
 }

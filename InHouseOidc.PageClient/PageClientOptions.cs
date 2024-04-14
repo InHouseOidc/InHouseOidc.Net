@@ -83,6 +83,6 @@ namespace InHouseOidc.PageClient
         /// A dictionary of claims to map from JSON returned from the UserInfo endpoint.  Optional.<br />
         /// Stored as key (claim name) value (JSON property name) pairs.
         /// </summary>
-        public Dictionary<string, string> UniqueClaimMappings { get; set; } = new();
+        public Dictionary<string, string> UniqueClaimMappings { get; set; } = [];
     }
 }

@@ -1,19 +1,21 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
-using InHouseOidc.Common.Constant;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Http;
 using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
+using InHouseOidc.Common.Constant;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
 
 namespace InHouseOidc.Example.Common
 {
     public static class ExampleHelper
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new() { WriteIndented = true };
+
         public static async Task<ExampleViewModel> GetExampleViewModel(
             HttpContext httpContext,
             string apiResult = "",
@@ -124,9 +126,9 @@ namespace InHouseOidc.Example.Common
             var unformattedJson = securityToken.ToString();
             var parts = unformattedJson.Split("}.{");
             var header = JsonSerializer.Deserialize<ExpandoObject>(parts[0] + "}");
-            var headerJson = JsonSerializer.Serialize(header, new JsonSerializerOptions { WriteIndented = true });
+            var headerJson = JsonSerializer.Serialize(header, JsonSerializerOptions);
             var body = JsonSerializer.Deserialize<ExpandoObject>("{" + parts[1]);
-            var bodyJson = JsonSerializer.Serialize(body, new JsonSerializerOptions { WriteIndented = true });
+            var bodyJson = JsonSerializer.Serialize(body, JsonSerializerOptions);
             return headerJson + Environment.NewLine + bodyJson;
         }
     }

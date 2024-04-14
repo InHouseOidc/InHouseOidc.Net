@@ -3,7 +3,6 @@
 
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Discovery;
-using System.Collections.Concurrent;
 
 namespace InHouseOidc.CredentialsClient.Type
 {

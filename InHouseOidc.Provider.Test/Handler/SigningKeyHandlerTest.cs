@@ -11,19 +11,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
 namespace InHouseOidc.Provider.Test.Handler
 {
     [TestClass]
     public class SigningKeyHandlerTest
     {
-        private Mock<IAsyncLock<SigningKeyHandler>> mockAsyncLock = new(MockBehavior.Strict);
-        private Mock<ICertificateStore> mockCertificateStore = new(MockBehavior.Strict);
+        private readonly Mock<ICertificateStore> mockCertificateStore = new(MockBehavior.Strict);
 
+        private Mock<IAsyncLock<SigningKeyHandler>> mockAsyncLock = new(MockBehavior.Strict);
         private Mock<IUtcNow> mockUtcNow = new(MockBehavior.Strict);
         private ProviderOptions providerOptions = new();
         private DateTimeOffset utcNow = new DateTimeOffset(2022, 5, 12, 17, 33, 00, TimeSpan.Zero).ToUniversalTime();

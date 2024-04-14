@@ -3,15 +3,9 @@
 
 namespace InHouseOidc.Provider.Type
 {
-    public class AuthorizationRequestClaim
+    public class AuthorizationRequestClaim(string type, string value)
     {
-        public string Type { get; set; }
-        public string Value { get; set; }
-
-        public AuthorizationRequestClaim(string type, string value)
-        {
-            this.Type = type;
-            this.Value = value;
-        }
+        public string Type { get; set; } = type;
+        public string Value { get; set; } = value;
     }
 }

@@ -8,10 +8,6 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 
 namespace InHouseOidc.Provider.Handler
 {

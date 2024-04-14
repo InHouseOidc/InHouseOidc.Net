@@ -9,33 +9,22 @@ using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using System.Security.Claims;
-using System.Text.Json;
 
 namespace InHouseOidc.Provider.Handler
 {
-    internal class AuthorizationHandler : IEndpointHandler<AuthorizationHandler>
+    internal class AuthorizationHandler(
+        ICodeStore codeStore,
+        ProviderOptions providerOptions,
+        IServiceProvider serviceProvider,
+        IUtcNow utcNow,
+        IValidationHandler validationHandler
+    ) : IEndpointHandler<AuthorizationHandler>
     {
-        private readonly ICodeStore codeStore;
-        private readonly ProviderOptions providerOptions;
-        private readonly IServiceProvider serviceProvider;
-        private readonly IUtcNow utcNow;
-        private readonly IValidationHandler validationHandler;
-
-        public AuthorizationHandler(
-            ICodeStore codeStore,
-            ProviderOptions providerOptions,
-            IServiceProvider serviceProvider,
-            IUtcNow utcNow,
-            IValidationHandler validationHandler
-        )
-        {
-            this.codeStore = codeStore;
-            this.providerOptions = providerOptions;
-            this.serviceProvider = serviceProvider;
-            this.utcNow = utcNow;
-            this.validationHandler = validationHandler;
-        }
+        private readonly ICodeStore codeStore = codeStore;
+        private readonly ProviderOptions providerOptions = providerOptions;
+        private readonly IServiceProvider serviceProvider = serviceProvider;
+        private readonly IUtcNow utcNow = utcNow;
+        private readonly IValidationHandler validationHandler = validationHandler;
 
         public async Task<bool> HandleRequest(HttpRequest httpRequest)
         {
@@ -45,13 +34,12 @@ namespace InHouseOidc.Provider.Handler
                 throw this.RedirectToErrorUri(httpRequest, "HttpMethod not supported: {method}", httpRequest.Method);
             }
             // Extract parameters to a dictionary
-            var parameters = HttpMethods.IsGet(httpRequest.Method)
-                ? httpRequest.GetQueryDictionary()
-                : await httpRequest.GetFormDictionary();
-            if (parameters == null)
-            {
-                throw this.RedirectToErrorUri(httpRequest, "Unable to resolve authorization request parameters");
-            }
+            var parameters =
+                (
+                    HttpMethods.IsGet(httpRequest.Method)
+                        ? httpRequest.GetQueryDictionary()
+                        : await httpRequest.GetFormDictionary()
+                ) ?? throw this.RedirectToErrorUri(httpRequest, "Unable to resolve authorization request parameters");
             // Parse and validate the request
             var (authorizationRequest, authorizationError) =
                 await this.validationHandler.ParseValidateAuthorizationRequest(parameters);
@@ -148,22 +136,20 @@ namespace InHouseOidc.Provider.Handler
             var issuer = httpRequest.GetBaseUriString();
             if (authorizationRequest.IdTokenHint != null)
             {
-                var tokenPrincipal = await this.validationHandler.ValidateJsonWebToken(
-                    null,
-                    issuer,
-                    authorizationRequest.IdTokenHint,
-                    true
-                );
-                if (tokenPrincipal == null)
-                {
-                    throw RedirectToReturnUri(
+                var tokenPrincipal =
+                    await this.validationHandler.ValidateJsonWebToken(
+                        null,
+                        issuer,
+                        authorizationRequest.IdTokenHint,
+                        true
+                    )
+                    ?? throw RedirectToReturnUri(
                         RedirectErrorType.InvalidRequest,
                         authorizationRequest.RedirectUri,
                         authorizationRequest.SessionState,
                         authorizationRequest.State,
                         "Invalid id token hint"
                     );
-                }
                 if (tokenPrincipal.GetSubjectClaim() != claimsPrincipal.GetSubjectClaim())
                 {
                     throw RedirectToReturnUri(
@@ -250,10 +236,7 @@ namespace InHouseOidc.Provider.Handler
 
         private void RedirectToLogin(HttpRequest httpRequest, Dictionary<string, string> parameters)
         {
-            if (parameters.ContainsKey(AuthorizationEndpointConstant.Prompt))
-            {
-                parameters.Remove(AuthorizationEndpointConstant.Prompt);
-            }
+            parameters.Remove(AuthorizationEndpointConstant.Prompt);
             var queryBuilderReturnUrl = new QueryBuilder(parameters);
             var queryBuilderRedirectUri = new QueryBuilder
             {

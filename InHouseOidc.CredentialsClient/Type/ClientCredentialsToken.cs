@@ -3,15 +3,9 @@
 
 namespace InHouseOidc.CredentialsClient.Type
 {
-    internal class ClientCredentialsToken
+    internal class ClientCredentialsToken(string accessToken, DateTimeOffset expiryUtc)
     {
-        public ClientCredentialsToken(string accessToken, DateTimeOffset expiryUtc)
-        {
-            this.AccessToken = accessToken;
-            this.ExpiryUtc = expiryUtc;
-        }
-
-        public string AccessToken { get; set; }
-        public DateTimeOffset ExpiryUtc { get; set; }
+        public string AccessToken { get; set; } = accessToken;
+        public DateTimeOffset ExpiryUtc { get; set; } = expiryUtc;
     }
 }

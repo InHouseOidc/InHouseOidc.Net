@@ -11,20 +11,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace InHouseOidc.Example.Provider
 {
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme, Roles = "UserRole1,UserRole2")]
-    public class Index : PageModel
+    public class Index(IHttpClientFactory httpClientFactory) : PageModel
     {
-        public ExampleViewModel ViewModel { get; set; }
+        public ExampleViewModel ViewModel { get; set; } = new ExampleViewModel();
 
         private const string ClientName = "exampleapi";
         private const string ApiAddress = "http://localhost:5102";
 
-        private readonly IHttpClientFactory httpClientFactory;
-
-        public Index(IHttpClientFactory httpClientFactory)
-        {
-            this.httpClientFactory = httpClientFactory;
-            this.ViewModel = new ExampleViewModel();
-        }
+        private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
 
         public async Task<IActionResult> OnGet()
         {

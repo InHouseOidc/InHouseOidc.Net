@@ -9,37 +9,25 @@ using InHouseOidc.CredentialsClient.Type;
 using InHouseOidc.Discovery;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
 
 namespace InHouseOidc.CredentialsClient.Resolver
 {
-    internal class ClientCredentialsResolver : IClientCredentialsResolver
+    internal class ClientCredentialsResolver(
+        ClientOptions clientConfiguration,
+        IDiscoveryResolver discoveryResolver,
+        IHttpClientFactory httpClientFactory,
+        ILogger<ClientCredentialsResolver> logger,
+        IServiceProvider serviceProvider,
+        IUtcNow utcNow
+    ) : IClientCredentialsResolver
     {
-        private readonly ClientOptions clientOptions;
-        private readonly IDiscoveryResolver discoveryResolver;
-        private readonly IHttpClientFactory httpClientFactory;
-        private readonly ILogger<ClientCredentialsResolver> logger;
-        private readonly IServiceProvider serviceProvider;
-        private readonly IUtcNow utcNow;
-        private readonly ConcurrentDictionary<string, ClientCredentialsToken> tokenDictionary;
-
-        public ClientCredentialsResolver(
-            ClientOptions clientConfiguration,
-            IDiscoveryResolver discoveryResolver,
-            IHttpClientFactory httpClientFactory,
-            ILogger<ClientCredentialsResolver> logger,
-            IServiceProvider serviceProvider,
-            IUtcNow utcNow
-        )
-        {
-            this.clientOptions = clientConfiguration;
-            this.discoveryResolver = discoveryResolver;
-            this.httpClientFactory = httpClientFactory;
-            this.logger = logger;
-            this.serviceProvider = serviceProvider;
-            this.utcNow = utcNow;
-            this.tokenDictionary = new ConcurrentDictionary<string, ClientCredentialsToken>();
-        }
+        private readonly ClientOptions clientOptions = clientConfiguration;
+        private readonly IDiscoveryResolver discoveryResolver = discoveryResolver;
+        private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
+        private readonly ILogger<ClientCredentialsResolver> logger = logger;
+        private readonly IServiceProvider serviceProvider = serviceProvider;
+        private readonly IUtcNow utcNow = utcNow;
+        private readonly ConcurrentDictionary<string, ClientCredentialsToken> tokenDictionary = new();
 
         public Task ClearClientToken(string clientName)
         {
@@ -145,19 +133,19 @@ namespace InHouseOidc.CredentialsClient.Resolver
             var form = new Dictionary<string, string>
             {
                 { TokenEndpointConstant.GrantType, TokenEndpointConstant.ClientCredentials },
+                { TokenEndpointConstant.ClientId, credentialsClientOptions.ClientId },
+                { TokenEndpointConstant.ClientSecret, credentialsClientOptions.ClientSecret },
+                { TokenEndpointConstant.Scope, credentialsClientOptions.Scope },
             };
-            form.Add(TokenEndpointConstant.ClientId, credentialsClientOptions.ClientId);
-            form.Add(TokenEndpointConstant.ClientSecret, credentialsClientOptions.ClientSecret);
-            form.Add(TokenEndpointConstant.Scope, credentialsClientOptions.Scope);
             var formContent = new FormUrlEncodedContent(form);
             var response = await httpClient.SendWithRetry(
                 HttpMethod.Post,
                 tokenEndpointUri,
                 formContent,
+                this.logger,
                 cancellationToken,
                 this.clientOptions.MaxRetryAttempts,
-                this.clientOptions.RetryDelayMilliseconds,
-                this.logger
+                this.clientOptions.RetryDelayMilliseconds
             );
             if (!response.IsSuccessStatusCode)
             {
