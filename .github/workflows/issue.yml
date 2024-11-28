@@ -2,7 +2,7 @@ name: issue
 
 on:
   push:
-    branches: [ 'issue/**' ]
+    branches: [ 'issue_*' ]
 
 jobs:
   build:
