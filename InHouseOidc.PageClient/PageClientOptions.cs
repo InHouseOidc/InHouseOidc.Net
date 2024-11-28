@@ -30,6 +30,11 @@ namespace InHouseOidc.PageClient
         public string? ClientId { get; init; }
 
         /// <summary>
+        /// The client secret registered at the OIDC Provider. Optional.
+        /// </summary>
+        public string? ClientSecret { get; init; }
+
+        /// <summary>
         /// The cookie name to issue for page client authentication.  Optional (defaults to the ClientId).<br />
         /// Only applies when IssueLocalAuthenticationCookie = true.<br />
         /// </summary>

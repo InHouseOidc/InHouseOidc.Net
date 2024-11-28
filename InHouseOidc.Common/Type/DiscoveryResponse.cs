@@ -10,6 +10,9 @@ namespace InHouseOidc.Common.Type
         [JsonPropertyName(DiscoveryConstant.AuthorizationEndpoint)]
         public string? AuthorizationEndpoint { get; set; }
 
+        [JsonPropertyName(DiscoveryConstant.CheckSessionEndpoint)]
+        public string? CheckSessionEndpoint { get; set; }
+
         [JsonPropertyName(DiscoveryConstant.EndSessionEndpoint)]
         public string? EndSessionEndpoint { get; set; }
 

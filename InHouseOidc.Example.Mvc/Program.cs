@@ -23,6 +23,7 @@ var clientOptions = new PageClientOptions
 {
     AccessDeniedPath = "/AccessDenied",
     ClientId = "mvcexample",
+    ClientSecret = "topsecret",
     CookieName = "InHouseOidc.Example.Mvc",
     // GetClaimsFromUserInfoEndpoint = true,
     OidcProviderAddress = providerAddress,

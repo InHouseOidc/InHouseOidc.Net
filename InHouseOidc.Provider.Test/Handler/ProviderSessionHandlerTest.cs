@@ -6,7 +6,6 @@ using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -183,7 +182,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 .Setup(m =>
                     m.SignInAsync(
                         this.context,
-                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        ProviderConstant.AuthenticationSchemeCookie,
                         It.IsAny<ClaimsPrincipal>(),
                         It.IsAny<AuthenticationProperties>()
                     )
@@ -264,7 +263,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 .Setup(m =>
                     m.SignOutAsync(
                         this.context,
-                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        ProviderConstant.AuthenticationSchemeCookie,
                         It.IsAny<AuthenticationProperties>()
                     )
                 )

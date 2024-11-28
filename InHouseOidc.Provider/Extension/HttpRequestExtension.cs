@@ -25,13 +25,12 @@ namespace InHouseOidc.Provider.Extension
             IServiceProvider serviceProvider
         )
         {
-            var authenticationSchemeProvider = serviceProvider.GetRequiredService<IAuthenticationSchemeProvider>();
-            var scheme =
-                await authenticationSchemeProvider.GetDefaultAuthenticateSchemeAsync()
-                ?? throw new InvalidOperationException("No default authentication scheme configured");
             var authenticationHandlerProvider = serviceProvider.GetRequiredService<IAuthenticationHandlerProvider>();
             var handler =
-                await authenticationHandlerProvider.GetHandlerAsync(httpRequest.HttpContext, scheme.Name)
+                await authenticationHandlerProvider.GetHandlerAsync(
+                    httpRequest.HttpContext,
+                    ProviderConstant.AuthenticationSchemeCookie
+                )
                 ?? throw new InvalidOperationException(
                     "Unable to resolve authentication handler for configured scheme"
                 );

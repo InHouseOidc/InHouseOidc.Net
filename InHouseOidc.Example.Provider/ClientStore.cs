@@ -31,6 +31,7 @@ namespace InHouseOidc.Example.Provider
                         {
                             AccessTokenExpiry = TimeSpan.FromMinutes(15),
                             ClientId = "mvcexample",
+                            ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
                             IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris =
@@ -55,7 +56,7 @@ namespace InHouseOidc.Example.Provider
                                 "exampleproviderapiscope",
                             ],
                         },
-                        null
+                        "topsecret"
                     )
                 },
                 {
@@ -65,6 +66,7 @@ namespace InHouseOidc.Example.Provider
                         {
                             AccessTokenExpiry = TimeSpan.FromMinutes(15),
                             ClientId = "providerexample",
+                            ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode],
                             IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris =
@@ -79,7 +81,7 @@ namespace InHouseOidc.Example.Provider
                             ],
                             Scopes = ["openid", "email", "phone", "profile", "role", "exampleapiscope"],
                         },
-                        null
+                        "topsecret"
                     )
                 },
                 {
@@ -89,6 +91,7 @@ namespace InHouseOidc.Example.Provider
                         {
                             AccessTokenExpiry = TimeSpan.FromMinutes(15),
                             ClientId = "razorexample",
+                            ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
                             IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris =
@@ -113,7 +116,7 @@ namespace InHouseOidc.Example.Provider
                                 "exampleproviderapiscope",
                             ],
                         },
-                        null
+                        "topsecret"
                     )
                 },
             };

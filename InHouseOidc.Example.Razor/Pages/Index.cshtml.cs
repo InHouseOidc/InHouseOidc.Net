@@ -3,9 +3,6 @@
 
 using InHouseOidc.Example.Common;
 using InHouseOidc.PageClient;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -45,11 +42,6 @@ namespace InHouseOidc.Example.Razor
         public async Task OnPostLogoutAsync()
         {
             await this.HttpContext.PageClientLogout(this.Url.PageLink("Index"));
-            await this.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            await this.HttpContext.SignOutAsync(
-                OpenIdConnectDefaults.AuthenticationScheme,
-                new AuthenticationProperties { RedirectUri = this.Url.PageLink("Index") }
-            );
         }
 
         private async Task<PageResult> RenderPage(string apiResult = "", string apiResultProvider = "")

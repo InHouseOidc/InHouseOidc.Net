@@ -12,7 +12,7 @@ namespace InHouseOidc.PageClient
     {
         public static async Task PageClientLogout(this HttpContext httpContext, string? redirectUri = null)
         {
-            await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await httpContext.SignOutAsync(PageConstant.AuthenticationSchemeCookie);
             await httpContext.SignOutAsync(
                 OpenIdConnectDefaults.AuthenticationScheme,
                 new AuthenticationProperties { RedirectUri = redirectUri }

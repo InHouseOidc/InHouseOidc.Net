@@ -27,7 +27,7 @@ namespace InHouseOidc.PageClient.Test
                 .Setup(m =>
                     m.SignOutAsync(
                         context,
-                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        PageConstant.AuthenticationSchemeCookie,
                         It.IsAny<AuthenticationProperties>()
                     )
                 )

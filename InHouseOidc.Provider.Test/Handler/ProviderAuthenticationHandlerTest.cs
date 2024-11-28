@@ -52,7 +52,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var context = new DefaultHttpContext();
             var authenticationScheme = new AuthenticationScheme(
-                ProviderConstant.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeProvider,
                 null,
                 typeof(ProviderAuthenticationHandler)
             );
@@ -85,7 +85,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var context = new DefaultHttpContext();
             var authenticationScheme = new AuthenticationScheme(
-                ProviderConstant.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeProvider,
                 null,
                 typeof(ProviderAuthenticationHandler)
             );
@@ -119,7 +119,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var context = new DefaultHttpContext();
             var authenticationScheme = new AuthenticationScheme(
-                ProviderConstant.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeProvider,
                 null,
                 typeof(ProviderAuthenticationHandler)
             );
@@ -154,7 +154,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var context = new DefaultHttpContext();
             var authenticationScheme = new AuthenticationScheme(
-                ProviderConstant.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeProvider,
                 null,
                 typeof(ProviderAuthenticationHandler)
             );
@@ -183,7 +183,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var context = new DefaultHttpContext();
             var authenticationScheme = new AuthenticationScheme(
-                ProviderConstant.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeProvider,
                 null,
                 typeof(ProviderAuthenticationHandler)
             );
@@ -227,7 +227,7 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var authenticationScheme = new AuthenticationScheme(
-                ProviderConstant.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeProvider,
                 null,
                 typeof(ProviderAuthenticationHandler)
             );
@@ -347,7 +347,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var serviceCollection = new TestServiceCollection();
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var authenticationScheme = new AuthenticationScheme(
-                ProviderConstant.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeProvider,
                 null,
                 typeof(ProviderAuthenticationHandler)
             );

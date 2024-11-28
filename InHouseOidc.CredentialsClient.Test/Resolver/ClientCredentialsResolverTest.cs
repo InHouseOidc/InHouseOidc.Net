@@ -63,6 +63,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             this.discovery = new Discovery.Discovery(
                 null,
                 null,
+                null,
                 DateTimeOffset.MaxValue,
                 ["code"],
                 this.credentialsClientOptions.OidcProviderAddress,
@@ -271,6 +272,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             );
             Assert.IsNotNull(this.credentialsClientOptions.OidcProviderAddress);
             var discovery = new Discovery.Discovery(
+                null,
                 null,
                 null,
                 DateTimeOffset.MaxValue,

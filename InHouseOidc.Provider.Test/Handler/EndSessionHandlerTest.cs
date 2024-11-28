@@ -21,7 +21,6 @@ namespace InHouseOidc.Provider.Test.Handler
         private readonly Mock<IValidationHandler> mockValidationHandler = new(MockBehavior.Strict);
         private readonly string host = "localhost";
         private readonly string postLogoutRedirectUri = "/logout/callback";
-        private readonly string scheme = "scheme";
         private readonly string sessionId = "sessionid";
         private readonly string state = "statevalue";
         private readonly string subject = "subject";
@@ -76,7 +75,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 true,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
@@ -202,14 +201,14 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 authenticateSuccess,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
             );
             var (tokenClaimsPrincipal, _) = TestHelper.SetupClaimsPrincipal(
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 jwtSubject,
                 this.sessionId,
                 this.utcNow

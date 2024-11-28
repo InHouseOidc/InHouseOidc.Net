@@ -4,7 +4,6 @@
 using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace InHouseOidc.Provider
@@ -24,14 +23,14 @@ namespace InHouseOidc.Provider
         {
             var authenticationBuilder = this.ServiceCollection.AddAuthentication(authenticationOptions =>
             {
-                authenticationOptions.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                authenticationOptions.DefaultAuthenticateScheme = ProviderConstant.AuthenticationSchemeCookie;
                 authenticationOptions.AddScheme<ProviderAuthenticationHandler>(
-                    ProviderConstant.AuthenticationScheme,
+                    ProviderConstant.AuthenticationSchemeProvider,
                     null
                 );
             });
             authenticationBuilder.AddCookie(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 options =>
                 {
                     options.AccessDeniedPath = this.ProviderOptions.ErrorPath;

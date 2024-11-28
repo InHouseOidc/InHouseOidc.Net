@@ -7,7 +7,8 @@ namespace InHouseOidc.Provider
     {
         public const string AccessDenied = "access_denied";
         public const string AuthenticationCookieName = "InHouseOidc";
-        public const string AuthenticationScheme = "InHouseOidc.ProviderScheme";
+        public const string AuthenticationSchemeCookie = "InHouseOidc.CookieScheme";
+        public const string AuthenticationSchemeProvider = "InHouseOidc.ProviderScheme";
         public const string Authorization = "Authorization";
         public const string AuthorizationPath = "/connect/authorize";
         public const string Basic = "Basic ";

@@ -35,14 +35,14 @@ namespace InHouseOidc.Provider.Test
             _ = serviceProvider.GetRequiredService<IAuthenticationService>();
             var authenticationOptions = serviceProvider.GetRequiredService<IOptions<AuthenticationOptions>>();
             Assert.AreEqual(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 authenticationOptions.Value.DefaultAuthenticateScheme
             );
             _ = serviceProvider.GetRequiredService<CookieAuthenticationHandler>();
             var cookieOptionsMonitor = serviceProvider.GetRequiredService<
                 IOptionsMonitor<CookieAuthenticationOptions>
             >();
-            var cookieOptions = cookieOptionsMonitor.Get("Cookies");
+            var cookieOptions = cookieOptionsMonitor.Get(ProviderConstant.AuthenticationSchemeCookie);
             var providerOptions = serviceProvider.GetRequiredService<ProviderOptions>();
             Assert.AreEqual(providerOptions.AuthenticationCookieName, cookieOptions.Cookie.Name);
             _ = serviceProvider.GetRequiredService<ProviderAuthenticationHandler>();

@@ -15,7 +15,6 @@ namespace InHouseOidc.Provider.Test.Handler
     public class UserInfoHandlerTest
     {
         private readonly string host = "localhost";
-        private readonly string scheme = "scheme";
         private readonly string sessionId = "sessionid";
         private readonly string subject = "subject";
         private readonly string urlScheme = "https";
@@ -93,7 +92,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             var (tokenClaimsPrincipal, _) = TestHelper.SetupClaimsPrincipal(
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow,
@@ -263,7 +262,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             var (tokenClaimsPrincipal, _) = TestHelper.SetupClaimsPrincipal(
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 subject,
                 this.sessionId,
                 this.utcNow,
