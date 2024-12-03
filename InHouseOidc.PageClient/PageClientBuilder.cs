@@ -5,7 +5,6 @@ using InHouseOidc.Discovery;
 using InHouseOidc.PageClient.Resolver;
 using InHouseOidc.PageClient.Type;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

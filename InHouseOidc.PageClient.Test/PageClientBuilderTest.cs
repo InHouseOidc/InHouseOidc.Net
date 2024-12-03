@@ -99,7 +99,7 @@ namespace InHouseOidc.PageClient.Test
             var openIdConnectOptionsMonitor = serviceProvider.GetRequiredService<
                 IOptionsMonitor<OpenIdConnectOptions>
             >();
-            var openIdConnectOptions = openIdConnectOptionsMonitor.Get("OpenIdConnect");
+            var openIdConnectOptions = openIdConnectOptionsMonitor.Get(OpenIdConnectDefaults.AuthenticationScheme);
             Assert.AreEqual(pageClientOptions.OidcProviderAddress, openIdConnectOptions.Authority);
         }
 

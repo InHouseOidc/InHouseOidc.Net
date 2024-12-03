@@ -80,7 +80,7 @@ namespace InHouseOidc.PageClient
         public string RoleClaimType { get; init; } = JsonWebTokenClaim.Role;
 
         /// <summary>
-        /// The scope (single) or scopes (space separated) requested to be included in the access token.  Required.
+        /// The scope (single) or scopes (space separated) requested to be included in the access token.  Optional.
         /// </summary>
         public string? Scope { get; init; }
 

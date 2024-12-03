@@ -45,7 +45,6 @@ namespace InHouseOidc.Provider.Test
             var cookieOptions = cookieOptionsMonitor.Get(ProviderConstant.AuthenticationSchemeCookie);
             var providerOptions = serviceProvider.GetRequiredService<ProviderOptions>();
             Assert.AreEqual(providerOptions.AuthenticationCookieName, cookieOptions.Cookie.Name);
-            _ = serviceProvider.GetRequiredService<ProviderAuthenticationHandler>();
         }
 
         [TestMethod]
