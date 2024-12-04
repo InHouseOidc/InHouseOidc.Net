@@ -78,7 +78,7 @@ Please refer to the example projects for each of the packages and use cases.
 - InHouseOidc.Example.Mvc - how to use the InHouseOidc.PageClient package in an MVC application (http://localhost:5103)
 - InHouseOidc.Example.Provider - how to implement a provider using the InHouseOidc.Provider package (http://localhost:5100)
 - InHouseOidc.Example.Razor - how to use the InHouseOidc.PageClient in a Razor Page application (http://localhost:5101)
-- InHouseOidc.Example.React - Vite/React frontend uses InHouseOidc.Example.Bff for authentication (http://localhost:5104)
+- InHouseOidc.Example.React - Vite/React frontend uses InHouseOidc.Example.Bff for authentication (http://localhost:5105)
 
 The Provider example requires a signing certificate file to exist at startup.  Run the script "Create-SigningCertificate.ps1" in the InHouseOidc.Example.Provider folder to create a self-signed certificate. 
 
