@@ -82,7 +82,7 @@ namespace InHouseOidc.PageClient.Test
             // Assert authentication options
             var authenticationOptions = serviceProvider.GetRequiredService<IOptions<AuthenticationOptions>>();
             Assert.AreEqual(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                PageConstant.AuthenticationSchemeCookie,
                 authenticationOptions.Value.DefaultAuthenticateScheme
             );
             Assert.AreEqual(
@@ -93,13 +93,13 @@ namespace InHouseOidc.PageClient.Test
             var cookieOptionsMonitor = serviceProvider.GetRequiredService<
                 IOptionsMonitor<CookieAuthenticationOptions>
             >();
-            var cookieOptions = cookieOptionsMonitor.Get("Cookies");
+            var cookieOptions = cookieOptionsMonitor.Get(PageConstant.AuthenticationSchemeCookie);
             Assert.AreEqual(pageClientOptions.ClientId, cookieOptions.Cookie.Name);
             // Assert OpenID Connect options
             var openIdConnectOptionsMonitor = serviceProvider.GetRequiredService<
                 IOptionsMonitor<OpenIdConnectOptions>
             >();
-            var openIdConnectOptions = openIdConnectOptionsMonitor.Get("OpenIdConnect");
+            var openIdConnectOptions = openIdConnectOptionsMonitor.Get(OpenIdConnectDefaults.AuthenticationScheme);
             Assert.AreEqual(pageClientOptions.OidcProviderAddress, openIdConnectOptions.Authority);
         }
 

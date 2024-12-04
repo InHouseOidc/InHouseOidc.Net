@@ -87,6 +87,7 @@ namespace InHouseOidc.Discovery
             // Cache the value and return it
             discovery = new Discovery(
                 discoveryResponse.AuthorizationEndpoint,
+                discoveryResponse.CheckSessionEndpoint,
                 discoveryResponse.EndSessionEndpoint,
                 this.utcNow.UtcNow.Add(discoveryOptions.CacheTime),
                 discoveryResponse.GrantTypesSupported ?? [],

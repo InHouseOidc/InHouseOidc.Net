@@ -3,7 +3,7 @@
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="all" Condition="$(MSBuildProjectExtension) == '.csproj'" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" Condition="$(MSBuildProjectExtension) == '.csproj'"/>
   </ItemGroup>  
   <PropertyGroup>
     <Authors>Brent Johnson</Authors>
@@ -15,7 +15,7 @@
     <Nullable>enable</Nullable>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true' And $(MSBuildProjectExtension) == '.csproj'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 </Project>

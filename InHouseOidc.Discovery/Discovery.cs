@@ -5,6 +5,7 @@ namespace InHouseOidc.Discovery
 {
     public class Discovery(
         string? authorizationEndpoint,
+        string? checkSessionEndpoint,
         string? endSessionEndpoint,
         DateTimeOffset expiryUtc,
         List<string> grantTypesSupported,
@@ -14,6 +15,7 @@ namespace InHouseOidc.Discovery
     )
     {
         public string? AuthorizationEndpoint { get; private set; } = authorizationEndpoint;
+        public string? CheckSessionEndpoint { get; private set; } = checkSessionEndpoint;
         public string? EndSessionEndpoint { get; private set; } = endSessionEndpoint;
         public DateTimeOffset ExpiryUtc { get; private set; } = expiryUtc;
         public List<string> GrantTypesSupported { get; private set; } = grantTypesSupported;

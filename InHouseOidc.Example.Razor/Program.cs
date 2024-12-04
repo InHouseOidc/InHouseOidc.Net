@@ -23,12 +23,14 @@ var clientOptions = new PageClientOptions
 {
     AccessDeniedPath = "/AccessDenied",
     ClientId = "razorexample",
+    ClientSecret = "topsecret",
     CookieName = "InHouseOidc.Example.Razor",
     // GetClaimsFromUserInfoEndpoint = true,
     OidcProviderAddress = providerAddress,
     Scope = "openid offline_access email phone profile role exampleapiscope exampleproviderapiscope",
     UniqueClaimMappings = new() { { "phone_number", "phone_number" } },
 };
+
 const string clientName = "exampleapi";
 
 // csharpier-ignore

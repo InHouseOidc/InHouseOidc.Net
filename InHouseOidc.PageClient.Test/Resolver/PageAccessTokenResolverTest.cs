@@ -72,6 +72,7 @@ namespace InHouseOidc.PageClient.Test.Resolver
             this.discovery = new Discovery.Discovery(
                 null,
                 null,
+                null,
                 DateTimeOffset.MaxValue,
                 ["code"],
                 this.clientOptions.PageClientOptions.OidcProviderAddress,
@@ -371,7 +372,7 @@ namespace InHouseOidc.PageClient.Test.Resolver
         )
         {
             var httpContext = new DefaultHttpContext();
-            var claimsIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(PageConstant.AuthenticationSchemeCookie);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var properties = new Dictionary<string, string?>
             {
@@ -394,7 +395,7 @@ namespace InHouseOidc.PageClient.Test.Resolver
                 new AuthenticationTicket(
                     claimsPrincipal,
                     authenticationProperties,
-                    CookieAuthenticationDefaults.AuthenticationScheme
+                    PageConstant.AuthenticationSchemeCookie
                 )
             );
             this.mockAuthenticationService.Setup(m => m.AuthenticateAsync(httpContext, null))
@@ -403,7 +404,7 @@ namespace InHouseOidc.PageClient.Test.Resolver
             this.mockAuthenticationService.Setup(m =>
                     m.SignInAsync(
                         httpContext,
-                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        PageConstant.AuthenticationSchemeCookie,
                         claimsPrincipal,
                         authenticationProperties
                     )

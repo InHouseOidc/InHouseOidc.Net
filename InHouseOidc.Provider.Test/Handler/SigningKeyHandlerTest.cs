@@ -143,33 +143,37 @@ namespace InHouseOidc.Provider.Test.Handler
             this.mockCertificateStore.Verify(m => m.GetSigningCertificates(), Times.Once());
             // Act 2 (launch 2 resolves that wait on the async lock)
             var releaser = asyncLock.Lock();
-            List<SigningKey>? results1 = null;
-            var waiter1 = Task.Run(async () =>
+            this.utcNow = this.utcNow.AddHours(24);
+            var waiter1 = Task.Factory.StartNew(async () =>
             {
-                results1 = await signingKeyHandler.Resolve();
+                return await signingKeyHandler.Resolve();
             });
-            List<SigningKey>? results2 = null;
-            var waiter2 = Task.Run(async () =>
+            var waiter2 = Task.Factory.StartNew(async () =>
             {
-                results2 = await signingKeyHandler.Resolve();
+                return await signingKeyHandler.Resolve();
             });
             // Assert 2
-            Assert.IsNull(results1);
             Assert.IsFalse(waiter1.IsCompleted);
-            Assert.IsNull(results2);
             Assert.IsFalse(waiter2.IsCompleted);
-            // Act 3 (release the lock and let the race commence)
-            this.utcNow = this.utcNow.AddHours(24);
+            // Act 3 (wait until running, release the lock and let the race commence)
+            var timeout = DateTime.Now.AddSeconds(10);
+            while (
+                (waiter1.Status != TaskStatus.Running || waiter2.Status != TaskStatus.Running) && DateTime.Now < timeout
+            )
+            {
+                await Task.Delay(50);
+            }
+            Assert.IsTrue(DateTime.Now <= timeout);
             releaser.Dispose();
             // Assert 3 (both threads resolve, only 1 thread does the reload work)
             while (!waiter1.IsCompleted || !waiter2.IsCompleted)
             {
                 await Task.Delay(50);
             }
-            Assert.IsNotNull(results1);
             Assert.IsTrue(waiter1.IsCompleted);
-            Assert.IsNotNull(results2);
+            Assert.IsNotNull(waiter1.Result);
             Assert.IsTrue(waiter2.IsCompleted);
+            Assert.IsNotNull(waiter2.Result);
             this.mockCertificateStore.Verify(m => m.GetSigningCertificates(), Times.Exactly(2));
         }
     }

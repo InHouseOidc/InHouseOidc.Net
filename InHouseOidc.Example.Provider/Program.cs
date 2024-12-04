@@ -22,7 +22,7 @@ builder.Services.AddRazorPages();
 builder
     .Services.AddOidcProvider()
     .EnableAuthorizationCodeFlow()
-    // .EnableCheckSessionEndpoint()
+    .EnableCheckSessionEndpoint()
     .EnableClientCredentialsFlow()
     .EnableRefreshTokenGrant()
     // .EnableUserInfoEndpoint()
@@ -48,6 +48,7 @@ var clientOptions = new PageClientOptions
 {
     AccessDeniedPath = "/AccessDenied",
     ClientId = "providerexample",
+    ClientSecret = "topsecret",
     // GetClaimsFromUserInfoEndpoint = true,
     IssueLocalAuthenticationCookie = false,
     OidcProviderAddress = providerAddress,

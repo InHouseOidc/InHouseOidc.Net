@@ -5,7 +5,6 @@ using InHouseOidc.Discovery;
 using InHouseOidc.PageClient.Resolver;
 using InHouseOidc.PageClient.Type;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -82,13 +81,13 @@ namespace InHouseOidc.PageClient
                 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
                 var authenticationBuilder = this.ServiceCollection.AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = PageConstant.AuthenticationSchemeCookie;
                     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 });
                 if (this.ClientOptions.PageClientOptions.IssueLocalAuthenticationCookie)
                 {
                     authenticationBuilder.AddCookie(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        PageConstant.AuthenticationSchemeCookie,
                         options =>
                         {
                             options.AccessDeniedPath = this.ClientOptions.PageClientOptions.AccessDeniedPath;
@@ -110,6 +109,7 @@ namespace InHouseOidc.PageClient
                         options.ClaimActions.MapUniqueJsonKey(uniqueClaimMapping.Key, uniqueClaimMapping.Value);
                     }
                     options.ClientId = this.ClientOptions.PageClientOptions.ClientId;
+                    options.ClientSecret = this.ClientOptions.PageClientOptions.ClientSecret;
                     options.GetClaimsFromUserInfoEndpoint = this.ClientOptions
                         .PageClientOptions
                         .GetClaimsFromUserInfoEndpoint;
@@ -126,7 +126,7 @@ namespace InHouseOidc.PageClient
                             options.Scope.Add(scope);
                         }
                     }
-                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.SignInScheme = PageConstant.AuthenticationSchemeCookie;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = this.ClientOptions.PageClientOptions.NameClaimType,

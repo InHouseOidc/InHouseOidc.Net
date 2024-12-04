@@ -30,21 +30,21 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 8.0.203
+          dotnet-version: 8.0.400
 
       - name: Restore tools
         run: dotnet tool restore
+
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: csharpier line wrap check
         run: dotnet csharpier --check .
 
       - name: Code format check 
         run: |
-          dotnet format analyzers --verify-no-changes
-          dotnet format style --verify-no-changes
-
-      - name: Restore dependencies
-        run: dotnet restore
+          dotnet format analyzers --verify-no-changes --no-restore
+          dotnet format style --verify-no-changes --no-restore
 
       - name: Build
         run: |

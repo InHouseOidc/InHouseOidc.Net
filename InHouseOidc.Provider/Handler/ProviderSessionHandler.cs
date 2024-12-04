@@ -6,7 +6,6 @@ using InHouseOidc.Common.Constant;
 using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -88,7 +87,7 @@ namespace InHouseOidc.Provider.Handler
             {
                 throw new InvalidOperationException("AuthorizationCode flow not enabled");
             }
-            var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+            var identity = new ClaimsIdentity(ProviderConstant.AuthenticationSchemeCookie);
             var sessionId = HashHelper.GenerateSessionId();
             claims.Add(
                 new Claim(
@@ -107,7 +106,7 @@ namespace InHouseOidc.Provider.Handler
                 IsPersistent = true,
             };
             await httpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 principal,
                 authenticationProperties
             );
@@ -144,7 +143,7 @@ namespace InHouseOidc.Provider.Handler
             }
             if (logoutRequest == null)
             {
-                await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                await httpContext.SignOutAsync(ProviderConstant.AuthenticationSchemeCookie);
             }
             else
             {
@@ -158,10 +157,7 @@ namespace InHouseOidc.Provider.Handler
                     }
                     authenticationProperties = new AuthenticationProperties { RedirectUri = redirectUrl };
                 }
-                await httpContext.SignOutAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    authenticationProperties
-                );
+                await httpContext.SignOutAsync(ProviderConstant.AuthenticationSchemeCookie, authenticationProperties);
             }
         }
     }

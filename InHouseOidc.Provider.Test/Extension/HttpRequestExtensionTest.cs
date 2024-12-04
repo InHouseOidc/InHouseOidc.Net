@@ -23,26 +23,33 @@ namespace InHouseOidc.Provider.Test.Extension
             // Arrange
             var context = new DefaultHttpContext();
             var serviceCollection = new TestServiceCollection();
-            var scheme = "DefaultScheme";
             var mockAuthenticationSchemeProvider = new Mock<IAuthenticationSchemeProvider>(MockBehavior.Strict);
-            var authenticationScheme = new AuthenticationScheme(scheme, null, typeof(TestHandler));
+            var authenticationScheme = new AuthenticationScheme(
+                ProviderConstant.AuthenticationSchemeCookie,
+                null,
+                typeof(TestHandler)
+            );
             mockAuthenticationSchemeProvider
                 .Setup(m => m.GetDefaultAuthenticateSchemeAsync())
                 .ReturnsAsync(authenticationScheme);
             serviceCollection.AddSingleton(mockAuthenticationSchemeProvider.Object);
             var mockAuthenticationHandler = new Mock<IAuthenticationHandler>(MockBehavior.Strict);
-            var claimsIdentity = new ClaimsIdentity(scheme);
+            var claimsIdentity = new ClaimsIdentity(ProviderConstant.AuthenticationSchemeCookie);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             var authenticationProperties = new AuthenticationProperties(new Dictionary<string, string?>());
             var authenticateResult = isAuthenticated
                 ? AuthenticateResult.Success(
-                    new AuthenticationTicket(claimsPrincipal, authenticationProperties, scheme)
+                    new AuthenticationTicket(
+                        claimsPrincipal,
+                        authenticationProperties,
+                        ProviderConstant.AuthenticationSchemeCookie
+                    )
                 )
                 : AuthenticateResult.NoResult();
             mockAuthenticationHandler.Setup(m => m.AuthenticateAsync()).ReturnsAsync(authenticateResult);
             var mockAuthenticationHandlerProvider = new Mock<IAuthenticationHandlerProvider>(MockBehavior.Strict);
             mockAuthenticationHandlerProvider
-                .Setup(m => m.GetHandlerAsync(context, scheme))
+                .Setup(m => m.GetHandlerAsync(context, ProviderConstant.AuthenticationSchemeCookie))
                 .ReturnsAsync(mockAuthenticationHandler.Object);
             serviceCollection.AddSingleton(mockAuthenticationHandlerProvider.Object);
             var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -73,14 +80,17 @@ namespace InHouseOidc.Provider.Test.Extension
             var serviceCollection = new TestServiceCollection();
             var mockAuthenticationSchemeProvider = new Mock<IAuthenticationSchemeProvider>(MockBehavior.Strict);
             serviceCollection.AddSingleton(mockAuthenticationSchemeProvider.Object);
-            var scheme = "DefaultScheme";
-            var authenticationScheme = new AuthenticationScheme(scheme, null, typeof(TestHandler));
+            var authenticationScheme = new AuthenticationScheme(
+                ProviderConstant.AuthenticationSchemeCookie,
+                null,
+                typeof(TestHandler)
+            );
             mockAuthenticationSchemeProvider
                 .Setup(m => m.GetDefaultAuthenticateSchemeAsync())
                 .ReturnsAsync(authenticationScheme);
             var mockAuthenticationHandlerProvider = new Mock<IAuthenticationHandlerProvider>(MockBehavior.Strict);
             mockAuthenticationHandlerProvider
-                .Setup(m => m.GetHandlerAsync(context, scheme))
+                .Setup(m => m.GetHandlerAsync(context, ProviderConstant.AuthenticationSchemeCookie))
                 .ReturnsAsync((IAuthenticationHandler?)null);
             serviceCollection.AddSingleton(mockAuthenticationHandlerProvider.Object);
             var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -91,27 +101,6 @@ namespace InHouseOidc.Provider.Test.Extension
             // Assert
             Assert.IsNotNull(exception);
             Assert.AreEqual("Unable to resolve authentication handler for configured scheme", exception.Message);
-        }
-
-        [TestMethod]
-        public async Task GetClaimsPrincipal_NoHandler()
-        {
-            // Arrange
-            var context = new DefaultHttpContext();
-            var serviceCollection = new TestServiceCollection();
-            var mockAuthenticationSchemeProvider = new Mock<IAuthenticationSchemeProvider>(MockBehavior.Strict);
-            mockAuthenticationSchemeProvider
-                .Setup(m => m.GetDefaultAuthenticateSchemeAsync())
-                .ReturnsAsync((AuthenticationScheme?)null);
-            serviceCollection.AddSingleton(mockAuthenticationSchemeProvider.Object);
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            // Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                async () => await context.Request.GetClaimsPrincipal(serviceProvider)
-            );
-            // Assert
-            Assert.IsNotNull(exception);
-            Assert.AreEqual("No default authentication scheme configured", exception.Message);
         }
 
         [TestMethod]

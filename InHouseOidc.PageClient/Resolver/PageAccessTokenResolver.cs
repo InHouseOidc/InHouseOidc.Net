@@ -138,7 +138,7 @@ namespace InHouseOidc.PageClient.Resolver
                 tokenResponse.RefreshToken;
             authenticateResult.Properties.IssuedUtc = null;
             await this.httpContextAccessor.HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                PageConstant.AuthenticationSchemeCookie,
                 authenticateResult.Principal,
                 authenticateResult.Properties
             );

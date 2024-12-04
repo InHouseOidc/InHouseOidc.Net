@@ -189,6 +189,10 @@ namespace InHouseOidc.Provider.Handler
                 { AuthorizationEndpointConstant.Code, code },
                 { AuthorizationEndpointConstant.Scope, authorizationRequest.Scope },
             };
+            if (!string.IsNullOrEmpty(authorizationRequest.SessionState))
+            {
+                queryBuilderCode.Add(AuthorizationEndpointConstant.SessionState, authorizationRequest.SessionState);
+            }
             if (!string.IsNullOrEmpty(authorizationRequest.State))
             {
                 queryBuilderCode.Add(AuthorizationEndpointConstant.State, authorizationRequest.State);

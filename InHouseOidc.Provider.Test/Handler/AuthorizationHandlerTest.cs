@@ -30,7 +30,6 @@ namespace InHouseOidc.Provider.Test.Handler
         private readonly string clientId = "client";
         private readonly string host = "localhost";
         private readonly string redirectUri = "https://client.app/auth/callback";
-        private readonly string scheme = "scheme";
         private readonly string scope = "scope";
         private readonly string sessionId = "sessionid";
         private readonly string state = "statevalue";
@@ -77,7 +76,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 true,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
@@ -275,7 +274,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 true,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
@@ -339,7 +338,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 false,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
@@ -392,7 +391,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 false,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
@@ -447,7 +446,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 true,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
@@ -526,14 +525,14 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 true,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
             );
             var (tokenClaimsPrincipal, _) = TestHelper.SetupClaimsPrincipal(
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 jwtSubject,
                 this.sessionId,
                 this.utcNow
@@ -603,7 +602,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 true,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow
@@ -667,7 +666,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 serviceCollection,
                 true,
                 TimeSpan.Zero,
-                this.scheme,
+                ProviderConstant.AuthenticationSchemeCookie,
                 this.subject,
                 this.sessionId,
                 this.utcNow,

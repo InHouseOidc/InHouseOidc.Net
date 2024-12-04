@@ -28,7 +28,7 @@ namespace InHouseOidc.Example.Common
             );
             var accessTokenExpiry = await httpContext.GetTokenAsync(
                 OpenIdConnectDefaults.AuthenticationScheme,
-                PageConstant.ExpiresAt
+                "ExpiresAt"
             );
             var claims = new List<Claim>();
             var name = string.Empty;

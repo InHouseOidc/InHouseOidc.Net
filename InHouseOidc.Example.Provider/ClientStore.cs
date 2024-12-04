@@ -11,6 +11,37 @@ namespace InHouseOidc.Example.Provider
             new()
             {
                 {
+                    "bffexample",
+                    (
+                        new OidcClient
+                        {
+                            AccessTokenExpiry = TimeSpan.FromMinutes(15),
+                            ClientId = "bffexample",
+                            ClientSecretRequired = true,
+                            GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
+                            IdentityTokenExpiry = TimeSpan.FromMinutes(60),
+                            RedirectUris = ["http://localhost:5105", "http://localhost:5105/api/auth/callback",],
+                            RedirectUrisPostLogout =
+                            [
+                                "http://localhost:5105",
+                                "http://localhost:5105/api/auth/signout-callback",
+                            ],
+                            Scopes =
+                            [
+                                "openid",
+                                "offline_access",
+                                "email",
+                                "phone",
+                                "profile",
+                                "role",
+                                "examplebffscope",
+                                "exampleproviderapiscope",
+                            ],
+                        },
+                        "topsecret"
+                    )
+                },
+                {
                     "clientcredentialsexample",
                     (
                         new OidcClient
@@ -31,6 +62,7 @@ namespace InHouseOidc.Example.Provider
                         {
                             AccessTokenExpiry = TimeSpan.FromMinutes(15),
                             ClientId = "mvcexample",
+                            ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
                             IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris =
@@ -55,7 +87,7 @@ namespace InHouseOidc.Example.Provider
                                 "exampleproviderapiscope",
                             ],
                         },
-                        null
+                        "topsecret"
                     )
                 },
                 {
@@ -65,6 +97,7 @@ namespace InHouseOidc.Example.Provider
                         {
                             AccessTokenExpiry = TimeSpan.FromMinutes(15),
                             ClientId = "providerexample",
+                            ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode],
                             IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris =
@@ -79,7 +112,7 @@ namespace InHouseOidc.Example.Provider
                             ],
                             Scopes = ["openid", "email", "phone", "profile", "role", "exampleapiscope"],
                         },
-                        null
+                        "topsecret"
                     )
                 },
                 {
@@ -89,6 +122,7 @@ namespace InHouseOidc.Example.Provider
                         {
                             AccessTokenExpiry = TimeSpan.FromMinutes(15),
                             ClientId = "razorexample",
+                            ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
                             IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris =
@@ -113,7 +147,7 @@ namespace InHouseOidc.Example.Provider
                                 "exampleproviderapiscope",
                             ],
                         },
-                        null
+                        "topsecret"
                     )
                 },
             };
