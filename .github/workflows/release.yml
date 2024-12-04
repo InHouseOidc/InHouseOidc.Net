@@ -35,16 +35,16 @@ jobs:
       - name: Restore tools
         run: dotnet tool restore
 
+      - name: Restore dependencies
+        run: dotnet restore
+
       - name: csharpier line wrap check
         run: dotnet csharpier --check .
 
       - name: Code format check 
         run: |
-          dotnet format analyzers --verify-no-changes
-          dotnet format style --verify-no-changes
-
-      - name: Restore dependencies
-        run: dotnet restore
+          dotnet format analyzers --verify-no-changes --no-restore
+          dotnet format style --verify-no-changes --no-restore
 
       - name: Build
         run: |
