@@ -2,6 +2,7 @@ export class CheckSessionIFrame {
   private iFrameOrigin: string;
   private iFrame: HTMLIFrameElement;
   private timeout: ReturnType<typeof setInterval> | null = null;
+  private sessionExpiry?: Date;
   private sessionState: string | null = null;
 
   public constructor(
@@ -32,13 +33,19 @@ export class CheckSessionIFrame {
     });
   }
 
-  public start(sessionState: string) {
+  public start(sessionExpiry: Date | undefined, sessionState: string) {
+    this.sessionExpiry = sessionExpiry ? new Date(sessionExpiry) : undefined;
     if (this.sessionState === sessionState) {
       return;
     }
     this.stop();
     this.sessionState = sessionState;
     const send = () => {
+      if (this.sessionExpiry && new Date() >= this.sessionExpiry) {
+        this.stop();
+        this.callback();
+        return;
+      }
       if (!this.iFrame.contentWindow) {
         return;
       }

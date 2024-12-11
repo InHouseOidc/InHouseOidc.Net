@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace InHouseOidc.Example.Razor
+namespace InHouseOidc.Example.Razor.Pages
 {
     [Authorize(Roles = "UserRole1,UserRole2")]
     public class Index(IHttpClientFactory httpClientFactory) : PageModel

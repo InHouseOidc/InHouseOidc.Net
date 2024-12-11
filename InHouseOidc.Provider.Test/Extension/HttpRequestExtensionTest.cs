@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common.Constant;
+using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Extension;
 using InHouseOidc.Test.Common;
 using Microsoft.AspNetCore.Authentication;

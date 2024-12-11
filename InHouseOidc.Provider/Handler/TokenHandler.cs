@@ -3,6 +3,7 @@
 
 using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
+using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Type;
@@ -690,11 +691,7 @@ namespace InHouseOidc.Provider.Handler
             var oidcClient = await this.clientStore.GetClient(clientId);
             if (oidcClient == null)
             {
-                return new ClientValidation
-                {
-                    ErrorMessage = "Unknown client id: {clientId}",
-                    ErrorArgs = new[] { clientId },
-                };
+                return new ClientValidation { ErrorMessage = "Unknown client id: {clientId}", ErrorArgs = [clientId], };
             }
             if (oidcClient.ClientSecretRequired ?? false)
             {

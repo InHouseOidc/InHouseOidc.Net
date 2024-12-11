@@ -3,6 +3,7 @@
 
 using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
+using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Extension;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
@@ -71,7 +72,6 @@ namespace InHouseOidc.Provider.Test.Handler
                 AccessTokenExpiry = TimeSpan.FromMinutes(15),
                 ClientId = this.clientId,
                 GrantTypes = [GrantType.AuthorizationCode],
-                IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                 RedirectUris = [this.redirectUri],
                 Scopes = ["openid", this.scope1],
             };
@@ -291,7 +291,6 @@ namespace InHouseOidc.Provider.Test.Handler
                     ValCliEx.GrantsNull => null,
                     _ => [GrantType.AuthorizationCode]
                 },
-                IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                 RedirectUris = valCliEx switch
                 {
                     ValCliEx.RedirectUriBad => [],
@@ -418,7 +417,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 case ValReqEx.StateLength:
                     parameters.Add(AuthorizationEndpointConstant.ClientId, this.clientId);
                     parameters.Add(AuthorizationEndpointConstant.RedirectUri, this.redirectUri);
-                    parameters.Add(AuthorizationEndpointConstant.State, new string('z', 513));
+                    parameters.Add(AuthorizationEndpointConstant.State, new string('z', 1025));
                     break;
             }
             switch (valCliEx)

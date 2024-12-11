@@ -69,7 +69,7 @@ namespace InHouseOidc.Provider.Handler
             // Capture any state to pass back on errors
             if (parameters.TryGetNonEmptyValue(AuthorizationEndpointConstant.State, out var state))
             {
-                if (state.Length > 512)
+                if (state.Length > 1024)
                 {
                     return ErrorAuthorization(
                         redirectUri,

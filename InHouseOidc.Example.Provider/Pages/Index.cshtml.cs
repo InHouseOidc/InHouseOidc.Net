@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace InHouseOidc.Example.Provider
+namespace InHouseOidc.Example.Provider.Pages
 {
     [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme, Roles = "UserRole1,UserRole2")]
     public class Index(IHttpClientFactory httpClientFactory) : PageModel

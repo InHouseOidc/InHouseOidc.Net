@@ -59,7 +59,7 @@ export const AuthenticationProvider = ({
       userInfo.clientId &&
       userInfo.sessionState
     ) {
-      const { clientId, checkSessionUri, sessionState } = userInfo;
+      const { clientId, checkSessionUri, sessionExpiry, sessionState } = userInfo;
       const createIFrame = async () => {
         // Setup the iframe to monitor the current session
         checkSessionIFrameRef.current = new CheckSessionIFrame(
@@ -68,7 +68,7 @@ export const AuthenticationProvider = ({
           checkSessionUri
         );
         await checkSessionIFrameRef.current.setup();
-        checkSessionIFrameRef.current.start(sessionState);
+        checkSessionIFrameRef.current.start(sessionExpiry, sessionState);
       };
       createIFrame();
     }

@@ -19,7 +19,6 @@ namespace InHouseOidc.Example.Provider
                             ClientId = "bffexample",
                             ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
-                            IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris = ["http://localhost:5105", "http://localhost:5105/api/auth/callback",],
                             RedirectUrisPostLogout =
                             [
@@ -34,7 +33,7 @@ namespace InHouseOidc.Example.Provider
                                 "phone",
                                 "profile",
                                 "role",
-                                "examplebffscope",
+                                "exampleapiscope",
                                 "exampleproviderapiscope",
                             ],
                         },
@@ -64,7 +63,6 @@ namespace InHouseOidc.Example.Provider
                             ClientId = "mvcexample",
                             ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
-                            IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris =
                             [
                                 "http://localhost:5103",
@@ -98,8 +96,7 @@ namespace InHouseOidc.Example.Provider
                             AccessTokenExpiry = TimeSpan.FromMinutes(15),
                             ClientId = "providerexample",
                             ClientSecretRequired = true,
-                            GrantTypes = [GrantType.AuthorizationCode],
-                            IdentityTokenExpiry = TimeSpan.FromMinutes(60),
+                            GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
                             RedirectUris =
                             [
                                 "http://localhost:5100",
@@ -110,7 +107,16 @@ namespace InHouseOidc.Example.Provider
                                 "http://localhost:5100",
                                 "http://localhost:5100/signout-callback-oidc",
                             ],
-                            Scopes = ["openid", "email", "phone", "profile", "role", "exampleapiscope"],
+                            Scopes =
+                            [
+                                "openid",
+                                "offline_access",
+                                "email",
+                                "phone",
+                                "profile",
+                                "role",
+                                "exampleapiscope"
+                            ],
                         },
                         "topsecret"
                     )
@@ -124,7 +130,6 @@ namespace InHouseOidc.Example.Provider
                             ClientId = "razorexample",
                             ClientSecretRequired = true,
                             GrantTypes = [GrantType.AuthorizationCode, GrantType.RefreshToken],
-                            IdentityTokenExpiry = TimeSpan.FromMinutes(60),
                             RedirectUris =
                             [
                                 "http://localhost:5101",
