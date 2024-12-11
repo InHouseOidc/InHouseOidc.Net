@@ -4,6 +4,7 @@
 using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Common.Type;
+using InHouseOidc.Provider.Constant;
 using InHouseOidc.Provider.Exception;
 using InHouseOidc.Provider.Handler;
 using InHouseOidc.Provider.Type;
@@ -155,7 +156,6 @@ namespace InHouseOidc.Provider.Test.Handler
                 AccessTokenExpiry = TimeSpan.FromMinutes(15),
                 ClientId = this.clientId,
                 GrantTypes = [GrantType.AuthorizationCode],
-                IdentityTokenExpiry = TimeSpan.FromMinutes(60),
             };
             this.mockClientStore.Setup(m => m.GetClient(this.clientId)).ReturnsAsync(oidcClient);
             var issuer = $"{this.urlScheme}://{this.host}";
@@ -543,7 +543,6 @@ namespace InHouseOidc.Provider.Test.Handler
                     AuthCliEx.ValidNoGrants => [],
                     _ => [GrantType.AuthorizationCode]
                 },
-                IdentityTokenExpiry = TimeSpan.FromMinutes(60),
             };
             switch (authClientEx)
             {

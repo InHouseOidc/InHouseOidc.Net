@@ -18,12 +18,13 @@ builder.Services.AddHttpLogging(httpLogging =>
 // Setup OIDC BFF client (authenticates user access to this site)
 // and an OIDC BFF API client (allows this site to call authenticated APIs)
 const string providerAddress = "http://localhost:5100";
+const string apiAddress = "http://localhost:5102";
 var clientOptions = new BffClientOptions
 {
     ClientId = "bffexample",
     ClientSecret = "topsecret",
     OidcProviderAddress = providerAddress,
-    Scope = "openid offline_access email phone profile role exampleproviderapiscope",
+    Scope = "openid offline_access email phone profile role exampleapiscope exampleproviderapiscope",
 };
 var clientName = "examplebff";
 
@@ -43,7 +44,21 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Add API endpoints
-app.MapGet("/api/secure", () => $"/secure response: UTC = {DateTime.UtcNow:u}")
+app.MapGet(
+        "/api/secure-api",
+        async (IHttpClientFactory httpClientFactory) =>
+        {
+            var httpClient = httpClientFactory.CreateClient(clientName);
+            var response = await httpClient.GetAsync(new Uri(new Uri(apiAddress), "/secure"));
+            if (response.IsSuccessStatusCode)
+            {
+                return $"/secure-api response: {await response.Content.ReadAsStringAsync()}";
+            }
+            return $"/secure-api response: StatusCode = {(int)response.StatusCode} {response.StatusCode}";
+        }
+    )
+    .RequireAuthorization(BffConstant.BffApiPolicy);
+app.MapGet("/api/secure-bff", () => $"/secure-bff response: UTC = {DateTime.UtcNow:u}")
     .RequireAuthorization(BffConstant.BffApiPolicy);
 app.MapGet(
         "/api/secure-provider",

@@ -30,8 +30,11 @@ namespace InHouseOidc.Provider
 
         /// <summary>
         /// Gets the expiry time for identity tokens issued.
+        /// DEPRECATED: id token expiry is sourced from session expiry.
         /// </summary>
-        public TimeSpan IdentityTokenExpiry { get; init; }
+        [Obsolete("id token expiry is sourced from session expiry (via IProviderSession.Login)")]
+        [ExcludeFromCodeCoverage(Justification = "Obsolete")]
+        public TimeSpan? IdentityTokenExpiry { get; init; }
 
         /// <summary>
         /// Gets the allowed post logout redirect URIs.  Required for the authorisation code flow.

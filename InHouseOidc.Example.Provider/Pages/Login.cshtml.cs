@@ -6,7 +6,7 @@ using InHouseOidc.Provider;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace InHouseOidc.Example.Provider
+namespace InHouseOidc.Example.Provider.Pages
 {
     public class Login(IProviderSession providerSession) : PageModel
     {

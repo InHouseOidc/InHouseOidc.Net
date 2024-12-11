@@ -52,7 +52,7 @@ var clientOptions = new PageClientOptions
     // GetClaimsFromUserInfoEndpoint = true,
     IssueLocalAuthenticationCookie = false,
     OidcProviderAddress = providerAddress,
-    Scope = "openid email phone profile role exampleapiscope",
+    Scope = "openid offline_access email phone profile role exampleapiscope",
     UniqueClaimMappings = new() { { "phone_number", "phone_number" } },
 };
 const string clientName = "exampleapi";

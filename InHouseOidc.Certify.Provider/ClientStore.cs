@@ -28,7 +28,6 @@ namespace InHouseOidc.Certify.Provider
                                 clientConfig?.GrantTypes == null
                                     ? []
                                     : clientConfig.GrantTypes.Select(EnumHelper.ParseEnumMember<GrantType>).ToList(),
-                            IdentityTokenExpiry = TimeSpan.FromMinutes(clientConfig?.IdentityTokenExpiryMinutes ?? 0),
                             RedirectUris = clientConfig?.RedirectUris,
                             RedirectUrisPostLogout = clientConfig?.RedirectUrisPostLogout,
                             Scopes = clientConfig?.Scopes,

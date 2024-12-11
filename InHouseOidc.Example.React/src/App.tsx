@@ -14,6 +14,7 @@ function App() {
     sessionState,
   } = useAuthentication();
   const [apiResult, setApiResult] = useState("");
+  const [bffResult, setBffResult] = useState("");
   const [providerApiResult, setProviderApiResult] = useState("");
   const callApi = useCallback(
     async (url: string, setResult: (result: string) => void) => {
@@ -65,7 +66,13 @@ function App() {
               </tbody>
             </table>
             <div className="d-flex mt-2 align-items-center">
-              <button onClick={() => callApi("/api/secure", setApiResult)}>
+              <button onClick={() => callApi("/api/secure-bff", setBffResult)}>
+                Call BFF
+              </button>
+              <span className="ml-2">{bffResult}</span>
+            </div>
+            <div className="d-flex mt-2 align-items-center">
+              <button onClick={() => callApi("/api/secure-api", setApiResult)}>
                 Call API
               </button>
               <span className="ml-2">{apiResult}</span>
