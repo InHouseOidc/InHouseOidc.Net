@@ -1,6 +1,7 @@
 ﻿// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
+using InHouseOidc.Common;
 using InHouseOidc.CredentialsClient.Resolver;
 using InHouseOidc.CredentialsClient.Type;
 using InHouseOidc.Discovery;
@@ -46,6 +47,7 @@ namespace InHouseOidc.CredentialsClient
                 .DiscoveryOptions
                 .ValidateGrantTypes;
             this.ClientOptions.DiscoveryOptions.ValidateIssuer = this.ClientOptions.DiscoveryOptions.ValidateIssuer;
+            this.ServiceCollection.AddSingleton(typeof(IAsyncLock<>), typeof(AsyncLock<>));
             this.ServiceCollection.AddSingleton(this.ClientOptions);
             this.ServiceCollection.AddHttpClient(this.ClientOptions.InternalHttpClientName);
             this.ServiceCollection.TryAddSingleton<IDiscoveryResolver, DiscoveryResolver>();

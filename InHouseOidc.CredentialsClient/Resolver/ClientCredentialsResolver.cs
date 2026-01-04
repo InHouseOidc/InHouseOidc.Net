@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace InHouseOidc.CredentialsClient.Resolver
 {
     internal class ClientCredentialsResolver(
+        IAsyncLock<ClientCredentialsResolver> asyncLock,
         ClientOptions clientConfiguration,
         IDiscoveryResolver discoveryResolver,
         IHttpClientFactory httpClientFactory,
@@ -21,6 +22,7 @@ namespace InHouseOidc.CredentialsClient.Resolver
         IUtcNow utcNow
     ) : IClientCredentialsResolver
     {
+        private readonly IAsyncLock<ClientCredentialsResolver> asyncLock = asyncLock;
         private readonly ClientOptions clientOptions = clientConfiguration;
         private readonly IDiscoveryResolver discoveryResolver = discoveryResolver;
         private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
@@ -81,11 +83,6 @@ namespace InHouseOidc.CredentialsClient.Resolver
                     return token.AccessToken;
                 }
             }
-            // Clear any existing token
-            if (token != null)
-            {
-                this.tokenDictionary.TryRemove(clientName, out var _);
-            }
             return await this.GetClientTokenInternal(clientName, credentialsClientOptions, cancellationToken);
         }
 
@@ -104,6 +101,16 @@ namespace InHouseOidc.CredentialsClient.Resolver
             )
             {
                 throw new InvalidOperationException("Client options are missing required values");
+            }
+            // Lock to prevent multiple token requests for the same client
+            using var locker = this.asyncLock.Lock();
+            if (
+                this.tokenDictionary.TryGetValue(clientName, out var existingToken)
+                && existingToken.ExpiryUtc > this.utcNow.UtcNow
+            )
+            {
+                // Another thread has already obtained the token while we waited
+                return existingToken.AccessToken;
             }
             // Use discovery to resolve the token endpoint
             var discovery = await this.discoveryResolver.GetDiscovery(
@@ -171,7 +178,7 @@ namespace InHouseOidc.CredentialsClient.Resolver
                 tokenResponse.AccessToken,
                 this.utcNow.UtcNow.AddSeconds(tokenResponse.ExpiresIn ?? 0)
             );
-            this.tokenDictionary.TryAdd(clientName, token);
+            this.tokenDictionary[clientName] = token;
             return token.AccessToken;
         }
     }

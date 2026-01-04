@@ -4,7 +4,6 @@
 using InHouseOidc.Common;
 using InHouseOidc.Common.Constant;
 using InHouseOidc.Common.Type;
-using InHouseOidc.CredentialsClient;
 using InHouseOidc.CredentialsClient.Resolver;
 using InHouseOidc.CredentialsClient.Type;
 using InHouseOidc.Discovery;
@@ -13,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace InHouseOidc.ClientCredentials.Test.Resolver
+namespace InHouseOidc.CredentialsClient.Test.Resolver
 {
     [TestClass]
     public class ClientCredentialsResolverTest
@@ -31,6 +30,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
         private readonly string clientName = "testclient";
         private readonly TokenResponse tokenResponse = new() { AccessToken = "accesstoken", ExpiresIn = 600 };
 
+        private Mock<IAsyncLock<ClientCredentialsResolver>> mockAsyncLock = new(MockBehavior.Strict);
         private ClientOptions clientOptions = new();
         private Mock<IDiscoveryResolver> mockDiscoveryResolver = new(MockBehavior.Strict);
         private Mock<IHttpClientFactory> mockHttpClientFactory = new(MockBehavior.Strict);
@@ -43,6 +43,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
         [TestInitialize]
         public void Initialise()
         {
+            this.mockAsyncLock = new Mock<IAsyncLock<ClientCredentialsResolver>>();
             this.clientOptions = new();
             this.mockDiscoveryResolver = new(MockBehavior.Strict);
             this.mockHttpClientFactory = new(MockBehavior.Strict);
@@ -78,6 +79,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             // Arrange
             this.clientOptions.CredentialsClientsOptions.TryAdd(this.clientName, this.credentialsClientOptions);
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -136,6 +138,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
         {
             // Arrange
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -170,6 +173,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             // Arrange
             this.clientOptions.CredentialsClientsOptions.TryAdd(this.clientName, null);
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -197,13 +201,25 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
                     )
                 )
                 .ReturnsAsync(this.discovery);
-            // Act
-            var result = await clientCredentialsResolver.GetClientToken(this.clientName, CancellationToken.None);
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual("accesstoken", result);
+            // Act 1
+            var result1 = await clientCredentialsResolver.GetClientToken(this.clientName, CancellationToken.None);
+            // Assert 1
+            Assert.IsNotNull(result1);
+            Assert.AreEqual("accesstoken", result1);
             Assert.AreEqual(1, this.testMessageHandler.SendCount);
             mockCredentialsStore.VerifyAll();
+            // Act 2 (expired)
+            this.mockUtcNow.Setup(m => m.UtcNow).Returns(this.utcNow.AddSeconds(1200));
+            var result2 = await clientCredentialsResolver.GetClientToken(this.clientName, CancellationToken.None);
+            Assert.IsNotNull(result2);
+            Assert.AreEqual("accesstoken", result2);
+            Assert.AreEqual(2, this.testMessageHandler.SendCount);
+            // Act 3 (cached)
+            this.mockUtcNow.Setup(m => m.UtcNow).Returns(this.utcNow.AddSeconds(1230));
+            var result3 = await clientCredentialsResolver.GetClientToken(this.clientName, CancellationToken.None);
+            Assert.IsNotNull(result3);
+            Assert.AreEqual("accesstoken", result3);
+            Assert.AreEqual(2, this.testMessageHandler.SendCount);
         }
 
         [TestMethod]
@@ -213,6 +229,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             var credentialsClientOptions = new CredentialsClientOptions();
             this.clientOptions.CredentialsClientsOptions.TryAdd(this.clientName, credentialsClientOptions);
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -235,6 +252,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             // Arrange
             this.clientOptions.CredentialsClientsOptions.TryAdd(this.clientName, this.credentialsClientOptions);
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -263,6 +281,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             // Arrange
             this.clientOptions.CredentialsClientsOptions.TryAdd(this.clientName, this.credentialsClientOptions);
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -305,6 +324,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             // Arrange
             this.clientOptions.CredentialsClientsOptions.TryAdd(this.clientName, this.credentialsClientOptions);
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -338,6 +358,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             // Arrange
             this.clientOptions.CredentialsClientsOptions.TryAdd(this.clientName, this.credentialsClientOptions);
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -371,6 +392,7 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
         {
             // Arrange
             var clientCredentialsResolver = new ClientCredentialsResolver(
+                this.mockAsyncLock.Object,
                 this.clientOptions,
                 this.mockDiscoveryResolver.Object,
                 this.mockHttpClientFactory.Object,
@@ -442,6 +464,80 @@ namespace InHouseOidc.ClientCredentials.Test.Resolver
             Assert.AreEqual(3, this.testMessageHandler.SendCount);
             Assert.IsNotNull(result4);
             Assert.AreEqual("accesstoken", result4);
+        }
+
+        [TestMethod]
+        public void ClientCredentialsResolver_LocksWhileResolving()
+        {
+            // Arrange
+            this.clientOptions.CredentialsClientsOptions.TryAdd(this.clientName, this.credentialsClientOptions);
+            var asyncLock = new AsyncLock<ClientCredentialsResolver>();
+            Assert.IsFalse(asyncLock.IsLocked);
+            var clientCredentialsResolver = new ClientCredentialsResolver(
+                asyncLock,
+                this.clientOptions,
+                this.mockDiscoveryResolver.Object,
+                this.mockHttpClientFactory.Object,
+                this.logger,
+                this.mockServiceProvider.Object,
+                this.mockUtcNow.Object
+            );
+            this.testMessageHandler.ResponseMessage = new HttpResponseMessage
+            {
+                Content = new TestJsonContent(this.tokenResponse),
+                StatusCode = HttpStatusCode.OK,
+            };
+            Assert.IsNotNull(this.credentialsClientOptions.OidcProviderAddress);
+            this.mockDiscoveryResolver.Setup(m =>
+                    m.GetDiscovery(
+                        this.clientOptions.DiscoveryOptions,
+                        this.credentialsClientOptions.OidcProviderAddress,
+                        CancellationToken.None
+                    )
+                )
+                .ReturnsAsync(this.discovery);
+            var blockerStarted = new AutoResetEvent(false);
+            var blockerFinished = new AutoResetEvent(false);
+            // Lock the AsyncLock for 15 seconds, order until told to release
+            var blocker = Task.Run(() =>
+            {
+                var waiterRelease = asyncLock.Lock();
+                blockerStarted.Set();
+                blockerFinished.WaitOne(15000);
+                waiterRelease.Dispose();
+            });
+            WaitHandle.WaitAll([blockerStarted]);
+            // Request a tokens on a separate threads - these will wait until the lock is released
+            string? backgroundToken1 = null;
+            var task1Started = new AutoResetEvent(false);
+            var tokenTask1 = Task.Run(async () =>
+            {
+                task1Started.Set();
+                backgroundToken1 = await clientCredentialsResolver.GetClientToken(
+                    this.clientName,
+                    CancellationToken.None
+                );
+            });
+            string? backgroundToken2 = null;
+            var task2Started = new AutoResetEvent(false);
+            var tokenTask2 = Task.Run(async () =>
+            {
+                task2Started.Set();
+                backgroundToken2 = await clientCredentialsResolver.GetClientToken(
+                    this.clientName,
+                    CancellationToken.None
+                );
+            });
+            WaitHandle.WaitAll([task1Started, task2Started]);
+            // Release the lock to allow the token requests to proceed
+            blockerFinished.Set();
+            // Assert (both token requests complete successfully, only 1 token request made)
+            Task.WaitAll([blocker, tokenTask1, tokenTask2]);
+            Assert.AreEqual("accesstoken", backgroundToken1);
+            Assert.AreEqual("accesstoken", backgroundToken2);
+            Assert.AreEqual(1, this.testMessageHandler.SendCount);
+            this.mockDiscoveryResolver.VerifyAll();
+            this.mockHttpClientFactory.VerifyAll();
         }
     }
 }
