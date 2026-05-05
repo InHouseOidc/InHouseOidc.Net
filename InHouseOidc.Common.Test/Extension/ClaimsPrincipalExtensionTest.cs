@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common.Constant;
@@ -35,11 +35,11 @@ namespace InHouseOidc.Common.Test.Extension
             var claimsIdentity = new ClaimsIdentity(claims, "testscheme");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             // Act
-            var exception = Assert.ThrowsException<InvalidOperationException>(
+            var exception = Assert.Throws<InvalidOperationException>(
                 () => claimsPrincipal.GetAuthenticationTimeClaim()
             );
             // Assert
-            StringAssert.Contains(exception.Message, "auth_time claim not found");
+            Assert.Contains("auth_time claim not found", exception.Message);
         }
 
         [TestMethod]
@@ -64,11 +64,9 @@ namespace InHouseOidc.Common.Test.Extension
             var claimsIdentity = new ClaimsIdentity(claims, "testscheme");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             // Act
-            var exception = Assert.ThrowsException<InvalidOperationException>(
-                () => claimsPrincipal.GetSessionIdClaim()
-            );
+            var exception = Assert.Throws<InvalidOperationException>(() => claimsPrincipal.GetSessionIdClaim());
             // Assert
-            StringAssert.Contains(exception.Message, "sid claim not found");
+            Assert.Contains("sid claim not found", exception.Message);
         }
 
         [TestMethod]
@@ -101,9 +99,9 @@ namespace InHouseOidc.Common.Test.Extension
             var claimsIdentity = new ClaimsIdentity(claims, "testscheme");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             // Act
-            var exception = Assert.ThrowsException<InvalidOperationException>(() => claimsPrincipal.GetSubjectClaim());
+            var exception = Assert.Throws<InvalidOperationException>(() => claimsPrincipal.GetSubjectClaim());
             // Assert
-            StringAssert.Contains(exception.Message, "sub/nameidentifier claim not found");
+            Assert.Contains("sub/nameidentifier claim not found", exception.Message);
         }
     }
 }

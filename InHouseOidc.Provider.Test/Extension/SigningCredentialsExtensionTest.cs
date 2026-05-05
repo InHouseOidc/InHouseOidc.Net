@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Provider.Extension;
@@ -31,7 +31,7 @@ namespace InHouseOidc.Provider.Test.Extension
             var securityKey = new RsaSecurityKey(provider);
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
             // Act
-            var exception = Assert.ThrowsException<ArgumentException>(() => signingCredentials.ToSigningKey());
+            var exception = Assert.Throws<ArgumentException>(() => signingCredentials.ToSigningKey());
             // Assert
             Assert.IsNotNull(exception);
             Assert.AreEqual(
@@ -47,7 +47,7 @@ namespace InHouseOidc.Provider.Test.Extension
             var securityKey = new X509SecurityKey(TestCertificate.CreateNonRS256(DateTimeOffset.UtcNow));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
             // Act
-            var exception = Assert.ThrowsException<ArgumentException>(() => signingCredentials.ToSigningKey());
+            var exception = Assert.Throws<ArgumentException>(() => signingCredentials.ToSigningKey());
             // Assert
             Assert.IsNotNull(exception);
             Assert.AreEqual("Signing credentials must use RSA public key", exception.Message);

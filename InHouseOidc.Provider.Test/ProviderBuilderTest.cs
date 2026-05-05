@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Provider.Constant;
@@ -426,20 +426,20 @@ namespace InHouseOidc.Provider.Test
             var providerBuilder = serviceCollection.AddOidcProvider();
             providerBuilder.SetSigningCertificates([TestCertificate.Create(DateTimeOffset.UtcNow)]);
             // Act/Assert 1
-            var exception1 = Assert.ThrowsException<ArgumentException>(
+            var exception1 = Assert.Throws<ArgumentException>(
                 () => providerBuilder.SetUserInfoEndpointUri(new Uri("%2c%/userinfo", UriKind.Relative))
             );
-            StringAssert.Contains(exception1.Message, "Invalid URI");
+            Assert.Contains("Invalid URI", exception1.Message);
             // Act/Assert 2
-            var exception2 = Assert.ThrowsException<ArgumentException>(
+            var exception2 = Assert.Throws<ArgumentException>(
                 () => providerBuilder.SetUserInfoEndpointUri(new Uri("~/userinfo", UriKind.Relative))
             );
-            StringAssert.Contains(exception2.Message, "Invalid URI");
+            Assert.Contains("Invalid URI", exception2.Message);
             // Act/Assert 3
-            var exception3 = Assert.ThrowsException<ArgumentException>(
+            var exception3 = Assert.Throws<ArgumentException>(
                 () => providerBuilder.SetUserInfoEndpointUri(new Uri("https://localhost/userinfo", UriKind.Absolute))
             );
-            StringAssert.Contains(exception3.Message, "Invalid URI");
+            Assert.Contains("Invalid URI", exception3.Message);
         }
     }
 }

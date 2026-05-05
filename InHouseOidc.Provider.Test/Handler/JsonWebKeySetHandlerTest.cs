@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Provider.Constant;
@@ -21,7 +21,7 @@ namespace InHouseOidc.Provider.Test.Handler
         private readonly string urlScheme = "https";
         private readonly Mock<ISigningKeyHandler> mockSigningKeyHandler = new(MockBehavior.Strict);
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("GET", true, null)]
         [DataRow("POST", false, "HttpMethod not supported: {method}")]
         public async Task HandleRequest(string method, bool setKeys, string? expectedBadRequestExceptionMessage)
@@ -66,7 +66,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             else if (!string.IsNullOrEmpty(expectedBadRequestExceptionMessage))
             {
-                var exception = await Assert.ThrowsExceptionAsync<BadRequestException>(
+                var exception = await Assert.ThrowsAsync<BadRequestException>(
                     async () => await jsonWebKeySetHandler.HandleRequest(context.Request)
                 );
                 Assert.IsNotNull(exception);

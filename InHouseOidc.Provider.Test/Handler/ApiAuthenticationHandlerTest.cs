@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Provider.Constant;
@@ -43,7 +43,7 @@ namespace InHouseOidc.Provider.Test.Handler
             );
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("none")]
         [DataRow("")]
         [DataRow("Bear")]
@@ -71,7 +71,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.IsTrue(result.None);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public async Task HandleAuthenticateAsync_TokenValidation(bool isValidToken)

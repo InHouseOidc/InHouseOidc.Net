@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -50,7 +50,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.providerOptions = new();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("GET")]
         [DataRow("POST")]
         public async Task HandleRequest_Success(string method)
@@ -150,7 +150,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockValidationHandler.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+            var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                 async () => await authorizationHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -158,7 +158,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.AreEqual("HttpMethod not supported: {method}", exception.LogMessage);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("GET")]
         [DataRow("POST")]
         public async Task HandleRequest_NoParameters(string method)
@@ -181,7 +181,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockValidationHandler.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+            var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                 async () => await authorizationHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -189,7 +189,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.AreEqual("Unable to resolve authorization request parameters", exception.LogMessage);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, true, true)]
         [DataRow(false, true, false)]
         [DataRow(false, false, false)]
@@ -248,7 +248,7 @@ namespace InHouseOidc.Provider.Test.Handler
                     .ReturnsAsync((null, null));
             }
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+            var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                 async () => await authorizationHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -368,7 +368,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+            var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                 async () => await authorizationHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -421,7 +421,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+            var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                 async () => await authorizationHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -430,7 +430,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.AreEqual(this.redirectUri, exception.Uri);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true)]
         [DataRow(false)]
         public async Task HandleRequest_MaxAge(bool isAgePassed)
@@ -508,7 +508,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, "", "Invalid id token hint")]
         [DataRow(true, "other", "Id token hint subject does not match authenticated subject")]
         [DataRow(true, "subject", null)]
@@ -574,7 +574,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             else
             {
-                var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+                var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                     async () => await authorizationHandler.HandleRequest(context.Request)
                 );
                 Assert.IsNotNull(exception);
@@ -583,7 +583,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("sessionid", false)]
         [DataRow("newsessionid", true)]
         public async Task CheckSessionEndpointEnabled(string cookieSessionId, bool expectNewResponseCookie)
@@ -643,7 +643,6 @@ namespace InHouseOidc.Provider.Test.Handler
             if (expectNewResponseCookie)
             {
                 var responseCookie = context.Response.Headers.First();
-                Assert.IsNotNull(responseCookie);
                 Assert.AreEqual("Set-Cookie", responseCookie.Key);
                 Assert.AreEqual(
                     "InHouseOidc.CheckSession=sessionid; path=/; secure; samesite=none",
@@ -697,7 +696,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 .ReturnsAsync((authorizationRequest, null));
             this.mockCodeStore.Setup(m => m.SaveCode(It.IsAny<StoredCode>())).Returns(Task.CompletedTask);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+            var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                 async () => await authorizationHandler.HandleRequest(context.Request)
             );
             // Assert

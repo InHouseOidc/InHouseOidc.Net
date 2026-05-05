@@ -49,7 +49,7 @@ namespace InHouseOidc.Common.Test
             var result = HashHelper.GenerateSessionState(null, clientId, redirectUriString, sessionId);
             // Assert 1
             Assert.IsNotNull(result);
-            StringAssert.Contains(result, ".");
+            Assert.Contains(".", result);
             Assert.IsTrue(result.Length >= 66, $"Unexpectedly short generated session state length of {result.Length}");
             // Assert 2
             var sessionStateParts = result.Split(".");

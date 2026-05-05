@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -131,7 +131,7 @@ namespace InHouseOidc.CredentialsClient.Test.Resolver
             Assert.AreEqual("accesstoken", result4);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, "Client credentials options not available via AddClient or ICredentialsStore")]
         [DataRow(true, "Client credentials options not available from ICredentialsStore")]
         public async Task ClientCredentialsResolver_BadClientName(bool setupCredentialsStore, string expectedMessage)
@@ -238,12 +238,12 @@ namespace InHouseOidc.CredentialsClient.Test.Resolver
                 this.mockUtcNow.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () => await clientCredentialsResolver.GetClientToken(this.clientName, CancellationToken.None)
             );
             // Assert
             Assert.IsNotNull(exception);
-            StringAssert.Contains("Client options are missing required values", exception.Message);
+            Assert.Contains("Client options are missing required values", exception.Message);
         }
 
         [TestMethod]

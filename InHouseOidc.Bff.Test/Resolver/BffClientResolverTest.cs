@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Bff.Resolver;
@@ -29,9 +29,7 @@ namespace InHouseOidc.Bff.Test.Resolver
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Host = new HostString(this.hostname);
             // Act
-            var exception = Assert.ThrowsException<InvalidOperationException>(
-                () => bffClientResolver.GetClient(httpContext)
-            );
+            var exception = Assert.Throws<InvalidOperationException>(() => bffClientResolver.GetClient(httpContext));
             // Assert
             Assert.IsNotNull(exception);
             Assert.AreEqual($"Unable to resolve client options for hostname: {this.hostname}", exception.Message);

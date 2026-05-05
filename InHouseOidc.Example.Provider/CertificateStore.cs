@@ -9,7 +9,7 @@ namespace InHouseOidc.Example.Provider
     {
         public Task<IEnumerable<X509Certificate2>> GetSigningCertificates()
         {
-            var signingCertificate = new X509Certificate2("InHouseOidcExample.pfx", "Internal");
+            var signingCertificate = X509CertificateLoader.LoadPkcs12FromFile("InHouseOidcExample.pfx", "Internal");
             return Task.FromResult<IEnumerable<X509Certificate2>>([signingCertificate]);
         }
     }

@@ -55,7 +55,7 @@ namespace InHouseOidc.Test.Common
 
         public static X509Certificate2 CreatePublicOnly(DateTimeOffset utcNow)
         {
-            return new X509Certificate2(Create(utcNow).Export(X509ContentType.Cert));
+            return X509CertificateLoader.LoadCertificate(Create(utcNow).Export(X509ContentType.Cert)!);
         }
 
         public static X509Certificate2 CreateNonRS256(DateTimeOffset utcNow)

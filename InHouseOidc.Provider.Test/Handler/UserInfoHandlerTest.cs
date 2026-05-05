@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -49,7 +49,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.mockValidationHandler = new Mock<IValidationHandler>(MockBehavior.Strict);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("GET", false)]
         [DataRow("POST", false)]
         [DataRow("POST", true)]
@@ -159,7 +159,7 @@ namespace InHouseOidc.Provider.Test.Handler
             CollectionAssert.AreEqual(expectedValueKinds, valueKinds);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(
             "DELETE",
             true,
@@ -281,7 +281,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             var userInfoHandler = new UserInfoHandler(this.mockUserStore.Object, this.mockValidationHandler.Object);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<BadRequestException>(
+            var exception = await Assert.ThrowsAsync<BadRequestException>(
                 async () => await userInfoHandler.HandleRequest(context.Request)
             );
             // Assert

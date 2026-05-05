@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -60,10 +60,10 @@ namespace InHouseOidc.Provider.Test.Extension
             using var utf8JsonWriter = new Utf8JsonWriter(memoryStream, JsonHelper.JsonWriterOptions);
             utf8JsonWriter.WriteStartObject();
             // Act/Assert
-            var exception = Assert.ThrowsException<ArgumentException>(
+            var exception = Assert.Throws<ArgumentException>(
                 () => utf8JsonWriter.WriteNameValue("datetime", DateTime.Now)
             );
-            StringAssert.Contains(exception.Message, "Unsupported value type");
+            Assert.Contains("Unsupported value type", exception.Message);
         }
 
         private class TestNamesValues
@@ -103,14 +103,12 @@ namespace InHouseOidc.Provider.Test.Extension
             using var utf8JsonWriter = new Utf8JsonWriter(memoryStream, JsonHelper.JsonWriterOptions);
             utf8JsonWriter.WriteStartObject();
             // Act/Assert
-            var exception1 = Assert.ThrowsException<ArgumentNullException>(
-                () => utf8JsonWriter.WriteNameUri("uri", null, null)
-            );
-            StringAssert.Contains(exception1.Message, "Value cannot be null");
-            var exception2 = Assert.ThrowsException<ArgumentNullException>(
+            var exception1 = Assert.Throws<ArgumentNullException>(() => utf8JsonWriter.WriteNameUri("uri", null, null));
+            Assert.Contains("Value cannot be null", exception1.Message);
+            var exception2 = Assert.Throws<ArgumentNullException>(
                 () => utf8JsonWriter.WriteNameUri("uri", "http://localhost", null)
             );
-            StringAssert.Contains(exception2.Message, "Value cannot be null");
+            Assert.Contains("Value cannot be null", exception2.Message);
         }
 
         private class TestNameUri

@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common.Constant;
@@ -9,7 +9,7 @@ namespace InHouseOidc.Common.Test.Extension
     [TestClass]
     public class ClaimsExtensionTest
     {
-        [DataTestMethod]
+        [TestMethod]
         [DynamicData(nameof(HasScope_Data))]
         public void HasScope(IEnumerable<Claim> claims, string scope, bool expectedResult)
         {

@@ -16,6 +16,7 @@ dotnet test `
 	/p:CoverletOutput=..\Coverage\Results\ `
 	/p:MergeWith=..\Coverage\Results\coverage.json `
 	/p:CoverletOutputFormat="json%2ccobertura" `
+	--filter "FullyQualifiedName!~InHouseOidc.Example.PlaywrightTest" `
 	-m:1 `
 	InHouseOidc.Net.sln
 if ($LASTEXITCODE -ne 0) 

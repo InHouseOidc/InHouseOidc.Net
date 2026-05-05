@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -33,7 +33,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.providerOptions = new();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true)]
         [DataRow(false)]
         public async Task Resolve_Success(bool fromStore)
@@ -109,12 +109,10 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockUtcNow.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InternalErrorException>(
-                () => signingKeyHandler.Resolve()
-            );
+            var exception = await Assert.ThrowsAsync<InternalErrorException>(() => signingKeyHandler.Resolve());
             // Assert
             Assert.IsNotNull(exception);
-            StringAssert.Contains(exception.LogMessage, "No signing keys available");
+            Assert.Contains("No signing keys available", exception.LogMessage);
         }
 
         [TestMethod]

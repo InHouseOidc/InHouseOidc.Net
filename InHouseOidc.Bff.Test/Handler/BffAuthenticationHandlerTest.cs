@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Bff.Handler;
@@ -39,7 +39,7 @@ namespace InHouseOidc.Bff.Test.Handler
             this.serviceCollection = [];
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("{null}")]
         [DataRow("")]
         [DataRow("/")]
@@ -101,7 +101,7 @@ namespace InHouseOidc.Bff.Test.Handler
             );
             await bffAuthenticationHandler.InitializeAsync(this.authenticationScheme, this.context);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<NotImplementedException>(
+            var exception = await Assert.ThrowsAsync<NotImplementedException>(
                 async () => await bffAuthenticationHandler.AuthenticateAsync()
             );
             // Assert

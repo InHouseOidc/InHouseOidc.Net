@@ -43,7 +43,7 @@ namespace InHouseOidc.Test.Common
             var lastItem = this.LogItems.LastOrDefault();
             Assert.IsNotNull(lastItem, "No items logged");
             Assert.AreEqual(logLevel, lastItem.LogLevel);
-            StringAssert.Contains(lastItem.Message, substring);
+            Assert.Contains(substring, lastItem.Message);
         }
     }
 }

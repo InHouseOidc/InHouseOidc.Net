@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common.Extension;
@@ -9,7 +9,7 @@ namespace InHouseOidc.Common.Test.Extension
     [TestClass]
     public class StringExtensionTest
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("http://localhost", "http://localhost/")]
         [DataRow("http://localhost/", "http://localhost/")]
         public void StringExtension_TestAll(string baseUri, string expectedUri)

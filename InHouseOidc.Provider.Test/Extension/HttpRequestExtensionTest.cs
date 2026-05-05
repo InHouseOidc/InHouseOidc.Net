@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common.Constant;
@@ -16,7 +16,7 @@ namespace InHouseOidc.Provider.Test.Extension
     [TestClass]
     public class HttpRequestExtensionTest
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true)]
         [DataRow(false)]
         public async Task GetClaimsPrincipal_Authenticated(bool isAuthenticated)
@@ -96,7 +96,7 @@ namespace InHouseOidc.Provider.Test.Extension
             serviceCollection.AddSingleton(mockAuthenticationHandlerProvider.Object);
             var serviceProvider = serviceCollection.BuildServiceProvider();
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () => await context.Request.GetClaimsPrincipal(serviceProvider)
             );
             // Assert
@@ -117,7 +117,7 @@ namespace InHouseOidc.Provider.Test.Extension
             Assert.IsNull(result);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null, false)]
         [DataRow("", false)]
         [DataRow("rubbish", false)]
@@ -197,7 +197,7 @@ namespace InHouseOidc.Provider.Test.Extension
             context.Request.Scheme = "https";
             context.Request.Path = new PathString("/test");
             // Act
-            var exception = Assert.ThrowsException<InvalidOperationException>(() => context.Request.GetBaseUriString());
+            var exception = Assert.Throws<InvalidOperationException>(() => context.Request.GetBaseUriString());
             // Assert
             Assert.IsNotNull(exception);
             Assert.AreEqual("Unable to resolve from host header", exception.Message);
