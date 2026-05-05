@@ -57,7 +57,7 @@ jobs:
             /p:InformationalVersion="${{ steps.semver.outputs.version }}-main.${{ steps.semver.outputs.increment }}"
 
       - name: Run tests
-        run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build
+        run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --filter "FullyQualifiedName!~PlaywrightTest"
 
       - name: Coverage
         run: |
@@ -69,6 +69,7 @@ jobs:
             /p:CoverletOutput=../Coverage/Results/ \
             /p:MergeWith=../Coverage/Results/coverage.json \
             /p:CoverletOutputFormat="json%2ccobertura" \
+            --filter "FullyQualifiedName!~PlaywrightTest" \
             -m:1 \
             $SOLUTION
           dotnet tool install dotnet-reportgenerator-globaltool --tool-path ./Coverage/Tools --ignore-failed-sources
