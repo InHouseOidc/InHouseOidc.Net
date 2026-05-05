@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common.Extension;
@@ -67,7 +67,7 @@ namespace InHouseOidc.Common.Test.Extension
             Assert.AreEqual(0, this.logger.LogItems.Count);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(HttpStatusCode.OK, false)]
         [DataRow(HttpStatusCode.RequestTimeout, true)]
         [DataRow(HttpStatusCode.BadGateway, true)]
@@ -82,7 +82,7 @@ namespace InHouseOidc.Common.Test.Extension
             if (throwsException)
             {
                 // Act
-                var exception = await Assert.ThrowsExceptionAsync<HttpClientRetryableException>(
+                var exception = await Assert.ThrowsAsync<HttpClientRetryableException>(
                     async () =>
                         await httpClient.SendWithRetry(
                             HttpMethod.Get,
@@ -132,7 +132,7 @@ namespace InHouseOidc.Common.Test.Extension
                 new IOException("The response ended prematurely.")
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<HttpRequestException>(
+            var exception = await Assert.ThrowsAsync<HttpRequestException>(
                 async () =>
                     await httpClient.SendWithRetry(
                         HttpMethod.Get,
@@ -164,7 +164,7 @@ namespace InHouseOidc.Common.Test.Extension
                 new List<Exception> { new IOException("The response ended prematurely.") }
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<AggregateException>(
+            var exception = await Assert.ThrowsAsync<AggregateException>(
                 async () =>
                     await httpClient.SendWithRetry(
                         HttpMethod.Get,

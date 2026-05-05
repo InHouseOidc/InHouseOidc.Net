@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -59,7 +59,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.mockUtcNow.Setup(m => m.UtcNow).Returns(this.utcNow);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("subjectid")]
         [DataRow(null)]
         public async Task GetAccessToken(string? subjectId)
@@ -106,7 +106,7 @@ namespace InHouseOidc.Provider.Test.Handler
             AssertHasClaims(jsonWebToken, JsonWebTokenClaim.Scope, this.scopes);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("onlyonce", "pwd", "superuser")]
         [DataRow(null, null, null)]
         public async Task GetIdToken_Success(string? nonce, string? amr, string? role)
@@ -212,7 +212,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, false, "AuthorizationRequest has no value for SessionExpiryUtc")]
         [DataRow(true, true, "Unable to resolve signing credentials for JWT")]
         public async Task GetIdToken_Exceptions(
@@ -259,7 +259,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockUtcNow.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InternalErrorException>(
+            var exception = await Assert.ThrowsAsync<InternalErrorException>(
                 () =>
                     jsonWebTokenHandler.GetIdToken(
                         authorizationRequest,
@@ -271,7 +271,7 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             // Assert
             Assert.IsNotNull(exception);
-            StringAssert.Contains(exception.LogMessage, expectedExceptionMessage);
+            Assert.Contains(expectedExceptionMessage, exception.LogMessage);
         }
 
         [TestMethod]

@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -40,7 +40,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.providerOptions = new();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("{null}")]
         [DataRow("")]
         [DataRow("/")]
@@ -203,7 +203,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.IsFalse(result);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DynamicData(nameof(HandleRequestAsync_Exception_Data))]
         public async Task HandleRequestAsync_Exception(
             System.Exception exception,
@@ -360,7 +360,7 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             await providerAuthenticationHandler.InitializeAsync(authenticationScheme, context);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<NotImplementedException>(
+            var exception = await Assert.ThrowsAsync<NotImplementedException>(
                 async () => await providerAuthenticationHandler.AuthenticateAsync()
             );
             // Assert

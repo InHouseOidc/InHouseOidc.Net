@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.PageClient.Resolver;
@@ -40,9 +40,7 @@ namespace InHouseOidc.PageClient.Test
             var clientName = "PageApiClient";
             // Act
             var clientBuilder = this.serviceCollection.AddOidcPageClient().AddApiClient(clientName);
-            var duplicateException = Assert.ThrowsException<ArgumentException>(
-                () => clientBuilder.AddApiClient(clientName)
-            );
+            var duplicateException = Assert.Throws<ArgumentException>(() => clientBuilder.AddApiClient(clientName));
             clientBuilder.Build();
             var serviceProvider = this.serviceCollection.BuildServiceProvider();
             // Assert
@@ -68,7 +66,7 @@ namespace InHouseOidc.PageClient.Test
             };
             // Act
             var clientBuilder = this.serviceCollection.AddOidcPageClient().AddClient(pageClientOptions);
-            var singleOnlyException = Assert.ThrowsException<ArgumentException>(
+            var singleOnlyException = Assert.Throws<ArgumentException>(
                 () => clientBuilder.AddClient(pageClientOptions)
             );
             clientBuilder.Build();

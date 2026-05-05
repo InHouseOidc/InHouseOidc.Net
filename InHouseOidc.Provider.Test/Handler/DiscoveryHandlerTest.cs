@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common.Constant;
@@ -27,7 +27,7 @@ namespace InHouseOidc.Provider.Test.Handler
             var providerOptions = new ProviderOptions();
             var discoveryHandler = new DiscoveryHandler(providerOptions);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<BadRequestException>(
+            var exception = await Assert.ThrowsAsync<BadRequestException>(
                 async () => await discoveryHandler.HandleRequest(context.Request)
             );
             // Assert

@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -130,7 +130,7 @@ namespace InHouseOidc.Provider.Test.Handler
             StateLength,
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(
             ValCliEx.NoClient,
             ValReqEx.Nothing,
@@ -450,7 +450,7 @@ namespace InHouseOidc.Provider.Test.Handler
             );
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("https://localhost", "something.interested", true, false, false, null)]
         [DataRow("https://localhost", "something.interested", true, true, true, nameof(SecurityTokenExpiredException))]
         [DataRow("https://localhost", "something.interested", false, false, false, null)]

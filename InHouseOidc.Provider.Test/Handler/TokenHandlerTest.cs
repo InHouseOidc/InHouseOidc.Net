@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -58,7 +58,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.mockUserStore = new Mock<IUserStore>(MockBehavior.Strict);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("GET", false, null, "Token request used invalid method: {method}")]
         [DataRow("POST", false, null, "Token request used invalid content type")]
         [DataRow("POST", true, null, "Token request missing grant_type")]
@@ -116,7 +116,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 context.Request.Body = new FormUrlEncodedContent(formParams).ReadAsStream();
             }
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<BadRequestException>(
+            var exception = await Assert.ThrowsAsync<BadRequestException>(
                 async () => await tokenHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -124,7 +124,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.AreEqual(expectedExceptionMessage, exception.LogMessage);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true)]
         [DataRow(false)]
         public async Task HandleRequest_AuthorizationCode(bool issueRefreshToken)
@@ -281,7 +281,7 @@ namespace InHouseOidc.Provider.Test.Handler
             RedirectUriMissing,
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(
             AuthCdeEx.None,
             AuthCliEx.NoClient,
@@ -561,7 +561,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             context.Request.Body = new FormUrlEncodedContent(formParams).ReadAsStream();
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<BadRequestException>(
+            var exception = await Assert.ThrowsAsync<BadRequestException>(
                 async () => await tokenHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -577,7 +577,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Mixed,
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ClientSecretType.BothAuthorization)]
         [DataRow(ClientSecretType.BothQueryParams)]
         [DataRow(ClientSecretType.Mixed)]
@@ -692,7 +692,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Nothing,
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(
             CredAutEx.None,
             CredCliEx.None,
@@ -906,7 +906,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockUtcNow.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<BadRequestException>(
+            var exception = await Assert.ThrowsAsync<BadRequestException>(
                 async () => await tokenHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -915,7 +915,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.AreEqual(expectedError, exception.Error);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false)]
         [DataRow(true)]
         public async Task HandleRequest_RefreshToken(bool changeScope)
@@ -1040,7 +1040,7 @@ namespace InHouseOidc.Provider.Test.Handler
             NoRefreshToken,
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(
             RefrCdeEx.None,
             RefrCliEx.Nothing,
@@ -1236,7 +1236,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockUtcNow.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<BadRequestException>(
+            var exception = await Assert.ThrowsAsync<BadRequestException>(
                 async () => await tokenHandler.HandleRequest(context.Request)
             );
             // Assert

@@ -1,9 +1,17 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
+import { defineConfig, createLogger } from 'vite';
 import react from '@vitejs/plugin-react'
+
+const logger = createLogger();
+const loggerError = logger.error;
+logger.error = (msg, options) => {
+    if (msg.includes('ECONNREFUSED')) return;
+    loggerError(msg, options);
+};
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    customLogger: logger,
     plugins: [react()],
     resolve: {
         alias: {

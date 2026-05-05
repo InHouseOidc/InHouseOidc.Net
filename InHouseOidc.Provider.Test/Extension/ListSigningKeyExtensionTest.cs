@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Provider.Exception;
@@ -17,11 +17,11 @@ namespace InHouseOidc.Provider.Test.Extension
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
             // Act
-            var exception = Assert.ThrowsException<InternalErrorException>(
+            var exception = Assert.Throws<InternalErrorException>(
                 () => providerBuilder.SetSigningCertificates([TestCertificate.CreatePublicOnly(DateTimeOffset.UtcNow)])
             );
             // Assert
-            StringAssert.Contains(exception.LogMessage, "must include a private key");
+            Assert.Contains("must include a private key", exception.LogMessage);
         }
 
         [TestMethod]
@@ -31,11 +31,11 @@ namespace InHouseOidc.Provider.Test.Extension
             var serviceCollection = new TestServiceCollection();
             var providerBuilder = serviceCollection.AddOidcProvider();
             // Act
-            var exception = Assert.ThrowsException<InternalErrorException>(
+            var exception = Assert.Throws<InternalErrorException>(
                 () => providerBuilder.SetSigningCertificates([TestCertificate.CreateNonRS256(DateTimeOffset.UtcNow)])
             );
             // Assert
-            StringAssert.Contains(exception.LogMessage, "must support RS256 algorithm");
+            Assert.Contains("must support RS256 algorithm", exception.LogMessage);
         }
     }
 }

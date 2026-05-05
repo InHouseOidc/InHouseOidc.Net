@@ -1,0 +1,244 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Net.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "build: Example.Provider",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Example.Provider/InHouseOidc.Example.Provider.csproj",
+                "/property:GenerateFullPaths=true",
+                "/property:GeneratePackageOnBuild=false",
+                "/property:BuildProjectReferences=false",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "build: Example.Api",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Example.Api/InHouseOidc.Example.Api.csproj",
+                "/property:GenerateFullPaths=true",
+                "/property:GeneratePackageOnBuild=false",
+                "/property:BuildProjectReferences=false",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "build: Example.Razor",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Example.Razor/InHouseOidc.Example.Razor.csproj",
+                "/property:GenerateFullPaths=true",
+                "/property:GeneratePackageOnBuild=false",
+                "/property:BuildProjectReferences=false",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "build: Example.Mvc",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Example.Mvc/InHouseOidc.Example.Mvc.csproj",
+                "/property:GenerateFullPaths=true",
+                "/property:GeneratePackageOnBuild=false",
+                "/property:BuildProjectReferences=false",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "build: Example.Bff",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Example.Bff/InHouseOidc.Example.Bff.csproj",
+                "/property:GenerateFullPaths=true",
+                "/property:GeneratePackageOnBuild=false",
+                "/property:BuildProjectReferences=false",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "build: Example.CredentialsClient",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Example.CredentialsClient/InHouseOidc.Example.CredentialsClient.csproj",
+                "/property:GenerateFullPaths=true",
+                "/property:GeneratePackageOnBuild=false",
+                "/property:BuildProjectReferences=false",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "build: Certify.Provider",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Certify.Provider/InHouseOidc.Certify.Provider.csproj",
+                "/property:GenerateFullPaths=true",
+                "/property:GeneratePackageOnBuild=false",
+                "/property:BuildProjectReferences=false",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "build: Example.PlaywrightTest",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/InHouseOidc.Example.PlaywrightTest/InHouseOidc.Example.PlaywrightTest.csproj",
+                "/property:GenerateFullPaths=true",
+                "/property:GeneratePackageOnBuild=false",
+                "/property:BuildProjectReferences=false",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "run: Example.Provider",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "${workspaceFolder}/InHouseOidc.Example.Provider/bin/Debug/net10.0/InHouseOidc.Example.Provider.dll"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/InHouseOidc.Example.Provider",
+                "env": {
+                    "ASPNETCORE_ENVIRONMENT": "Development"
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "run-example-provider",
+                "pattern": [{"regexp": "^$"}],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "Application started"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "run: Example.Api",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "${workspaceFolder}/InHouseOidc.Example.Api/bin/Debug/net10.0/InHouseOidc.Example.Api.dll"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/InHouseOidc.Example.Api",
+                "env": {
+                    "ASPNETCORE_ENVIRONMENT": "Development"
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "run-example-api",
+                "pattern": [{"regexp": "^$"}],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "Application started"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "run: Example.Bff",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "${workspaceFolder}/InHouseOidc.Example.Bff/bin/Debug/net10.0/InHouseOidc.Example.Bff.dll"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/InHouseOidc.Example.Bff",
+                "env": {
+                    "ASPNETCORE_ENVIRONMENT": "Development"
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "run-example-bff",
+                "pattern": [{"regexp": "^$"}],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "Application started"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        }
+    ]
+}

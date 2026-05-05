@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -51,7 +51,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.mockUtcNow.Setup(m => m.UtcNow).Returns(this.utcNow);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true, false, true, true)]
         [DataRow(true, true, true, false)]
         [DataRow(false, false, false, false)]
@@ -111,15 +111,15 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             this.mockHttpContextAccessor.Setup(m => m.HttpContext).Returns((HttpContext?)null);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () => await providerSessionHandler.GetLogoutRequest("anycode")
             );
             // Assert
             Assert.IsNotNull(exception);
-            StringAssert.Contains(exception.Message, "No HttpContext found to logout");
+            Assert.Contains("No HttpContext found to logout", exception.Message);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("/rubbish", false, false)]
         [DataRow("/rubbish?param=value", false, false)]
         [DataRow("/connect/authorize?param=value", false, false)]
@@ -162,15 +162,15 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockValidationHandler.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () => await providerSessionHandler.IsValidReturnUrl("/rubbish?param=value")
             );
             // Assert
             Assert.IsNotNull(exception);
-            StringAssert.Contains("AuthorizationCode flow not enabled", exception.Message);
+            Assert.Contains("AuthorizationCode flow not enabled", exception.Message);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true)]
         [DataRow(false)]
         public async Task Login(bool checkSessionEndpointEnabled)
@@ -217,7 +217,7 @@ namespace InHouseOidc.Provider.Test.Handler
             if (checkSessionEndpointEnabled)
             {
                 var cookie = this.context.Response.Headers.SetCookie;
-                Assert.IsNotNull(cookie);
+                Assert.IsFalse(string.IsNullOrEmpty(cookie));
             }
             mockAuthenticationService.VerifyAll();
         }
@@ -235,15 +235,15 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             var claims = new List<Claim>();
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () => await providerSessionHandler.Login(this.context, claims, TimeSpan.FromMinutes(60))
             );
             // Assert
             Assert.IsNotNull(exception);
-            StringAssert.Contains("AuthorizationCode flow not enabled", exception.Message);
+            Assert.Contains("AuthorizationCode flow not enabled", exception.Message);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true, true, true, true, true)]
         [DataRow(true, true, true, true, false)]
         [DataRow(false, true, true, false, false)]
@@ -312,8 +312,8 @@ namespace InHouseOidc.Provider.Test.Handler
             {
                 var cookie = this.context.Response.Headers.SetCookie.Single();
                 Assert.IsNotNull(cookie);
-                StringAssert.Contains(cookie, this.providerOptions.CheckSessionCookieName);
-                StringAssert.Contains(cookie, "expires=");
+                Assert.Contains(this.providerOptions.CheckSessionCookieName, cookie);
+                Assert.Contains("expires=", cookie);
             }
             if (passLogoutCode)
             {
@@ -344,12 +344,12 @@ namespace InHouseOidc.Provider.Test.Handler
             );
             var claims = new List<Claim>();
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () => await providerSessionHandler.Logout(this.context, null, null)
             );
             // Assert
             Assert.IsNotNull(exception);
-            StringAssert.Contains("AuthorizationCode flow not enabled", exception.Message);
+            Assert.Contains("AuthorizationCode flow not enabled", exception.Message);
         }
     }
 }

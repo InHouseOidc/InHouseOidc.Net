@@ -19,7 +19,7 @@ builder.Services.AddHttpLogging(httpLogging =>
 builder.Services.AddRazorPages();
 
 // Setup the OIDC provider
-var signingCertificate = new X509Certificate2("InHouseOidcCertify.pfx", "Internal");
+var signingCertificate = X509CertificateLoader.LoadPkcs12FromFile("InHouseOidcCertify.pfx", "Internal");
 
 builder
     .Services.AddOidcProvider()

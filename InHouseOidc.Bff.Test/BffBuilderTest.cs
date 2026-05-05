@@ -53,7 +53,7 @@ namespace InHouseOidc.Bff.Test
         public void AddApiClient_Duplicate()
         {
             // Act
-            var mixedException = Assert.ThrowsException<ArgumentException>(
+            var mixedException = Assert.Throws<ArgumentException>(
                 () => this.serviceCollection.AddOidcBff().AddApiClient(ApiClientName).AddApiClient(ApiClientName)
             );
             // Assert
@@ -82,7 +82,7 @@ namespace InHouseOidc.Bff.Test
             Dictionary<string, BffClientOptions> bffHostClientOptions =
                 new() { { "localhost", this.bffClientOptions } };
             // Act
-            var mixedException = Assert.ThrowsException<InvalidOperationException>(
+            var mixedException = Assert.Throws<InvalidOperationException>(
                 () =>
                     this
                         .serviceCollection.AddOidcBff()
@@ -110,7 +110,7 @@ namespace InHouseOidc.Bff.Test
             CollectionAssert.Contains(policy.AuthenticationSchemes.ToList(), BffConstant.AuthenticationSchemeCookie);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null, 2)]
         [DataRow("", 2)]
         [DataRow("testscope", 3)]
@@ -237,7 +237,7 @@ namespace InHouseOidc.Bff.Test
             Dictionary<string, BffClientOptions> bffHostClientOptions =
                 new() { { "localhost", this.bffClientOptions } };
             // Act
-            var mixedException = Assert.ThrowsException<InvalidOperationException>(
+            var mixedException = Assert.Throws<InvalidOperationException>(
                 () =>
                     this
                         .serviceCollection.AddOidcBff()

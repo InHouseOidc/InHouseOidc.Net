@@ -1,0 +1,132 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Example.Provider",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Example.Provider",
+            "program": "${workspaceFolder}/InHouseOidc.Example.Provider/bin/Debug/net10.0/InHouseOidc.Example.Provider.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/InHouseOidc.Example.Provider",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Example.Api",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Example.Api",
+            "program": "${workspaceFolder}/InHouseOidc.Example.Api/bin/Debug/net10.0/InHouseOidc.Example.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/InHouseOidc.Example.Api",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Example.Razor",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Example.Razor",
+            "program": "${workspaceFolder}/InHouseOidc.Example.Razor/bin/Debug/net10.0/InHouseOidc.Example.Razor.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/InHouseOidc.Example.Razor",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Example.Mvc",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Example.Mvc",
+            "program": "${workspaceFolder}/InHouseOidc.Example.Mvc/bin/Debug/net10.0/InHouseOidc.Example.Mvc.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/InHouseOidc.Example.Mvc",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Example.Bff",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Example.Bff",
+            "program": "${workspaceFolder}/InHouseOidc.Example.Bff/bin/Debug/net10.0/InHouseOidc.Example.Bff.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/InHouseOidc.Example.Bff",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Example.CredentialsClient",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Example.CredentialsClient",
+            "program": "${workspaceFolder}/InHouseOidc.Example.CredentialsClient/bin/Debug/net10.0/InHouseOidc.Example.CredentialsClient.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/InHouseOidc.Example.CredentialsClient",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Certify.Provider",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Certify.Provider",
+            "program": "${workspaceFolder}/InHouseOidc.Certify.Provider/bin/Debug/net10.0/InHouseOidc.Certify.Provider.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/InHouseOidc.Certify.Provider",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Example.React (Vite)",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "node",
+            "runtimeArgs": ["--max-http-header-size=65536"],
+            "program": "${workspaceFolder}/InHouseOidc.Example.React/node_modules/vite/bin/vite.js",
+            "cwd": "${workspaceFolder}/InHouseOidc.Example.React",
+            "console": "integratedTerminal",
+            "serverReadyAction": {
+                "pattern": "Local:.*http://localhost:([0-9]+)",
+                "uriFormat": "http://localhost:%s",
+                "action": "openExternally"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Example.React (standalone)",
+            "configurations": [
+                "Example.React (Vite)"
+            ],
+            "preLaunchTask": "start: React dependencies",
+            "stopAll": true
+        },
+        {
+            "name": "All Examples",
+            "configurations": [
+                "Example.Provider",
+                "Example.Api",
+                "Example.Razor",
+                "Example.Mvc",
+                "Example.Bff",
+                "Example.CredentialsClient",
+                "Example.React (Vite)"
+            ],
+            "stopAll": true
+        },
+    ]
+}

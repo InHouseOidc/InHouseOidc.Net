@@ -30,9 +30,9 @@ namespace InHouseOidc.Provider.Test.Handler
             context.Response.Body.Seek(0, SeekOrigin.Begin);
             var body = reader.ReadToEnd();
             Assert.IsNotNull(body);
-            StringAssert.Contains(body, "<!DOCTYPE html>");
-            StringAssert.Contains(body, providerOptions.CheckSessionCookieName);
-            StringAssert.Contains(body, "window.addEventListener");
+            Assert.Contains("<!DOCTYPE html>", body);
+            Assert.Contains(providerOptions.CheckSessionCookieName, body);
+            Assert.Contains("window.addEventListener", body);
         }
     }
 }

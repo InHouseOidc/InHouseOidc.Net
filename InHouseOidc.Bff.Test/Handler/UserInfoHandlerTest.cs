@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Bff.Handler;
@@ -115,7 +115,7 @@ namespace InHouseOidc.Bff.Test.Handler
             Assert.AreEqual(405, this.context.Response.StatusCode);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(false, false, false)]
         [DataRow(true, true, true)]
         [DataRow(true, false, false)]
@@ -222,12 +222,12 @@ namespace InHouseOidc.Bff.Test.Handler
                 )
                 .ReturnsAsync((Discovery.Discovery?)null);
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () => await userInfoHandler.HandleRequest(this.context)
             );
             // Assert
             Assert.IsNotNull(exception);
-            StringAssert.Contains("Unable to resolve discovery", exception.Message);
+            Assert.Contains("Unable to resolve discovery", exception.Message);
         }
 
         private string GetResponseBody()

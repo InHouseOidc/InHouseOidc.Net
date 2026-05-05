@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -69,7 +69,7 @@ namespace InHouseOidc.Provider.Test.Extension
                 1
             );
             // Act
-            var exception = Assert.ThrowsException<InvalidOperationException>(
+            var exception = Assert.Throws<InvalidOperationException>(
                 () => context.Response.WriteRedirect(redirectErrorException)
             );
             // Assert
@@ -160,8 +160,8 @@ namespace InHouseOidc.Provider.Test.Extension
             // Act
             context.Response.AppendSessionCookie(checkSessionCookieName, false, sessionId);
             // Assert
-            var cookie = context.Response.Headers["cookies"];
-            Assert.IsNotNull(cookie);
+            var cookie = context.Response.Headers.SetCookie;
+            Assert.IsFalse(string.IsNullOrEmpty(cookie));
         }
 
         [TestMethod]
@@ -175,8 +175,8 @@ namespace InHouseOidc.Provider.Test.Extension
             // Act
             context.Response.DeleteSessionCookie(checkSessionCookieName);
             // Assert
-            var cookie = context.Response.Headers["cookies"];
-            Assert.AreEqual(0, cookie.Count);
+            var cookie = context.Response.Headers.SetCookie.ToString();
+            Assert.Contains("expires=", cookie);
         }
     }
 }

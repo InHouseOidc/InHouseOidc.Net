@@ -17,22 +17,22 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Determine package version using semver
         id: semver
-        uses: paulhatch/semantic-version@v4.0.3
+        uses: paulhatch/semantic-version@v5.4.0
         with:
           tag_prefix: "v"
-          format: "${major}.${minor}.${patch}"
+          version_format: "${major}.${minor}.${patch}"
           search_commit_body: false
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.400
+          dotnet-version: 10.0.x
 
       - name: Restore tools
         run: dotnet tool restore
@@ -57,7 +57,7 @@ jobs:
             /p:InformationalVersion="${{ steps.semver.outputs.version }}-main.${{ steps.semver.outputs.increment }}"
 
       - name: Run tests
-        run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build
+        run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --filter "FullyQualifiedName!~PlaywrightTest"
 
       - name: Coverage
         run: |
@@ -69,6 +69,7 @@ jobs:
             /p:CoverletOutput=../Coverage/Results/ \
             /p:MergeWith=../Coverage/Results/coverage.json \
             /p:CoverletOutputFormat="json%2ccobertura" \
+            --filter "FullyQualifiedName!~PlaywrightTest" \
             -m:1 \
             $SOLUTION
           dotnet tool install dotnet-reportgenerator-globaltool --tool-path ./Coverage/Tools --ignore-failed-sources

@@ -14,7 +14,6 @@ namespace InHouseOidc.Common.Test
             // Act
             var result = JsonHelper.JsonWriterOptions;
             // Assert
-            Assert.IsNotNull(result);
             Assert.AreEqual(JavaScriptEncoder.UnsafeRelaxedJsonEscaping, result.Encoder);
             Assert.IsTrue(result.Indented);
         }

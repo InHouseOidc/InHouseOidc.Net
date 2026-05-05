@@ -63,7 +63,10 @@ namespace InHouseOidc.Bff.Test.Handler
             // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(302, this.context.Response.StatusCode);
-            Assert.AreEqual(this.clientOptions.PostLogoutRedirectAddress, this.context.Response.Headers.Location);
+            Assert.AreEqual(
+                this.clientOptions.PostLogoutRedirectAddress,
+                this.context.Response.Headers.Location.ToString()
+            );
         }
 
         [TestMethod]

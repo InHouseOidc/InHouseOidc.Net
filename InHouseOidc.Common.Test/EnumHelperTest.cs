@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -61,11 +61,9 @@ namespace InHouseOidc.Common.Test
         public void ParseEnumMember_NoMatch()
         {
             // Act
-            var exception = Assert.ThrowsException<ArgumentException>(
-                () => EnumHelper.ParseEnumMember<TestEnum>("value_x")
-            );
+            var exception = Assert.Throws<ArgumentException>(() => EnumHelper.ParseEnumMember<TestEnum>("value_x"));
             // Assert
-            StringAssert.Contains(exception.Message, "Invalid enum member value");
+            Assert.Contains("Invalid enum member value", exception.Message);
         }
 
         private enum TestEnum

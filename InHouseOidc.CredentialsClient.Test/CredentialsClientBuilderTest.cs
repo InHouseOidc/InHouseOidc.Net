@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.CredentialsClient.Type;
@@ -34,7 +34,7 @@ namespace InHouseOidc.CredentialsClient.Test
             };
             // Act
             var clientBuilder = this.serviceCollection.AddOidcCredentialsClient().AddClient(clientName, clientOptions);
-            var duplicateException = Assert.ThrowsException<ArgumentException>(
+            var duplicateException = Assert.Throws<ArgumentException>(
                 () => clientBuilder.AddClient(clientName, clientOptions)
             );
             clientBuilder.Build();

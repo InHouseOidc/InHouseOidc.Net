@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Brent Johnson.
+// Copyright 2022 Brent Johnson.
 // Licensed under the Apache License, Version 2.0 (refer to the LICENSE file in the solution folder).
 
 using InHouseOidc.Common;
@@ -49,7 +49,7 @@ namespace InHouseOidc.Provider.Test.Handler
             this.providerOptions = new();
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("GET")]
         [DataRow("POST")]
         public async Task HandleRequest_Success(string method)
@@ -118,7 +118,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockValidationHandler.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+            var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                 async () => await endSessionHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -144,7 +144,7 @@ namespace InHouseOidc.Provider.Test.Handler
                 this.mockValidationHandler.Object
             );
             // Act
-            var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+            var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                 async () => await endSessionHandler.HandleRequest(context.Request)
             );
             // Assert
@@ -152,7 +152,7 @@ namespace InHouseOidc.Provider.Test.Handler
             Assert.AreEqual("Unable to resolve end session parameters", exception.LogMessage);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true, false, "", null, 16, "Invalid id token hint")]
         [DataRow(true, true, "other", null, 16, "Id token hint subject does not match authenticated subject")]
         [DataRow(true, true, "subject", false, 16, "Invalid post_logout_redirect_uri")]
@@ -261,7 +261,7 @@ namespace InHouseOidc.Provider.Test.Handler
             }
             else
             {
-                var exception = await Assert.ThrowsExceptionAsync<RedirectErrorException>(
+                var exception = await Assert.ThrowsAsync<RedirectErrorException>(
                     async () => await endSessionHandler.HandleRequest(context.Request)
                 );
                 Assert.IsNotNull(exception);
